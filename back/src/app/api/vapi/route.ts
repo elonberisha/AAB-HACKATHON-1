@@ -1,58 +1,116 @@
 import { NextRequest } from 'next/server'
+import { openai } from '@/lib/openai'
 import { searchDocuments } from '@/lib/rag'
-import { getSession, saveSession } from '@/lib/session'
-import { SYSTEM_PROMPT } from '@/lib/prompt'
+import { saveSession } from '@/lib/session'
+import { SYSTEM_PROMPT, WEB_SEARCH_PROMPT } from '@/lib/prompt'
 
+// Vapi Custom LLM endpoint
+// Vapi dërgon mesazhet në formatin OpenAI-compatible
+// Ne bëjmë RAG, thirrim GPT, dhe kthejmë stream
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { type, call, message } = body
 
-  // Vapi kërkon system prompt kur starton asistentin
-  if (type === 'assistant-request') {
-    const sessionId = call?.metadata?.sessionId ?? call?.id
-    const history = await getSession(sessionId)
-    const context = await searchDocuments('reforma administrative Kosovë BE')
+  // Vapi dërgon call info + messages
+  const messages: Array<{ role: string; content: string }> = body.messages ?? body.message ?? []
+  const call = body.call ?? {}
+  const sessionId = call?.metadata?.sessionId ?? call?.id ?? `vapi-${Date.now()}`
 
-    const historyText = history.length
-      ? '\n\nHistoria e bisedës:\n' +
-        history.map((m) => `${m.role === 'user' ? 'Qytetari' : 'Asistenti'}: ${m.content}`).join('\n')
-      : ''
+  // Merr mesazhin e fundit të user-it për RAG search
+  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+  const userText = lastUserMsg?.content ?? ''
 
-    return Response.json({
-      assistant: {
-        model: {
-          provider: 'openai',
-          model: 'gpt-4o',
-          systemPrompt: SYSTEM_PROMPT(context) + historyText,
-        },
-        voice: {
-          provider: 'openai',
-          voiceId: 'nova',
-        },
-        firstMessage: history.length
-          ? 'Mirë se u kthyet! Si mund t\'ju ndihmoj?'
-          : 'Mirë se vini! Si mund t\'ju ndihmoj me pyetjet tuaja për reformën administrative dhe integrimin evropian?',
-      },
-    })
+  // RAG search
+  const context = await searchDocuments(userText)
+  const hasLocalContext = context.length > 0
+
+  let fullReply = ''
+  const encoder = new TextEncoder()
+
+  // System prompt me kontekstin e RAG
+  const systemMessage = {
+    role: 'system' as const,
+    content: hasLocalContext
+      ? SYSTEM_PROMPT(context)
+      : SYSTEM_PROMPT('') + '\n\n' + WEB_SEARCH_PROMPT,
   }
 
-  // Ruaj transcript kur përfundon call-i
-  if (type === 'end-of-call-report') {
-    const sessionId = call?.metadata?.sessionId ?? call?.id
-    const messages = call?.artifact?.messages ?? []
+  // Filtro mesazhet — mbaj vetëm user/assistant
+  const chatMessages = messages
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
-    const formatted = messages
-      .filter((m: { role: string }) => m.role === 'user' || m.role === 'assistant')
-      .map((m: { role: string; message: string }) => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.message,
-      }))
+  // GPT-4o streaming
+  const stream = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    stream: true,
+    messages: [
+      systemMessage,
+      ...chatMessages,
+    ],
+  })
 
-    if (formatted.length) {
-      const existing = await getSession(sessionId)
-      await saveSession(sessionId, [...existing, ...formatted])
-    }
-  }
+  const readable = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of stream) {
+        const delta = chunk.choices[0]?.delta?.content ?? ''
+        if (delta) {
+          fullReply += delta
+          // Vapi Custom LLM pret formatin OpenAI SSE
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({
+              id: chunk.id,
+              object: 'chat.completion.chunk',
+              choices: [{
+                index: 0,
+                delta: { content: delta },
+                finish_reason: null,
+              }],
+            })}\n\n`)
+          )
+        }
+      }
 
-  return Response.json({ ok: true })
+      // Signal përfundim
+      controller.enqueue(
+        encoder.encode(`data: ${JSON.stringify({
+          id: 'done',
+          object: 'chat.completion.chunk',
+          choices: [{
+            index: 0,
+            delta: {},
+            finish_reason: 'stop',
+          }],
+        })}\n\n`)
+      )
+      controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+      controller.close()
+
+      // Ruaj sesionin në background
+      try {
+        await saveSession(sessionId, [
+          ...chatMessages,
+          { role: 'assistant', content: fullReply },
+        ], { source: 'voice' })
+      } catch { /* skip save errors */ }
+    },
+  })
+
+  return new Response(readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }
