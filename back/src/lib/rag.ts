@@ -1,7 +1,11 @@
 import { openai } from './openai'
 import { supabase } from './supabase'
 
-export async function searchDocuments(query: string, matchCount = 5): Promise<string> {
+export async function searchDocuments(
+  query: string,
+  matchCount = 5,
+  similarityThreshold = 0.7
+): Promise<string> {
   const embeddingRes = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: query,
@@ -12,6 +16,7 @@ export async function searchDocuments(query: string, matchCount = 5): Promise<st
   const { data, error } = await supabase.rpc('match_documents', {
     query_embedding: embedding,
     match_count: matchCount,
+    similarity_threshold: similarityThreshold,
   })
 
   if (error || !data?.length) return ''

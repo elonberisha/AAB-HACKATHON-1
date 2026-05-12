@@ -398,17 +398,32 @@ Owner-i i projektit (Elon) duhet të ftojë devsat tjerë:
 
 **Të gjithë devsat mund të bëjnë hapat 1-5 më poshtë** — nuk është vetëm punë e owner-it.
 
-### 1. Database — Ekzekuto SQL Schemas
-Shko te **SQL Editor** → New query → copy-paste dhe Run:
+### 1. Database — Ekzekuto SQL Schema
+Shko te **SQL Editor** → New query → copy-paste `back/supabase.sql` → **Run**.
 
-**Herën e parë:** `back/supabase.sql` — krijon tabelat AI:
+Krijon të gjitha tabelat me **një ekzekutim**:
+
+**AI:**
 - `documents` — chunks + embeddings (pgvector)
-- `sessions` — histori bisedash
-- Funksioni `match_documents` për similarity search
+- `uploaded_documents` — listë e dokumenteve PDF/Word të ngarkuara
+- `sessions` — histori bisedash (lidhet me user)
+- `match_documents()` — RPC për similarity search me threshold
 
-**Herën e dytë:** `back/supabase-cms.sql` — krijon tabelat CMS:
+**CMS:**
 - `pages`, `sections`, `articles`, `faq_items`, `infographics`
-- Seed data: 4 faqet kryesore (reforma, sundimi, korrupsioni, be)
+- `categories`, `tags`, `article_tags`
+- Seed data: 4 faqet + 4 kategori
+
+**Auth & Tracking:**
+- `profiles` — user me role (user/admin/editor), auto-krijohet me trigger
+- `media_library` — metadata për imazhet në Storage
+- `activity_log` — log i veprimeve admin
+
+**Plus:**
+- RLS policies për të gjitha tabelat (public read + admin write)
+- Triggers për `updated_at` automatik
+- 2 Storage buckets: `media` (public), `documents` (private)
+- Helper function `is_admin()`
 
 ### 2. Authentication — Aktivizo Providers
 
@@ -431,33 +446,18 @@ Shko te **SQL Editor** → New query → copy-paste dhe Run:
 4. Allowed MIME types: `image/png, image/jpeg, image/webp, image/svg+xml, application/pdf`
 5. Max file size: `10MB`
 
-### 4. Row Level Security (RLS)
+### 4. Admin Bootstrap (i pari admin manualisht)
 
-Tabelat CMS duhen lexuar nga publiku (faqet publike) por shkruar vetëm nga admin:
+Pas ekzekutimit të skemës, krijo admin-in e parë:
 
-```sql
--- Lexo publik (për faqet publike)
-alter table pages enable row level security;
-create policy "Public read" on pages for select using (published = true);
-create policy "Admin write" on pages for all using (auth.role() = 'authenticated');
+1. Supabase → Authentication → Users → **Add user** → email + password
+2. Profilja krijohet automatikisht (trigger)
+3. Promovo në admin:
+   ```sql
+   update profiles set role = 'admin' where email = 'YOUR_EMAIL@gmail.com';
+   ```
 
--- Njëjtë për tabelat tjera:
-alter table sections enable row level security;
-create policy "Public read" on sections for select using (true);
-create policy "Admin write" on sections for all using (auth.role() = 'authenticated');
-
-alter table articles enable row level security;
-create policy "Public read" on articles for select using (published = true);
-create policy "Admin write" on articles for all using (auth.role() = 'authenticated');
-
-alter table faq_items enable row level security;
-create policy "Public read" on faq_items for select using (published = true);
-create policy "Admin write" on faq_items for all using (auth.role() = 'authenticated');
-
-alter table infographics enable row level security;
-create policy "Public read" on infographics for select using (published = true);
-create policy "Admin write" on infographics for all using (auth.role() = 'authenticated');
-```
+Pastaj ai admin mund të promovojë të tjerët nga faqja `/admin/users` (UI me buton "Promote to admin").
 
 ### 5. Supabase URL + Keys (ku gjenden)
 Supabase → Settings → API:

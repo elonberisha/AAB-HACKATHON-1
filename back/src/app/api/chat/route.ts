@@ -5,11 +5,13 @@ import { getSession, saveSession } from '@/lib/session'
 import { SYSTEM_PROMPT, WEB_SEARCH_PROMPT } from '@/lib/prompt'
 
 export async function POST(req: NextRequest) {
-  const { message, sessionId } = await req.json()
+  const { message, sessionId, userId, language } = await req.json()
 
   if (!message || !sessionId) {
     return Response.json({ error: 'message dhe sessionId kërkohen' }, { status: 400 })
   }
+
+  const saveOpts = { userId: userId ?? null, language: language ?? 'sq', source: 'chat' as const }
 
   const [context, history] = await Promise.all([
     searchDocuments(message),
@@ -46,8 +48,8 @@ export async function POST(req: NextRequest) {
         await saveSession(sessionId, [
           ...history,
           { role: 'user', content: message },
-          { role: 'assistant', content: fullReply },
-        ])
+          { role: 'assistant', content: fullReply, source: 'rag' },
+        ], saveOpts)
 
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, sessionId })}\n\n`))
         controller.close()
@@ -89,8 +91,8 @@ export async function POST(req: NextRequest) {
       await saveSession(sessionId, [
         ...history,
         { role: 'user', content: message },
-        { role: 'assistant', content: fullReply },
-      ])
+        { role: 'assistant', content: fullReply, source: 'web' },
+      ], saveOpts)
 
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, sessionId })}\n\n`))
       controller.close()
