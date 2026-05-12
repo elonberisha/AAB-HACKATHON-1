@@ -1,36 +1,319 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# euguide-ks — Frontend
 
-## Getting Started
+Frontend i deployuar live: **https://euguide-ks.info**
 
-First, run the development server:
+---
+
+## Stack
+
+| Teknologjia | Përdorimi |
+|---|---|
+| Next.js 15 (App Router) | Framework |
+| React 19 | UI |
+| TypeScript | Gjuha |
+| Tailwind CSS | Styling |
+| shadcn/ui | Komponente UI (Button, Dialog, Sheet, Accordion, Table, etc.) |
+| @supabase/supabase-js | Supabase client (database + auth + storage) |
+| @supabase/ssr | Server-side auth + middleware |
+| Vercel | Hosting (auto-deploy nga `front/`) |
+
+---
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd front
+npm install
+npm install @supabase/ssr
+npx shadcn@latest init
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Krijo `.env.local` nga `.env.local.example`:
+```
+NEXT_PUBLIC_AI_URL=https://euguide-ks-back.vercel.app
+NEXT_PUBLIC_SUPABASE_URL=https://onitqrbcncgikyhsngon.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON=<anon key nga Supabase → Settings → API>
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev   # localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Faqet Publike
 
-To learn more about Next.js, take a look at the following resources:
+### `/` — Home
+- **Navbar** — logo euguide-ks, 4 lidhje temash (Reforma, Sundimi, Korrupsioni, BE), zgjedhës gjuhe (sq/en/sr)
+- **Hero** — tekst motivues për integrimin e Kosovës në BE, imazh/ilustrim, buton "Mëso më shumë"
+- **4 karta temash** — Reforma Administrative, Sundimi i Ligjit, Lufta kundër Korrupsionit, Integrimi në BE — çdo kartë linkon te faqja përkatëse
+- **Seksion "Pse rëndëson integrimi në BE"** — tekst i shkurtër me statistika
+- **Statistika** — numra kyç (progres bar EU, numri i dokumenteve të harmonizuara, etc.)
+- **Artikujt e fundit** — 3 karta artikujsh nga tabela `articles` (rendit sipas `published_at`)
+- **Footer** — logo, lidhje te faqet, kontakt, copyright
+- **Chat widget** — floating button bottom-right (global, shfaqet në të gjitha faqet)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### `/reforma` — Reforma Administrative
+- **Hero** — titull + nëntitull + imazh hero (nga tabela `pages` ku `slug='reforma'`)
+- **Seksione** — listë seksionesh nga tabela `sections` (page_id = reforma) — secili ka titull, rich text content, imazh opsional, renditur sipas `sort_order`
+- **Sidebar navigim** — lidhje te secili seksion (scroll to)
+- **FAQ mini** — 3-5 pyetje nga tabela `faq_items` ku `page_id = reforma`, accordion format
+- **Artikuj të lidhur** — artikuj nga `articles` ku `page_id = reforma`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `/sundimi` — Sundimi i Ligjit
+- Njëjtë si `/reforma` por slug = `sundimi`
+- Tema: të drejtat e qytetarëve, barazia para ligjit, institucionet e sundimit të ligjit
 
-## Deploy on Vercel
+### `/korrupsioni` — Lufta kundër Korrupsionit
+- Njëjtë si `/reforma` por slug = `korrupsioni`
+- Tema: format e korrupsionit, si raportohet, institucionet përgjegjëse
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `/be` — Integrimi në BE
+- Njëjtë si `/reforma` por slug = `be`
+- Tema: pse BE, progresi i Kosovës, hapat e ardhshëm, kriteret e anëtarësimit
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### `/faq` — Pyetje të Shpeshta
+- **Search bar** — kërko pyetje me tekst
+- **Filter kategori** — filtrimi sipas page_id (Reforma, Sundimi, Korrupsioni, BE, Generale)
+- **Accordion Q&A** — çdo pyetje hapet/mbyllet, shfaq përgjigjen
+- **Mesazh në fund** — "Nuk gjete përgjigje? Pyet chatbotin tonë!" → hap chat widget
+- Lexon nga tabela `faq_items` ku `published = true`
+
+### `/infografika` — Infografika
+- **Grid** me karta infografikash (imazh + titull + pershkrim)
+- **Hover** → preview më i madh
+- **Download buton** — shkarko imazhin origjinal
+- **Filter** sipas kategorisë (opsional)
+- Lexon nga tabela `infographics` ku `published = true`, renditur sipas `sort_order`
+
+---
+
+## Chat Widget (Global — të gjitha faqet)
+
+Komponent floating bottom-right i dukshëm në çdo faqe:
+
+- **Buton floating** — ikona chat, bottom-right, z-index i lartë
+- **Drawer** — hapet nga djathtas kur klikohet butoni
+- **Input mesazhi** — tekst + buton Send
+- **Mesazhet** — bubble format (user djathtas, AI majtas)
+- **SSE Streaming** — mesazhi i AI shfaqet fjala-pas-fjale
+- **Buton Voice** — hap Vapi thirrje zanore me sessionId (AI vazhdon bisedën me zë)
+- **Indicator gjuhe** — tregon gjuhën aktive (sq/en/sr)
+- **sessionId** — ruhet në `localStorage`, i njëjtë për chat dhe voice
+
+**Si funksionon:**
+```
+Klik chat buton → drawer hapet
+User shkruan mesazh → POST /api/chat { message, sessionId }
+AI përgjigjet me SSE stream → shfaqet live
+User klikon voice → Vapi thirrje me sessionId → AI vazhdon bisedën me zë
+Mbaron thirrja → transcript ruhet → chat vazhdon me histori
+```
+
+Klienti ndodhet gati te `front/src/lib/ai.ts` — funksionet `chatStream()`, `getSession()`.
+
+---
+
+## Gjuha — Multilingual (sq/en/sr)
+
+- **Zgjedhësi** në Navbar — klik → ndrysho gjuhën
+- Gjuha ruhet në `localStorage` nëpërmjet hook-ut `useLang` (`front/src/hooks/useLang.ts`)
+- Të gjitha tabelat në Supabase kanë kolona `_sq`, `_en`, `_sr` — lexo kolonën sipas gjuhës aktive
+- Shembull: nëse gjuha = `en`, lexo `title_en`, `content_en`, `question_en`, `answer_en`
+- Chatbot-i automatikisht i përgjigjet në gjuhën e pyetjes (nuk ka nevojë t'i thuhet)
+
+---
+
+## Admin Panel — i mbrojtur me Supabase Auth
+
+### `/login` — Login
+- Form me email + password
+- Autentikimi: Supabase Auth (`signInWithPassword`)
+- Pas login-it → redirekto te `/admin`
+- Nëse nuk je i autentikuar → redirekto te `/login`
+
+### Middleware Auth
+Krijo `front/src/middleware.ts` — kontrollon sesionin Supabase për çdo request te `/admin/*`. Nëse nuk ka sesion → redirekto te `/login`.
+
+### `/admin` — Dashboard
+- Numri i faqeve, artikujve, FAQ-ve, dokumenteve, infografikave
+- Lidhje te secili seksion i admin-it
+- Activity feed (opsional): veprimet e fundit
+
+### `/admin/pages` — Menaxhim Faqesh
+- **Tabelë** me faqet ekzistuese (Reforma, Sundimi, Korrupsioni, BE)
+- **Edit** — ndryshon: hero title (sq/en/sr), hero subtitle, hero image
+- **Seksionet** — brenda çdo faqe, listë seksionesh (CRUD):
+  - Titull (sq/en/sr)
+  - Content rich text (sq/en/sr) — përdor Tiptap ose react-quill
+  - Imazh opsional (upload në Supabase Storage)
+  - Sort order (drag & drop ose numër)
+- Tabela Supabase: `pages` + `sections`
+
+### `/admin/articles` — Artikuj dhe Lajme
+- **Tabelë** e artikujve me titull, status (draft/published), data
+- **CRUD** — krijo/edito/fshi artikuj:
+  - Titull (sq/en)
+  - Body rich text (sq/en) — Tiptap ose react-quill
+  - Cover image (upload në Supabase Storage)
+  - Page (opsional — lidh me një faqe specifike)
+  - Published boolean + published_at date
+- Tabela Supabase: `articles`
+
+### `/admin/faq` — FAQ
+- **Tabelë** me pyetjet ekzistuese
+- **CRUD** — krijo/edito/fshi pyetje:
+  - Question (sq/en/sr)
+  - Answer (sq/en/sr)
+  - Page (opsional — lidh me faqe specifike)
+  - Sort order
+  - Published boolean
+- Tabela Supabase: `faq_items`
+
+### `/admin/infographics` — Infografika
+- **Grid** me infografikat ekzistuese
+- **CRUD** — krijo/edito/fshi:
+  - Titull (sq/en)
+  - Pershkrim (sq/en)
+  - Imazh (upload në Supabase Storage)
+  - Sort order
+  - Published boolean
+- Tabela Supabase: `infographics`
+
+### `/admin/documents` — Upload Dokumentesh (PDF/Word → AI)
+- **Upload zone** — drag & drop ose klik për zgjedhje file
+- **Pranon:** PDF (.pdf) dhe Word (.docx)
+- **Pas upload-it:**
+  1. Lexon file-in, konverton në base64
+  2. Dërgon `POST https://euguide-ks-back.vercel.app/api/ingest` me `{ fileName, content }`
+  3. Tregon statusin: "U indeksua — 24 chunks"
+- **Listë dokumentesh** — emri, data e upload-it, numri i chunks
+- Juristët përdorin këtë faqe për të ngarkuar dokumente ligjore — AI i indekson automatikisht dhe chatbot-i i përdor për përgjigje
+
+### `/admin/media` — Media Library
+- **Upload** imazhe në Supabase Storage (bucket `media`)
+- **Grid** me imazhet ekzistuese — preview + URL
+- **Kopjo URL** — klik → kopjon URL-në publike (për hero images, artikuj, etc.)
+- **Fshi** — fshi imazhin nga Storage
+
+### `/admin/users` — Menaxhim Adminëve
+- **Tabelë** e user-ave admin (nga Supabase Auth)
+- **Invite** — ftesa me email (Supabase `inviteUserByEmail`)
+- **Deactivate** — çaktivizim (nuk fshin, vetëm ndalon hyrjen)
+
+---
+
+## Supabase Database (Tabelat CMS)
+
+Këto tabela lexohen/shkruhen nga frontend-i:
+
+### `pages`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| slug | text | 'reforma', 'sundimi', 'korrupsioni', 'be' |
+| title_sq, title_en, title_sr | text | Titulli i faqes |
+| hero_title_sq, hero_title_en | text | Teksti hero |
+| hero_subtitle_sq, hero_subtitle_en | text | Nëntitulli hero |
+| hero_image_url | text | URL e imazhit hero |
+| published | boolean | E publikuar? |
+
+### `sections`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| page_id | uuid | FK → pages |
+| title_sq, title_en, title_sr | text | Titulli i seksionit |
+| content_sq, content_en, content_sr | text | Rich text HTML |
+| image_url | text | Imazh opsional |
+| sort_order | int | Renditja |
+
+### `articles`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| page_id | uuid | FK → pages (null = general) |
+| title_sq, title_en | text | Titulli |
+| body_sq, body_en | text | Body rich text |
+| cover_image_url | text | Cover image |
+| published | boolean | E publikuar? |
+| published_at | timestamptz | Data e publikimit |
+
+### `faq_items`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| page_id | uuid | FK → pages (null = general) |
+| question_sq, question_en, question_sr | text | Pyetja |
+| answer_sq, answer_en, answer_sr | text | Përgjigja |
+| sort_order | int | Renditja |
+| published | boolean | E publikuar? |
+
+### `infographics`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| title_sq, title_en | text | Titulli |
+| image_url | text | URL e imazhit |
+| description_sq, description_en | text | Pershkrimi |
+| sort_order | int | Renditja |
+| published | boolean | E publikuar? |
+
+---
+
+## Strukturë Folderësh
+
+```
+front/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                           ← Home
+│   │   ├── layout.tsx                         ← Root layout (Navbar, Footer, ChatWidget)
+│   │   ├── login/page.tsx                     ← Login
+│   │   ├── (public)/
+│   │   │   ├── reforma/page.tsx               ← Reforma Administrative
+│   │   │   ├── sundimi/page.tsx               ← Sundimi i Ligjit
+│   │   │   ├── korrupsioni/page.tsx           ← Lufta kundër Korrupsionit
+│   │   │   ├── be/page.tsx                    ← Integrimi në BE
+│   │   │   ├── faq/page.tsx                   ← Pyetje të Shpeshta
+│   │   │   └── infografika/page.tsx           ← Infografika
+│   │   └── admin/
+│   │       ├── page.tsx                       ← Dashboard
+│   │       ├── pages/page.tsx                 ← Menaxhim faqesh + seksionesh
+│   │       ├── articles/page.tsx              ← Artikuj
+│   │       ├── faq/page.tsx                   ← FAQ CRUD
+│   │       ├── infographics/page.tsx          ← Infografika CRUD
+│   │       ├── documents/page.tsx             ← Upload docs → AI ingestion
+│   │       ├── media/page.tsx                 ← Media library
+│   │       └── users/page.tsx                 ← Menaxhim adminëve
+│   ├── components/
+│   │   ├── ui/                                ← shadcn/ui komponente
+│   │   ├── layout/
+│   │   │   ├── Navbar.tsx                     ← Navbar global
+│   │   │   └── Footer.tsx                     ← Footer global
+│   │   ├── chat/
+│   │   │   └── ChatWidget.tsx                 ← Chat widget floating
+│   │   └── admin/                             ← Komponente admin (tabela, forma, etc.)
+│   ├── hooks/
+│   │   ├── useChat.ts                         ← Menaxhon chat messages + SSE stream
+│   │   └── useLang.ts                         ← Gjuha aktive (sq/en/sr)
+│   ├── lib/
+│   │   ├── supabase.ts                        ← Supabase client (gati ✅)
+│   │   └── ai.ts                              ← chatStream, ingestDocument, getSession (gati ✅)
+│   ├── types/
+│   │   └── index.ts                           ← TypeScript types (gati ✅)
+│   └── middleware.ts                          ← Auth guard për /admin/*
+├── .env.local.example                         ← Shembull env vars
+└── package.json
+```
+
+---
+
+## Deployment
+
+Auto-deploy në çdo `git push` në `main`.
+
+- **Platform:** Vercel
+- **Root directory:** `front/`
+- **Domain:** euguide-ks.info
+- **Env vars:** vendosen në Vercel dashboard
