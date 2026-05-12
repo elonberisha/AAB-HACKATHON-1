@@ -33,7 +33,9 @@ export default function TestPage() {
     } else {
       const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID
       if (assistantId) {
-        vapiRef.current.start(assistantId)
+        vapiRef.current.start(assistantId, {
+          metadata: { sessionId: sessionId.current },
+        })
         setVapiStatus('connecting...')
       } else {
         setVapiStatus('error: VAPI_ASSISTANT_ID not set')
