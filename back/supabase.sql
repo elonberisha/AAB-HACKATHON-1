@@ -23,10 +23,15 @@ create table if not exists profiles (
 );
 
 -- Trigger: krijo profile automatikisht kur regjistrohet user i ri
-create or replace function handle_new_user()
-returns trigger as $$
+-- IMPORTANT: search_path = public + exception handler — nuk bllokon signup nëse profile failon
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
-  insert into profiles (id, email, full_name, avatar_url)
+  insert into public.profiles (id, email, full_name, avatar_url)
   values (
     new.id,
     new.email,
@@ -35,13 +40,18 @@ begin
   )
   on conflict (id) do nothing;
   return new;
+exception when others then
+  -- Mos blloko krijimin e user-it edhe nese profilja deshton
+  return new;
 end;
-$$ language plpgsql security definer;
+$$;
+
+grant execute on function public.handle_new_user() to anon, authenticated, service_role;
 
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute function handle_new_user();
+  for each row execute function public.handle_new_user();
 
 -- Helper: kontrollo nëse user aktual është admin
 create or replace function is_admin()
@@ -346,6 +356,10 @@ create policy "Users update own profile" on profiles
 drop policy if exists "Admin write profiles" on profiles;
 create policy "Admin write profiles" on profiles
   for all using (is_admin()) with check (is_admin());
+-- Lejon trigger-in të krijojë profile gjatë signup-it (përdoruesi nuk ekziston ende në auth.uid())
+drop policy if exists "Allow signup profile insert" on profiles;
+create policy "Allow signup profile insert" on profiles
+  for insert with check (true);
 
 -- PAGES
 alter table pages enable row level security;
