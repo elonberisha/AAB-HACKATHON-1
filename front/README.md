@@ -24,20 +24,39 @@ Frontend i deployuar live: **https://euguide-ks.info**
 ```bash
 cd front
 npm install
-npm install @supabase/ssr
+
+# Supabase client + SSR (tashmë në package.json, instalohen me npm install)
+# Nëse mungojnë:
+npm install @supabase/supabase-js @supabase/ssr
+
+# Inicializo shadcn/ui
 npx shadcn@latest init
+
+# Shto komponentin Supabase Auth nga shadcn (gati për përdorim — login form, session, etc.)
+npx shadcn@latest add @supabase/supabase-client-nextjs
+
+# Komponente shadcn shtesë sipas nevojës
+npx shadcn@latest add button input dialog sheet accordion table dropdown-menu form select textarea
 ```
 
 Krijo `.env.local` nga `.env.local.example`:
 ```
 NEXT_PUBLIC_AI_URL=https://euguide-ks-back.vercel.app
 NEXT_PUBLIC_SUPABASE_URL=https://onitqrbcncgikyhsngon.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON=<anon key nga Supabase → Settings → API>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key nga Supabase → Settings → API>
 ```
 
 ```bash
 npm run dev   # localhost:3000
 ```
+
+### Komponente shadcn UI të rekomanduara
+- **Button, Input, Form** — për të gjitha format
+- **Dialog, Sheet** — për chat widget drawer, modale admin
+- **Accordion** — për FAQ
+- **Table, DropdownMenu** — për admin CRUD
+- **Select, Textarea** — për form admin
+- Më shumë komponente: [ui.shadcn.com](https://ui.shadcn.com) dhe [supabase.com/ui](https://supabase.com/ui)
 
 ---
 
@@ -369,6 +388,15 @@ front/
 ## Supabase Setup (njëherë — para se të filloni punë)
 
 Supabase projekti: `euguide-ks` — https://supabase.com/dashboard
+
+### 0. Ftesa në projekt (për të gjithë devsat)
+Owner-i i projektit (Elon) duhet të ftojë devsat tjerë:
+1. Supabase → **Organization Settings** → **Team** → **Invite member**
+2. Vendos email-in e dev-it
+3. Role: **Developer** (mund të bëjë SQL Editor, krijojë tabela) ose **Owner** (akses i plotë)
+4. Dev-i pranon ftesën nga email-i → e sheh projektin në dashboard-in e vet
+
+**Të gjithë devsat mund të bëjnë hapat 1-5 më poshtë** — nuk është vetëm punë e owner-it.
 
 ### 1. Database — Ekzekuto SQL Schemas
 Shko te **SQL Editor** → New query → copy-paste dhe Run:
