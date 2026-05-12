@@ -2,49 +2,38 @@ import { NextRequest } from 'next/server'
 import { openai } from '@/lib/openai'
 import { searchDocuments } from '@/lib/rag'
 import { saveSession } from '@/lib/session'
-import { SYSTEM_PROMPT, WEB_SEARCH_PROMPT } from '@/lib/prompt'
+import { SYSTEM_PROMPT } from '@/lib/prompt'
 
-// Vapi Custom LLM endpoint
-// Vapi dërgon mesazhet në formatin OpenAI-compatible
-// Ne bëjmë RAG, thirrim GPT, dhe kthejmë stream
 export async function POST(req: NextRequest) {
   const body = await req.json()
 
-  // Vapi dërgon call info + messages
-  const messages: Array<{ role: string; content: string }> = body.messages ?? body.message ?? []
+  const messages: Array<{ role: string; content: string }> = body.messages ?? []
   const call = body.call ?? {}
   const sessionId = call?.metadata?.sessionId ?? call?.id ?? `vapi-${Date.now()}`
 
-  // Merr mesazhin e fundit të user-it për RAG search
   const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
   const userText = lastUserMsg?.content ?? ''
 
-  // RAG search
-  const context = await searchDocuments(userText)
-  const hasLocalContext = context.length > 0
+  // RAG search — skip nëse mesazhi është shumë i shkurtër (përshëndetje)
+  let context = ''
+  if (userText.length > 10) {
+    context = await searchDocuments(userText)
+  }
 
   let fullReply = ''
   const encoder = new TextEncoder()
 
-  // System prompt me kontekstin e RAG
-  const systemMessage = {
-    role: 'system' as const,
-    content: hasLocalContext
-      ? SYSTEM_PROMPT(context)
-      : SYSTEM_PROMPT('') + '\n\n' + WEB_SEARCH_PROMPT,
-  }
-
-  // Filtro mesazhet — mbaj vetëm user/assistant
   const chatMessages = messages
     .filter(m => m.role === 'user' || m.role === 'assistant')
     .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
-  // GPT-4o streaming
+  // gpt-4o-mini për voice — 3x më shpejt se gpt-4o
   const stream = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     stream: true,
+    max_tokens: 300, // përgjigje të shkurtra për voice
     messages: [
-      systemMessage,
+      { role: 'system', content: SYSTEM_PROMPT(context) + '\n\nRREGULL SHTESË PËR VOICE: Përgjigju SHKURT (2-4 fjali max). Mos përdor lista, bullet points, ose formatim. Fol natyrshëm si në bisedë.' },
       ...chatMessages,
     ],
   })
@@ -55,7 +44,6 @@ export async function POST(req: NextRequest) {
         const delta = chunk.choices[0]?.delta?.content ?? ''
         if (delta) {
           fullReply += delta
-          // Vapi Custom LLM pret formatin OpenAI SSE
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({
               id: chunk.id,
@@ -70,28 +58,21 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Signal përfundim
       controller.enqueue(
         encoder.encode(`data: ${JSON.stringify({
           id: 'done',
           object: 'chat.completion.chunk',
-          choices: [{
-            index: 0,
-            delta: {},
-            finish_reason: 'stop',
-          }],
+          choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
         })}\n\n`)
       )
       controller.enqueue(encoder.encode('data: [DONE]\n\n'))
       controller.close()
 
-      // Ruaj sesionin në background
-      try {
-        await saveSession(sessionId, [
-          ...chatMessages,
-          { role: 'assistant', content: fullReply },
-        ], { source: 'voice' })
-      } catch { /* skip save errors */ }
+      // Ruaj në background — nuk bllokon stream-in
+      saveSession(sessionId, [
+        ...chatMessages,
+        { role: 'assistant', content: fullReply },
+      ], { source: 'voice' }).catch(() => {})
     },
   })
 
