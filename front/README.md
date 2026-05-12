@@ -569,6 +569,157 @@ Libraria `@vapi-ai/web` është tashmë e instaluar në `front/package.json`.
 
 ---
 
+## API-t Gati për Chatbot (Backend)
+
+Backend URL: `https://euguide-ks-back.vercel.app`
+
+### POST `/api/chat` — Dërgo mesazh, merr përgjigje streaming
+
+```typescript
+const res = await fetch('https://euguide-ks-back.vercel.app/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    message: 'Çka është reforma administrative?',
+    sessionId: 'abc-123',          // unik për çdo bisedë
+    userId: 'user-uuid',           // opsional — nga Supabase auth.uid()
+    language: 'sq',                // opsional — 'sq' | 'en' | 'sr'
+  }),
+})
+
+// Response: SSE stream (text/event-stream)
+// Çdo chunk:  data: {"delta":"fjala"}
+// Fundi:      data: {"done":true,"sessionId":"abc-123"}
+
+const reader = res.body.getReader()
+const decoder = new TextDecoder()
+let buffer = ''
+
+while (true) {
+  const { done, value } = await reader.read()
+  if (done) break
+  buffer += decoder.decode(value, { stream: true })
+  const lines = buffer.split('\n')
+  buffer = lines.pop() ?? ''
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed || !trimmed.startsWith('data: ')) continue
+    const parsed = JSON.parse(trimmed.slice(6))
+    if (parsed.done) break
+    if (parsed.delta) {
+      // Shto parsed.delta në UI (fjala e re)
+    }
+  }
+}
+```
+
+Funksioni gati: `chatStream(message, sessionId)` në `src/lib/ai.ts`
+
+---
+
+### GET `/api/session/:id` — Merr mesazhet e një bisede
+
+```typescript
+const res = await fetch('https://euguide-ks-back.vercel.app/api/session/abc-123')
+const { messages, sessionId } = await res.json()
+
+// messages = [
+//   { role: 'user', content: 'Çka është reforma?' },
+//   { role: 'assistant', content: 'Reforma administrative...' },
+//   ...
+// ]
+```
+
+Funksioni gati: `getSession(sessionId)` në `src/lib/ai.ts`
+
+---
+
+### GET `/api/sessions?userId=xxx` — Lista e bisedave të user-it
+
+```typescript
+const res = await fetch('https://euguide-ks-back.vercel.app/api/sessions?userId=user-uuid')
+const { sessions } = await res.json()
+
+// sessions = [
+//   { id: 'abc-123', title: 'Çka është reforma administrative', source: 'chat', created_at: '...', updated_at: '...' },
+//   { id: 'def-456', title: 'Ligji i punës', source: 'voice', created_at: '...', updated_at: '...' },
+//   ...
+// ]
+```
+
+---
+
+### POST `/api/ingest` — Upload dokument për AI (admin)
+
+```typescript
+// Lexo file si base64
+const reader = new FileReader()
+reader.onload = async () => {
+  const base64 = (reader.result as string).split(',')[1]
+  const res = await fetch('https://euguide-ks-back.vercel.app/api/ingest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fileName: 'ligji-punes.pdf',
+      content: base64,
+    }),
+  })
+  const { chunks } = await res.json()
+  // chunks = numri i chunks që u krijuan
+}
+reader.readAsDataURL(file)
+```
+
+Funksioni gati: `ingestDocument(fileName, content)` në `src/lib/ai.ts`
+
+---
+
+### Voice — Vapi Web SDK
+
+```typescript
+import Vapi from '@vapi-ai/web'
+
+const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY!)
+
+// Fillo thirrje — sessionId i njëjtë si chat
+vapi.start(process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID!, {
+  metadata: { sessionId: 'abc-123' },  // lidh voice me chat
+})
+
+// Events
+vapi.on('call-start', () => { /* thirrja filloi */ })
+vapi.on('call-end', () => { /* thirrja mbaroi */ })
+vapi.on('speech-start', () => { /* user po flet */ })
+vapi.on('speech-end', () => { /* user ndaloi */ })
+vapi.on('error', (e) => { /* gabim */ })
+
+// Ndalo thirrjen
+vapi.stop()
+```
+
+Kur voice mbaron, mesazhet ruhen automatikisht në të njëjtin sesion (backend i ruan). Kur user kthehet në chat, sheh edhe mesazhet e voice-it.
+
+---
+
+### Session Continuity — Chat + Voice bashkë
+
+```
+sessionId = "abc-123" (i njëjtë)
+    │
+    ├─ 💬 Chat: POST /api/chat {sessionId: "abc-123", message: "..."}
+    │   → mesazhet ruhen në sessions["abc-123"]
+    │
+    ├─ 🎙️ Voice: vapi.start(assistantId, {metadata: {sessionId: "abc-123"}})
+    │   → Vapi → backend → RAG + GPT → mesazhet ruhen në sessions["abc-123"]
+    │   → AI i di çka u shkrua në chat
+    │
+    └─ 📋 Sidebar: GET /api/sessions?userId=xxx
+        → lista e bisedave → klik → GET /api/session/abc-123
+        → shfaq TË GJITHA mesazhet (chat + voice bashkë)
+```
+
+---
+
 ## Deployment
 
 Auto-deploy në çdo `git push` në `main`.
