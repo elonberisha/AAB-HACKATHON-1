@@ -1,35 +1,39 @@
-# KO-in-EU — Platformë Informuese për Integrimin e Kosovës në BE
+# euguide-ks — Platformë Informuese për Integrimin e Kosovës në BE
 
-> **KO-in-EU Hackathon** · Platforma ndihmon qytetarët, studentët dhe palët e interesit të kuptojnë tre fusha të procesit të integrimit evropian: reformën administrative, sundimin e ligjit dhe luftën kundër korrupsionit.
-
----
-
-## Synimi i Platformës
-
-Shumë qytetarë të Kosovës kanë informacione të fragmentuara për proceset e integrimit. Kjo platformë shërben si **qendër informuese** ku temat komplekse shpjegohen me gjuhë të thjeshtë, infografika, dokumente dhe pyetje të shpeshta — me mbështetje të **AI chatbot** dhe **voice agent** shumëgjuhësh.
+> Platforma ndihmon qytetarët, studentët dhe palët e interesit të kuptojnë procesin e integrimit të Kosovës në BE — reforma administrative, sundimi i ligjit, lufta kundër korrupsionit.
 
 ---
 
-## Struktura e Repo-s (Monorepo)
+## URLs të Deployuara
+
+| Shërbimi | URL |
+|---|---|
+| **Frontend** | https://euguide-ks.info |
+| **Backend AI** | https://euguide-ks-back.vercel.app |
+| **Supabase** | https://supabase.com → projekti `euguide-ks` |
+
+---
+
+## Struktura e Repo-s
 
 ```
 AAB-HACKATHON-1/
-├── back/     ← AI Backend  (Koyeb)
-└── front/    ← Web Frontend (Vercel)
+├── back/     ← AI Backend (i ndërtuar, i deployuar ✅)
+└── front/    ← Web Frontend (strukturë gati, web devs ndërtojnë)
 ```
 
 ---
 
-## Stack Teknologjik
+## Stack
 
 | Shtresa | Teknologjia |
 |---|---|
 | Frontend | Next.js 15 · React 19 · TypeScript · Tailwind CSS · shadcn/ui |
-| Backend AI | Next.js 15 · GPT-4o · OpenAI Embeddings · Vapi |
+| Backend AI | Next.js 15 · GPT-4o · OpenAI Embeddings text-embedding-3-small |
+| Voice | Vapi |
 | Database | Supabase (PostgreSQL · pgvector · Storage · Auth) |
-| Hosting Backend | Koyeb (auto-deploy nga `back/`) |
-| Hosting Frontend | Vercel (auto-deploy nga `front/`) |
-| Versionim | GitHub → push → auto-deploy të dyja |
+| Hosting | Vercel (të dyja `back/` dhe `front/`) |
+| Domain | euguide-ks.info (Namecheap → Vercel) |
 
 ---
 
@@ -37,195 +41,181 @@ AAB-HACKATHON-1/
 
 | Roli | Detyra |
 |---|---|
-| **Juristët** | Sigurojnë content (dokumente PDF/Word, FAQ, tekste ligjore) |
-| **Dizajnerët** | Dizajnojnë UI/UX në Figma (nuk vendosin content) |
-| **Web Devs** | Ndërtojnë `front/` — faqet publike + admin panel |
-| **AI Devs** | Ndërtojnë `back/` — chatbot, voice agent, RAG, ingestion |
+| **Juristët** | Content: dokumente PDF/Word, FAQ, tekste ligjore — nëpërmjet admin panel |
+| **Dizajnerët** | UI/UX në Figma për të gjitha faqet dhe komponentet |
+| **Web Devs** | Ndërtojnë `front/` — faqet publike + admin panel (shih seksionin më poshtë) |
+| **AI Devs** | `back/` i ndërtuar dhe deployuar ✅ |
 
 ---
 
-## Faqet e Platformës
+## API Contract — Backend ↔ Frontend
+
+Backend URL: `https://euguide-ks-back.vercel.app`
+
+```
+POST /api/chat
+Body:  { message: string, sessionId: string }
+Reply: SSE stream → data: {"delta":"..."} ... data: {"done":true,"sessionId":"..."}
+
+POST /api/ingest
+Body:  { fileName: string, content: string }  ← content është base64 i file-it
+Reply: { status: "ok", chunks: number }
+
+GET /api/session/:sessionId
+Reply: { messages: [{role:"user"|"assistant", content:string}], sessionId: string }
+```
+
+Klienti i gatshëm ndodhet te `front/src/lib/ai.ts`.
+
+---
+
+## Faqet (Routes)
 
 ### Publike
-| Route | Faqja | Përshkrimi |
+| Route | Faqja | Seksionet |
 |---|---|---|
-| `/` | **Home** | Hero · 4 karta temash · statistika · artikuj të fundit |
-| `/reforma` | **Reforma Administrative** | Qëllimi i reformës · dokumentet strategjike · përfitimet |
-| `/sundimi` | **Sundimi i Ligjit** | Të drejtat e qytetarëve · barafia para ligjit · institucionet |
-| `/korrupsioni` | **Lufta kundër Korrupsionit** | Format e korrupsionit · si raportohet · institucionet |
-| `/be` | **Integrimi në BE** | Pse BE · progresi i Kosovës · hapat e ardhshëm |
-| `/faq` | **Pyetje të Shpeshta** | Search · kategori · accordion Q&A |
-| `/infografika` | **Infografika** | Grid · download · filter |
+| `/` | Home | Hero, 4 karta temash, statistika, artikuj të fundit |
+| `/reforma` | Reforma Administrative | Hero, seksione nga CMS, FAQ, artikuj |
+| `/sundimi` | Sundimi i Ligjit | Hero, seksione nga CMS, FAQ, artikuj |
+| `/korrupsioni` | Lufta kundër Korrupsionit | Hero, seksione nga CMS, FAQ, artikuj |
+| `/be` | Integrimi në BE | Hero, seksione nga CMS, FAQ, artikuj |
+| `/faq` | Pyetje të Shpeshta | Search, kategori, accordion Q&A |
+| `/infografika` | Infografika | Grid, hover preview, download |
 
-### Admin Panel (i mbrojtur — Supabase Auth)
+### Admin Panel — i mbrojtur me Supabase Auth
 | Route | Funksioni |
 |---|---|
-| `/admin` | Dashboard me statistika |
-| `/admin/pages` | Menaxhim hero + seksionesh për çdo faqe |
+| `/login` | Login me email/password (Supabase Auth) |
+| `/admin` | Dashboard: statistika dhe lidhje |
+| `/admin/pages` | CRUD për faqet kryesore (hero + seksione) |
 | `/admin/articles` | Artikuj dhe lajme |
-| `/admin/faq` | FAQ CRUD (shqip · anglisht · serbisht) |
+| `/admin/faq` | FAQ (shqip · anglisht · serbisht) |
 | `/admin/infographics` | Upload + renditje infografikash |
-| `/admin/documents` | Upload PDF/Word → trigger AI ingestion automatik |
-| `/admin/media` | Media library (Supabase Storage) |
+| `/admin/documents` | Upload PDF/Word → POST `/api/ingest` automatikisht |
+| `/admin/media` | Media library (Supabase Storage bucket `media`) |
 | `/admin/users` | Menaxhim adminëve |
 
 ---
 
-## Shtresat AI (back/)
+## Çfarë Duhet të Ndërtojnë Web Devs
 
-### API Endpoints
+Struktura e folderëve dhe konfigurimi bazë janë gati në `front/`. Web devs duhet të:
 
-| Endpoint | Metoda | Funksioni |
-|---|---|---|
-| `/api/chat` | POST | Chat me RAG + streaming SSE |
-| `/api/vapi` | POST | Vapi voice webhook |
-| `/api/ingest` | POST | Auto-ingestion dokumentesh nga admin |
-| `/api/session/[id]` | GET | Merr historinë e sesionit |
-
-### Shtesa AI (jo në dokumentin origjinal)
-
-| Shtesa | Përshkrimi |
-|---|---|
-| **Chat widget** | Floating button gjithë faqet · drawer me streaming |
-| **Voice agent** | Vapi call · vazhdon bisedën nga chat |
-| **Session continuity** | Chat → Voice → Chat me histori të njëjtë |
-| **Multilingual** | Shqip · Anglisht · Serbisht automatikisht |
-| **RAG** | Dokumentet e juristëve → knowledge base → përgjigje të sakta |
-| **Topic restriction** | AI refuzon pyetjet jashtë temës |
-
-### Bashkëpunimi AI ↔ Ekipit
-
+### 1. Setup fillestar
+```bash
+cd front
+npm install
+# krijo .env.local nga .env.local.example dhe mbush vlerat
 ```
-Juristët → /admin/documents → upload PDF/Word
-                  ↓
-           Auto-ingestion → pgvector (Supabase)
-                  ↓
-    Chatbot + Voice → përgjigje bazuar në dokumente reale
+
+### 2. Instalo libraritë shtesë
+```bash
+npm install @supabase/ssr
+npx shadcn@latest init
+# komponente shadcn sipas nevojës: button, input, dialog, sheet, accordion, etc.
 ```
+
+### 3. Supabase Auth middleware
+Krijo `front/src/middleware.ts` — mbron të gjitha rotat `/admin/*` dhe redirekton te `/login` nëse jo i autentikuar. Përdor `@supabase/ssr` për server-side session.
+
+### 4. Layout publik
+Krijo layout për grupin `(public)` me:
+- `Navbar` — logo + 4 lidhje + zgjedhës gjuhe (sq/en/sr)
+- `Footer`
+- `ChatWidget` — floating bottom-right, drawer me SSE streaming
+
+### 5. Faqet publike (dynamic nga Supabase)
+Çdo faqe (`/reforma`, `/sundimi`, `/korrupsioni`, `/be`) lexon nga:
+- tabela `pages` (sipas `slug`) — hero title, subtitle, image
+- tabela `sections` (sipas `page_id`) — seksione me rich text
+- tabela `articles` (sipas `page_id`) — artikuj të lidhur
+- tabela `faq_items` (sipas `page_id`) — FAQ mini
+
+### 6. Chat Widget (`front/src/components/chat/ChatWidget.tsx`)
+- Floating button bottom-right në të gjitha faqet
+- Drawer hapet nga djathtas
+- Dërgon `POST /api/chat` me SSE streaming
+- `sessionId` ruhet në `localStorage`
+- Buton voice → hap Vapi call me `sessionId`
+
+### 7. Admin Panel
+Çdo faqe admin kryen CRUD direkt me Supabase client (`front/src/lib/supabase.ts`).
+
+Faqja `/admin/documents` duhet:
+1. Marrë file PDF/Word nga user
+2. Konvertuar në base64
+3. `POST https://euguide-ks-back.vercel.app/api/ingest` me `{ fileName, content }`
+
+### 8. Gjuha (i18n)
+Hook `useLang` (`front/src/hooks/useLang.ts`) menaxhon gjuhën aktive (`sq`/`en`/`sr`) në `localStorage`. Të gjitha faqet shfaqin kolonën e duhur nga Supabase (`title_sq`, `title_en`, etj.).
 
 ---
 
-## Database Schema (Supabase)
+## Çfarë Duhet të Dizajnojnë Dizajnerët (Figma)
 
-### Tabela AI (`back/supabase.sql`)
-- `documents` — chunks + embeddings (pgvector)
-- `sessions` — histori bisedash
-
-### Tabela CMS (`back/supabase-cms.sql`)
-- `pages` — faqet kryesore (slug, hero, multilang)
-- `sections` — seksionet brenda faqeve (rich text)
-- `articles` — artikuj dhe lajme
-- `faq_items` — pyetje & përgjigje (sq/en/sr)
-- `infographics` — infografika me imazhe
+1. **Home** — Navbar, Hero, 4 karta temash, statistika, footer
+2. **Faqe teme** (`/reforma` etj.) — Hero, seksione me imazh+tekst, sidebar navigim, FAQ accordion
+3. **FAQ** (`/faq`) — Search bar, filter kategori, accordion Q&A
+4. **Infografika** (`/infografika`) — Grid kartat, hover preview, download buton
+5. **Chat Widget** — Floating button, drawer, bubble messages, buton voice, indicator gjuhe
+6. **Admin Panel** — Dashboard, tabela me CRUD, rich text editor, upload zona
 
 ---
 
-## API Contract (Frontend ↔ Backend)
+## Çfarë Duhet të Bëjnë Juristët
 
-```
-POST {KOYEB_URL}/api/chat
-Body:  { message: string, sessionId: string }
-Reply: SSE stream → { delta } ... { done: true, sessionId }
-
-POST {KOYEB_URL}/api/ingest
-Body:  { fileName: string, content: string (base64) }
-Reply: { status: 'ok', chunks: number }
-
-GET  {KOYEB_URL}/api/session/:id
-Reply: { messages: Message[], sessionId: string }
-```
+1. Hyr te `https://euguide-ks.info/admin` (pasi web devs ta ndërtojnë)
+2. Shto dokumente PDF/Word te `/admin/documents` → AI i indekson automatikisht
+3. Plotëso content për çdo faqe te `/admin/pages`
+4. Shto FAQ te `/admin/faq` (shqip + anglisht + serbisht)
+5. Upload infografika te `/admin/infographics`
 
 ---
 
-## Deployment (Auto-deploy në çdo push)
+## Supabase — Çfarë Mbetet
 
-### Backend → Koyeb
+Ekzekuto këto dy skedarë në Supabase SQL Editor (një herë):
+
+1. `back/supabase.sql` — pgvector + tabela AI (documents, sessions)
+2. `back/supabase-cms.sql` — tabela CMS (pages, sections, articles, faq_items, infographics)
+
+Pastaj:
+- Supabase → Authentication → aktivizo **Email** provider
+- Supabase → Storage → krijo bucket `media` (public)
+- Krijo user-in e parë admin: Authentication → Users → Invite user
+
+---
+
+## Variabla të Mjedisit
+
+### front/.env.local
 ```
-Root directory:  back/
-Build command:   npm run build
-Run command:     npm run start
-Port:            8000
+NEXT_PUBLIC_AI_URL=https://euguide-ks-back.vercel.app
+NEXT_PUBLIC_SUPABASE_URL=https://onitqrbcncgikyhsngon.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON=<anon key nga Supabase Settings → API>
 ```
 
-**Env vars në Koyeb:**
+### back/ (në Vercel env vars — jo në kod)
 ```
 OPENAI_API_KEY       = sk-...
-SUPABASE_URL         = https://xxx.supabase.co
+SUPABASE_URL         = https://onitqrbcncgikyhsngon.supabase.co
 SUPABASE_SERVICE_KEY = eyJ...
 VAPI_SECRET          = ...
-ALLOWED_ORIGIN       = https://your-app.vercel.app
-```
-
-### Frontend → Vercel
-```
-Root directory:  front/
-Framework:       Next.js
-```
-
-**Env vars në Vercel:**
-```
-NEXT_PUBLIC_AI_URL          = https://your-app.koyeb.app
-NEXT_PUBLIC_SUPABASE_URL    = https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON   = eyJ...
+ALLOWED_ORIGIN       = https://www.euguide-ks.info
 ```
 
 ---
 
-## Hapat e Setup-it (Rend Ekzekutimi)
+## Testim Para Demo
 
-### Faza 1 — Accountet dhe API Keys
-- [ ] Krijo account [Supabase](https://supabase.com) → merr `URL` + `anon key` + `service key`
-- [ ] Krijo account [OpenAI](https://platform.openai.com) → merr `API Key`
-- [ ] Krijo account [Vapi](https://vapi.ai) → merr `API Key` + konfiguро voice assistant
-- [ ] Krijo account [Koyeb](https://koyeb.com) → lidh me GitHub repo
-- [ ] Lidh [Vercel](https://vercel.com) me GitHub repo
-
-### Faza 2 — Database Setup
-- [ ] Supabase SQL Editor → ekzekuto `back/supabase.sql`
-- [ ] Supabase SQL Editor → ekzekuto `back/supabase-cms.sql`
-- [ ] Supabase → aktivizo `Email Auth`
-- [ ] Supabase Storage → krijo bucket `media`
-
-### Faza 3 — Backend Deploy (Koyeb)
-- [ ] Shto env vars në Koyeb
-- [ ] Set root directory: `back/`
-- [ ] Deploy → testo `POST /api/chat`
-
-### Faza 4 — Frontend (Web Devs)
-- [ ] Krijo Next.js projekt në `front/`
-- [ ] Instalo: `@supabase/supabase-js @supabase/ssr tailwindcss shadcn-ui`
-- [ ] Shto env vars në Vercel
-- [ ] Ndërto faqet nga CMS (dynamic)
-- [ ] Integro chat widget me `NEXT_PUBLIC_AI_URL`
-
-### Faza 5 — Content (Juristët)
-- [ ] Hyr në `/admin` → shto dokumentet PDF/Word
-- [ ] Plotëso content për çdo faqe
-- [ ] Shto FAQ items
-- [ ] Upload infografika
-
-### Faza 6 — Testim Para Demo
-- [ ] Chat shqip: "Çfarë është reforma administrative?" → përgjigje shqip ✓
-- [ ] Chat jashtë temës: "Çmimi i bukës?" → refuzim ✓
-- [ ] Voice → vazhdo në chat me histori ✓
-- [ ] Admin CRUD → reflektohet live në faqe ✓
-- [ ] Mobile responsive ✓
+- [ ] Chat shqip: "Çfarë është reforma administrative?" → përgjigje shqip
+- [ ] Chat jashtë temës: "Çmimi i bukës?" → refuzim
+- [ ] Upload dokument PDF → pyet chatbotin për content → përgjigje e saktë
+- [ ] Voice → vazhdo në chat me histori
+- [ ] Admin CRUD → reflektohet live në faqe
+- [ ] Mobile responsive
+- [ ] `euguide-ks.info` hapet pa gabime
 
 ---
 
-## Dizajni — Çfarë Duhet Dizajnuar
-
-Dizajnerët punojnë në **Figma** për këto ekrane:
-
-1. **Home** — Navbar · Hero · 4 karta · statistika · footer
-2. **Faqe teme** — Hero · seksione · sidebar navigim · FAQ mini
-3. **FAQ** — Search · kategori · accordion
-4. **Infografika** — Grid · hover preview · download
-5. **Chat Widget** — Floating button · drawer · bubble messages · voice buton
-6. **Admin Panel** — Dashboard · tabela CRUD · rich text editor · upload
-
-> Dizajnerët dizajnojnë strukturën vizuale — content vendoset nga juristët nëpërmjet admin panel.
-
----
-
-*KO-in-EU Hackathon — Pergatitur për përdorim akademik dhe orientues*
+*euguide-ks — AAB Hackathon*
