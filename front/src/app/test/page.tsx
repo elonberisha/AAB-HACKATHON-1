@@ -1,13 +1,52 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { chatStream } from '@/lib/ai'
 
 export default function TestPage() {
   const [input, setInput] = useState('')
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
+  const [callActive, setCallActive] = useState(false)
+  const [vapiStatus, setVapiStatus] = useState('idle')
+  const vapiRef = useRef<any>(null)
   const sessionId = useRef(`test-${Date.now()}`)
+
+  // Load Vapi SDK
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/dist/vapi.min.js'
+    script.async = true
+    script.onload = () => {
+      const token = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+      if (token && (window as any).Vapi) {
+        vapiRef.current = new (window as any).Vapi(token)
+        vapiRef.current.on('call-start', () => { setCallActive(true); setVapiStatus('connected') })
+        vapiRef.current.on('call-end', () => { setCallActive(false); setVapiStatus('idle') })
+        vapiRef.current.on('speech-start', () => setVapiStatus('listening...'))
+        vapiRef.current.on('speech-end', () => setVapiStatus('thinking...'))
+        vapiRef.current.on('error', (e: any) => { setVapiStatus(`error: ${e.message ?? e}`); setCallActive(false) })
+        setVapiStatus('ready')
+      }
+    }
+    document.head.appendChild(script)
+    return () => { script.remove() }
+  }, [])
+
+  function toggleVapi() {
+    if (!vapiRef.current) return
+    if (callActive) {
+      vapiRef.current.stop()
+    } else {
+      const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID
+      if (assistantId) {
+        vapiRef.current.start(assistantId)
+        setVapiStatus('connecting...')
+      } else {
+        setVapiStatus('error: VAPI_ASSISTANT_ID not set')
+      }
+    }
+  }
 
   async function handleSend() {
     if (!input.trim() || loading) return
@@ -26,7 +65,6 @@ export default function TestPage() {
         const { done, value } = await reader.read()
         if (done) break
         const chunk = decoder.decode(value, { stream: true })
-        // Parse SSE lines
         for (const line of chunk.split('\n')) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6)
@@ -37,7 +75,6 @@ export default function TestPage() {
               text += delta
               setResponse(text)
             } catch {
-              // plain text delta
               text += data
               setResponse(text)
             }
@@ -58,7 +95,9 @@ export default function TestPage() {
         Backend: {process.env.NEXT_PUBLIC_AI_URL ?? '⚠️ NEXT_PUBLIC_AI_URL not set'}
       </p>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+      {/* Chat Test */}
+      <h2 style={{ marginTop: 24, fontSize: 18 }}>💬 Chat</h2>
+      <div style={{ display: 'flex', gap: 8 }}>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -76,9 +115,36 @@ export default function TestPage() {
       </div>
 
       {response && (
-        <div style={{ marginTop: 20, padding: 16, background: '#f1f5f9', borderRadius: 8, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+        <div style={{ marginTop: 12, padding: 16, background: '#f1f5f9', borderRadius: 8, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
           {response}
         </div>
+      )}
+
+      {/* Voice Test */}
+      <h2 style={{ marginTop: 32, fontSize: 18 }}>🎙️ Voice (Vapi)</h2>
+      <p style={{ color: '#666', fontSize: 14, margin: '4px 0 12px' }}>
+        Status: {vapiStatus}
+      </p>
+      <button
+        onClick={toggleVapi}
+        disabled={vapiStatus === 'idle' && !vapiRef.current}
+        style={{
+          padding: '12px 32px',
+          fontSize: 16,
+          borderRadius: 50,
+          border: 'none',
+          cursor: 'pointer',
+          background: callActive ? '#ef4444' : '#10b981',
+          color: '#fff',
+        }}
+      >
+        {callActive ? '⏹ Ndalo thirrjen' : '🎤 Fillo thirrjen'}
+      </button>
+
+      {!process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY && (
+        <p style={{ color: '#f59e0b', fontSize: 13, marginTop: 8 }}>
+          ⚠️ NEXT_PUBLIC_VAPI_PUBLIC_KEY not set
+        </p>
       )}
     </main>
   )
