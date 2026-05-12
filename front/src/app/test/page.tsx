@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { chatStream } from '@/lib/ai'
+import Vapi from '@vapi-ai/web'
 
 export default function TestPage() {
   const [input, setInput] = useState('')
@@ -9,32 +10,20 @@ export default function TestPage() {
   const [loading, setLoading] = useState(false)
   const [callActive, setCallActive] = useState(false)
   const [vapiStatus, setVapiStatus] = useState('idle')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const vapiRef = useRef<any>(null)
+  const vapiRef = useRef<Vapi | null>(null)
   const sessionId = useRef(`test-${Date.now()}`)
 
-  // Load Vapi SDK
   useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/dist/vapi.min.js'
-    script.async = true
-    script.onload = () => {
-      const token = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (token && (window as any).Vapi) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        vapiRef.current = new (window as any).Vapi(token)
-        vapiRef.current.on('call-start', () => { setCallActive(true); setVapiStatus('connected') })
-        vapiRef.current.on('call-end', () => { setCallActive(false); setVapiStatus('idle') })
-        vapiRef.current.on('speech-start', () => setVapiStatus('listening...'))
-        vapiRef.current.on('speech-end', () => setVapiStatus('thinking...'))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        vapiRef.current.on('error', (e: any) => { setVapiStatus(`error: ${e.message ?? e}`); setCallActive(false) })
-        setVapiStatus('ready')
-      }
-    }
-    document.head.appendChild(script)
-    return () => { script.remove() }
+    const token = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+    if (!token) return
+    const vapi = new Vapi(token)
+    vapiRef.current = vapi
+    vapi.on('call-start', () => { setCallActive(true); setVapiStatus('connected') })
+    vapi.on('call-end', () => { setCallActive(false); setVapiStatus('idle') })
+    vapi.on('speech-start', () => setVapiStatus('listening...'))
+    vapi.on('speech-end', () => setVapiStatus('thinking...'))
+    vapi.on('error', (e) => { setVapiStatus(`error: ${e.message ?? e}`); setCallActive(false) })
+    setVapiStatus('ready')
   }, [])
 
   function toggleVapi() {
