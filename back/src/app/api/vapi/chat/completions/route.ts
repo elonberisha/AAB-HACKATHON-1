@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     stream: true,
     max_tokens: 300, // përgjigje të shkurtra për voice
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT(context) + '\n\nRREGULL SHTESË PËR VOICE: Përgjigju SHKURT (2-4 fjali max). Mos përdor lista, bullet points, ose formatim. Fol natyrshëm si në bisedë.' },
+      { role: 'system', content: SYSTEM_PROMPT(context) + '\n\nRREGULL SHTESË PËR VOICE:\n- Përgjigju GJITHMONË në SHQIP, pavarësisht gjuhës së pyetjes\n- Përgjigju SHKURT (2-4 fjali max)\n- Mos përdor lista, bullet points, ose formatim\n- Fol natyrshëm si në bisedë të përditshme\n- Mos thuaj "sipas dokumenteve" nëse nuk ke kontekst dokumentesh' },
       ...chatMessages,
     ],
   })
