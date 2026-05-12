@@ -82,7 +82,7 @@ Merr historinë e sesionit (për continuity chat ↔ voice).
 
 ---
 
-## Arkitektura RAG
+## Arkitektura RAG + Web Search Fallback
 
 ```
 User dërgon pyetje
@@ -93,12 +93,34 @@ Similarity search në pgvector (top 5 chunks)
         ↓
 Merret historia e sesionit nga Supabase
         ↓
-System prompt + context + histori → GPT-4o
+┌─── Ka dokumente relevante? ───┐
+│                                │
+│ PO                          JO │
+│ ↓                            ↓ │
+│ Chat Completions      Responses API │
+│ GPT-4o + context      GPT-4o + web_search │
+│ (dokumente lokale)    (kërkon online në │
+│                        burime të besueshme: │
+│                        europa.eu, mei-ks.net, │
+│                        kryeministri.rks-gov.net, │
+│                        ec.europa.eu, etc.) │
+└────────────────────────────────┘
         ↓
 SSE stream → frontend
         ↓
 Sesioni ruhet në Supabase
 ```
+
+### Burimet online të besueshme (kur RAG nuk gjen)
+- europa.eu, ec.europa.eu (Komisioni Evropian)
+- consilium.europa.eu (Këshilli i BE-së)
+- kryeministri.rks-gov.net (Qeveria e Kosovës)
+- mei-ks.net (Ministria për Integrim Evropian)
+- md.rks-gov.net (Ministria e Drejtësisë)
+- gjyqesori-rks.org (Këshilli Gjyqësor)
+- assembly-kosova.org (Kuvendi i Kosovës)
+
+AI citon burimin kur përgjigjet nga interneti.
 
 ---
 

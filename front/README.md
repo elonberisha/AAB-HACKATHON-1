@@ -41,6 +41,46 @@ npm run dev   # localhost:3000
 
 ---
 
+## User Auth — Google Login (për qytetarët)
+
+Qytetarët (vizitorët e platformës) logohen me Google account para se të përdorin chat-in. Kjo mundëson ruajtjen e bisedave nën accountin e tyre.
+
+### Si funksionon
+1. User hap chat widget → nëse nuk është i loguar, shfaqet buton **"Vazhdo me Google"**
+2. Klik → Supabase Auth `signInWithOAuth({ provider: 'google' })` → Google consent screen
+3. Pas login-it, user merr `user.id` nga Supabase — ky përdoret si `sessionId` për chat
+4. Bisedat ruhen në Supabase nën `user.id` — user mund t'i shohë historinë kur kthehet
+
+### Supabase Setup (njëherë)
+1. Supabase → Authentication → Providers → **Google** → Enable
+2. Shto Google OAuth credentials (Client ID + Client Secret):
+   - Shko te [console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials
+   - Create OAuth Client ID → Web application
+   - Authorized redirect URI: `https://onitqrbcncgikyhsngon.supabase.co/auth/v1/callback`
+   - Kopjo Client ID dhe Client Secret → vendos në Supabase Google provider settings
+
+### Të dhënat që merren nga Google
+- **email** — adresa e email-it
+- **full_name** — emri i plotë
+- **avatar_url** — foto e profilit
+
+Këto ruhen automatikisht në `auth.users` të Supabase. Nuk ka nevojë për tabelë ekstra.
+
+### Ku shfaqet
+- **Chat widget** — para se user të shkruajë, duhet loguar me Google
+- **Navbar** — nëse i loguar, shfaq avatar + emrin; nëse jo, buton "Hyr"
+- User mund të bëjë logout nga Navbar
+
+### Dallimi Admin vs User
+| | User (qytetar) | Admin |
+|---|---|---|
+| Login | Google OAuth | Email + Password |
+| Qëllimi | Chat + histori bisedash | Menaxhim content |
+| Qasja | Faqet publike + chat | /admin/* |
+| Supabase Auth | `signInWithOAuth` | `signInWithPassword` |
+
+---
+
 ## Faqet Publike
 
 ### `/` — Home
@@ -111,6 +151,23 @@ Mbaron thirrja → transcript ruhet → chat vazhdon me histori
 ```
 
 Klienti ndodhet gati te `front/src/lib/ai.ts` — funksionet `chatStream()`, `getSession()`.
+
+---
+
+## Histori Bisedash (Chat History)
+
+Useri i loguar mund të shohë bisedat e mëparshme:
+
+- **Sidebar në chat drawer** — lista e bisedave (renditur sipas datës, më e reja lart)
+- **Çdo bisedë** — shfaq 2-3 fjalët e para të mesazhit të parë si titull
+- **Klik** → hap bisedën e vjetër me të gjitha mesazhet
+- **Bisedë e re** — buton "+" krijon sesion të ri
+- Nëse user nuk është i loguar → nuk ka histori, vetëm bisedën aktuale (si anonim)
+
+### Si ruhen
+- `sessionId` = `user.id + timestamp` (ose UUID)
+- Backend i ruan në tabelën `sessions` (Supabase) me `user_id` kolona
+- Frontend merr listën: `GET /api/sessions?userId=xxx` ose direkt nga Supabase `sessions` tabela ku `user_id = auth.uid()`
 
 ---
 
