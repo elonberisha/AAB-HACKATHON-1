@@ -9,6 +9,7 @@ export default function TestPage() {
   const [loading, setLoading] = useState(false)
   const [callActive, setCallActive] = useState(false)
   const [vapiStatus, setVapiStatus] = useState('idle')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const vapiRef = useRef<any>(null)
   const sessionId = useRef(`test-${Date.now()}`)
 
@@ -19,12 +20,15 @@ export default function TestPage() {
     script.async = true
     script.onload = () => {
       const token = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (token && (window as any).Vapi) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         vapiRef.current = new (window as any).Vapi(token)
         vapiRef.current.on('call-start', () => { setCallActive(true); setVapiStatus('connected') })
         vapiRef.current.on('call-end', () => { setCallActive(false); setVapiStatus('idle') })
         vapiRef.current.on('speech-start', () => setVapiStatus('listening...'))
         vapiRef.current.on('speech-end', () => setVapiStatus('thinking...'))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         vapiRef.current.on('error', (e: any) => { setVapiStatus(`error: ${e.message ?? e}`); setCallActive(false) })
         setVapiStatus('ready')
       }
