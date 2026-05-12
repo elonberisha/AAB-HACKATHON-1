@@ -1,0 +1,17 @@
+name: ko-in-eu-backend
+services:
+  - name: api
+    type: web
+    routes:
+      - path: /
+        port: 8000
+    env:
+      - key: PORT
+        value: "8000"
+      - key: NODE_ENV
+        value: production
+    build:
+      buildpack: nodejs
+      build_command: npm run build
+    run:
+      run_command: npm run start
