@@ -258,6 +258,59 @@ as $$
 $$;
 
 -- =============================================================================
+-- 3.5. EU INTEGRATION OBJECTIVES (objektivat për futjen në BE)
+-- =============================================================================
+
+create table if not exists eu_objectives (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  name_sq text not null, name_en text, name_sr text,
+  description_sq text, description_en text, description_sr text,
+  conditions_sq text, conditions_en text, conditions_sr text,
+  cluster text,                            -- 'rule_of_law', 'economy', 'democracy', 'admin_reform', 'visa', 'saa', 'other'
+  completed boolean default false,
+  completed_at timestamptz,
+  progress_percent int default 0 check (progress_percent >= 0 and progress_percent <= 100),
+  source_url text,                         -- link tek burimi zyrtar
+  sort_order int default 0,
+  published boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists eu_objectives_completed_idx on eu_objectives(completed, sort_order);
+create index if not exists eu_objectives_cluster_idx on eu_objectives(cluster);
+create index if not exists eu_objectives_published_idx on eu_objectives(published, sort_order);
+
+-- Trigger updated_at
+drop trigger if exists set_updated_at_eu_objectives on eu_objectives;
+create trigger set_updated_at_eu_objectives
+  before update on eu_objectives for each row execute function set_updated_at();
+
+-- RLS
+alter table eu_objectives enable row level security;
+drop policy if exists "Public read published objectives" on eu_objectives;
+create policy "Public read published objectives" on eu_objectives
+  for select using (published = true or is_admin());
+drop policy if exists "Admin write objectives" on eu_objectives;
+create policy "Admin write objectives" on eu_objectives
+  for all using (is_admin()) with check (is_admin());
+
+-- Seed data — objektivat kryesore për futjen e Kosovës në BE
+insert into eu_objectives (slug, name_sq, name_en, cluster, completed, sort_order, conditions_sq) values
+  ('visa-liberalization',  'Liberalizimi i Vizave për Kosovarët',  'Visa Liberalization',  'visa',          true,  1,  'Plotësimi i 95 kritereve të Roadmap-it për liberalizim vizash. U arrit më 1 janar 2024.'),
+  ('saa',                  'Marrëveshja e Stabilizim-Asociimit',   'Stabilization and Association Agreement', 'saa', true, 2, 'MSA hyri në fuqi më 1 prill 2016.'),
+  ('eu-candidate-status',  'Statusi i Vendit Kandidat',            'EU Candidate Status',  'saa',           false, 3,  'Aplikim formal për anëtarësim në BE. Aplikimi u dorëzua më 14 dhjetor 2022.'),
+  ('rule-of-law-ch23',     'Sundimi i Ligjit (Kapitulli 23)',      'Rule of Law (Chapter 23)', 'rule_of_law', false, 4, 'Reforma e gjyqësorit, lufta kundër korrupsionit, të drejtat themelore.'),
+  ('justice-freedom-ch24', 'Drejtësia, Liria dhe Siguria (Kapitulli 24)', 'Justice, Freedom, Security (Chapter 24)', 'rule_of_law', false, 5, 'Migrimi, azili, kufijtë, lufta kundër krimit të organizuar.'),
+  ('public-admin-reform',  'Reforma e Administratës Publike',      'Public Administration Reform', 'admin_reform', false, 6, 'Modernizimi i shërbimit civil, dixhitalizimi, transparenca.'),
+  ('economic-criteria',    'Kriteret Ekonomike',                   'Economic Criteria',    'economy',       false, 7,  'Ekonomi funksionale tregu, kapacitet për të përballuar presionin konkurrues të BE-së.'),
+  ('democratic-criteria',  'Kriteret Demokratike',                 'Democratic Criteria',  'democracy',     false, 8,  'Stabilitet institucional, demokraci, sundim ligji, të drejta të njeriut, mbrojtje pakicash.'),
+  ('acquis-alignment',     'Përafrimi me Acquis Communautaire',    'Acquis Alignment',     'other',         false, 9,  'Harmonizimi i legjislacionit të Kosovës me 35 kapitujt e legjislacionit të BE-së.'),
+  ('5-non-recognizers',    'Njohja nga 5 Shtetet Anëtare të BE-së','Recognition by 5 EU Member States', 'other', false, 10, 'Njohja nga Spanja, Greqia, Rumania, Sllovakia dhe Qipro.')
+on conflict (slug) do nothing;
+
+-- =============================================================================
 -- 4. MEDIA LIBRARY
 -- =============================================================================
 

@@ -145,6 +145,48 @@ Këto ruhen automatikisht në `auth.users` të Supabase. Nuk ka nevojë për tab
 - **Filter** sipas kategorisë (opsional)
 - Lexon nga tabela `infographics` ku `published = true`, renditur sipas `sort_order`
 
+### `/objektivat` — Objektivat për Futjen në BE
+Faqe që tregon të gjitha objektivat që Kosova duhet të plotësojë për anëtarësim në BE.
+
+**Layout:**
+- **Hero** — titull "Rruga e Kosovës drejt BE-së" + progress bar global (% e plotësuar = `completed=true` / total)
+- **Tabs / Filter** — navigim mes statuseve:
+  - "Të gjitha" (default)
+  - "Të plotësuara" ✓ (filtrim `completed = true`)
+  - "Të paplotësuara" ○ (filtrim `completed = false`)
+- **Cluster filter** (opsional) — dropdown për kategori: rule_of_law, economy, democracy, admin_reform, visa, saa, other
+- **Listë e objektivave** — secili rresht/kartë me:
+  - Ikona ✓ (jeshile për completed) ose ○ (gri për pa plotësuar)
+  - Emri i objektivit (`name_sq`/`name_en`/`name_sr` sipas gjuhës aktive)
+  - Badge me cluster (me ngjyrë sipas kategorisë)
+  - Data e plotësimit (nëse `completed_at` ekziston)
+  - Buton expand (chevron) → hap **dropdown / accordion** me detaje
+- **Brenda dropdown-it** (kur klikohet):
+  - Përshkrim i plotë (`description_*`)
+  - **Kushtet që duhen plotësuar** (`conditions_*`)
+  - Progress bar (nëse `progress_percent > 0`)
+  - Link te burimi zyrtar (`source_url`) nëse ekziston
+  - Status badge (Completed / In Progress / Not Started)
+
+**Komponentet shadcn:**
+- `Tabs` për filtrim status
+- `Accordion` ose `Collapsible` për dropdown-in e secilit objektiv
+- `Badge` për cluster + status
+- `Progress` për progress bar
+
+**Si lexohet:**
+```typescript
+const { data } = await supabase
+  .from('eu_objectives')
+  .select('*')
+  .eq('published', true)
+  .order('sort_order')
+
+// Filter klient-side sipas tab-it të zgjedhur
+const completed = data.filter(o => o.completed)
+const pending = data.filter(o => !o.completed)
+```
+
 ---
 
 ## Chat Widget (Global — të gjitha faqet)
@@ -276,6 +318,20 @@ Krijo `front/src/middleware.ts` — kontrollon sesionin Supabase për çdo reque
 - **Tabelë** e user-ave admin (nga Supabase Auth)
 - **Invite** — ftesa me email (Supabase `inviteUserByEmail`)
 - **Deactivate** — çaktivizim (nuk fshin, vetëm ndalon hyrjen)
+- **Promote to admin** buton — `update profiles set role = 'admin' where id = ?`
+
+### `/admin/objectives` — Objektivat BE
+- **Tabelë** e objektivave (`eu_objectives`)
+- **CRUD** — krijo / edito / fshi:
+  - Emri (sq/en/sr)
+  - Përshkrimi (sq/en/sr)
+  - Kushtet (sq/en/sr)
+  - Cluster (dropdown: rule_of_law, economy, democracy, admin_reform, visa, saa, other)
+  - Completed (checkbox) + Completed at (date picker)
+  - Progress percent (slider 0-100)
+  - Source URL
+  - Sort order, Published
+- Aty plotësohen objektivat dhe statusi i tyre — shfaqen menjëherë në `/objektivat`
 
 ---
 
@@ -332,6 +388,22 @@ Këto tabela lexohen/shkruhen nga frontend-i:
 | title_sq, title_en | text | Titulli |
 | image_url | text | URL e imazhit |
 | description_sq, description_en | text | Pershkrimi |
+| sort_order | int | Renditja |
+| published | boolean | E publikuar? |
+
+### `eu_objectives`
+| Kolona | Tipi | Përshkrimi |
+|---|---|---|
+| id | uuid | PK |
+| slug | text | Unique slug |
+| name_sq, name_en, name_sr | text | Emri i objektivit |
+| description_sq/_en/_sr | text | Përshkrimi i plotë |
+| conditions_sq/_en/_sr | text | Kushtet që duhen plotësuar |
+| cluster | text | 'rule_of_law', 'economy', 'democracy', 'admin_reform', 'visa', 'saa', 'other' |
+| completed | boolean | E plotësuar? |
+| completed_at | timestamptz | Kur u plotësua |
+| progress_percent | int (0-100) | % e progresit |
+| source_url | text | Link te burimi zyrtar |
 | sort_order | int | Renditja |
 | published | boolean | E publikuar? |
 
