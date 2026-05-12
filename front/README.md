@@ -366,6 +366,109 @@ front/
 
 ---
 
+## Supabase Setup (njëherë — para se të filloni punë)
+
+Supabase projekti: `euguide-ks` — https://supabase.com/dashboard
+
+### 1. Database — Ekzekuto SQL Schemas
+Shko te **SQL Editor** → New query → copy-paste dhe Run:
+
+**Herën e parë:** `back/supabase.sql` — krijon tabelat AI:
+- `documents` — chunks + embeddings (pgvector)
+- `sessions` — histori bisedash
+- Funksioni `match_documents` për similarity search
+
+**Herën e dytë:** `back/supabase-cms.sql` — krijon tabelat CMS:
+- `pages`, `sections`, `articles`, `faq_items`, `infographics`
+- Seed data: 4 faqet kryesore (reforma, sundimi, korrupsioni, be)
+
+### 2. Authentication — Aktivizo Providers
+
+**Google (për qytetarët):**
+1. Supabase → Authentication → Providers → **Google** → Enable
+2. Shko te [console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials
+3. Create OAuth Client ID → Web application
+4. Authorized JavaScript origins: `https://euguide-ks.info`
+5. Authorized redirect URI: `https://onitqrbcncgikyhsngon.supabase.co/auth/v1/callback`
+6. Kopjo **Client ID** + **Client Secret** → vendos në Supabase Google provider settings
+
+**Email (për adminët):**
+1. Supabase → Authentication → Providers → **Email** → duhet jetë Enable (default)
+2. Supabase → Authentication → Users → **Add user** → shto admin-in e parë me email + password
+
+### 3. Storage — Bucket për Media
+1. Supabase → Storage → **New bucket**
+2. Name: `media`
+3. Public: **ON** (që imazhet të jenë aksesibël pa auth)
+4. Allowed MIME types: `image/png, image/jpeg, image/webp, image/svg+xml, application/pdf`
+5. Max file size: `10MB`
+
+### 4. Row Level Security (RLS)
+
+Tabelat CMS duhen lexuar nga publiku (faqet publike) por shkruar vetëm nga admin:
+
+```sql
+-- Lexo publik (për faqet publike)
+alter table pages enable row level security;
+create policy "Public read" on pages for select using (published = true);
+create policy "Admin write" on pages for all using (auth.role() = 'authenticated');
+
+-- Njëjtë për tabelat tjera:
+alter table sections enable row level security;
+create policy "Public read" on sections for select using (true);
+create policy "Admin write" on sections for all using (auth.role() = 'authenticated');
+
+alter table articles enable row level security;
+create policy "Public read" on articles for select using (published = true);
+create policy "Admin write" on articles for all using (auth.role() = 'authenticated');
+
+alter table faq_items enable row level security;
+create policy "Public read" on faq_items for select using (published = true);
+create policy "Admin write" on faq_items for all using (auth.role() = 'authenticated');
+
+alter table infographics enable row level security;
+create policy "Public read" on infographics for select using (published = true);
+create policy "Admin write" on infographics for all using (auth.role() = 'authenticated');
+```
+
+### 5. Supabase URL + Keys (ku gjenden)
+Supabase → Settings → API:
+- **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
+- **anon / public key** → `NEXT_PUBLIC_SUPABASE_ANON` (frontend)
+- **service_role key** → `SUPABASE_SERVICE_KEY` (backend vetëm — KURRSESI në frontend!)
+
+---
+
+## Vapi Setup (Voice Agent)
+
+### 1. Krijo account
+- [vapi.ai](https://vapi.ai) → Sign Up
+
+### 2. Krijo Assistant
+- Dashboard → Assistants → Create Assistant
+- **Name:** `euguide-ks`
+- **Server URL:** `https://euguide-ks-back.vercel.app/api/vapi`
+- **Voice:** `nova` (rekomandoj)
+- **First message:** `Përshëndetje! Si mund t'ju ndihmoj me integrimin e Kosovës në BE?`
+
+### 3. Merr Keys
+- Organization Settings → **API Key** → shkon si `VAPI_SECRET` në backend (Vercel)
+- Organization Settings → **Public Key** → përdoret në frontend code
+
+### 4. Përdorimi në frontend
+```typescript
+import Vapi from '@vapi-ai/web'
+
+const vapi = new Vapi('<VAPI_PUBLIC_KEY>')
+vapi.start('<ASSISTANT_ID>', {
+  metadata: { sessionId }  // i njëjti sessionId si chat
+})
+```
+
+Libraria `@vapi-ai/web` është tashmë e instaluar në `front/package.json`.
+
+---
+
 ## Deployment
 
 Auto-deploy në çdo `git push` në `main`.
