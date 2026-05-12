@@ -60,25 +60,26 @@ export default function TestPage() {
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let text = ''
+      let buffer = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        for (const line of chunk.split('\n')) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6)
-            if (data === '[DONE]') break
-            try {
-              const parsed = JSON.parse(data)
-              const delta = parsed.choices?.[0]?.delta?.content ?? parsed.content ?? data
-              text += delta
-              setResponse(text)
-            } catch {
-              text += data
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+        for (const line of lines) {
+          const trimmed = line.trim()
+          if (!trimmed || !trimmed.startsWith('data: ')) continue
+          const json = trimmed.slice(6)
+          try {
+            const parsed = JSON.parse(json)
+            if (parsed.done) break
+            if (parsed.delta) {
+              text += parsed.delta
               setResponse(text)
             }
-          }
+          } catch { /* skip */ }
         }
       }
     } catch (err: unknown) {
