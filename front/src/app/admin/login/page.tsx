@@ -19,7 +19,10 @@ export default function AdminLoginPage() {
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
     })
 
     if (error) {
