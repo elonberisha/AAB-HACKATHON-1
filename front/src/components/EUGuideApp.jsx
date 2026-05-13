@@ -376,12 +376,84 @@ const REFORM = [
 ];
 
 const CLUSTERS = [
-  { code: 1, name_sq: 'Themelet', name_en: 'Fundamentals', name_sr: 'Osnove', color: 'var(--ink)', chapters: 7, weight: 22 },
-  { code: 2, name_sq: 'Tregu i brendshëm', name_en: 'Internal market', name_sr: 'Unutrašnje tržište', color: 'var(--blue)', chapters: 6, weight: 20 },
-  { code: 3, name_sq: 'Konkurrueshmëria & rritja', name_en: 'Competitiveness & growth', name_sr: 'Konkurentnost i rast', color: 'var(--gold)', chapters: 8, weight: 18 },
-  { code: 4, name_sq: 'Agjenda e gjelbër', name_en: 'Green agenda', name_sr: 'Zelena agenda', color: 'var(--sage)', chapters: 5, weight: 14 },
-  { code: 5, name_sq: 'Burimet & bujqësia', name_en: 'Resources & agriculture', name_sr: 'Resursi i poljoprivreda', color: 'var(--rust)', chapters: 5, weight: 14 },
-  { code: 6, name_sq: 'Marrëdhënie të jashtme', name_en: 'External relations', name_sr: 'Spoljni odnosi', color: '#7A6D5A', chapters: 2, weight: 12 },
+  {
+    code: 1, name_sq: 'Themelet', name_en: 'Fundamentals', name_sr: 'Osnove',
+    color: 'var(--ink)', chapters: 7, weight: 22,
+    desc_sq: 'Klasteri më i vështirë dhe më vendimtari. Hapet i pari në negociata dhe mbyllet i fundit. Nëse Kosova nuk shënon progres këtu, klasterët e tjerë mbeten të bllokuar.',
+    desc_en: 'The hardest and most decisive cluster. Opens first in negotiations and closes last. Without progress here, the other clusters stay locked.',
+    desc_sr: 'Najteži i odlučujući klaster. Prvi se otvara u pregovorima i poslednji se zatvara. Bez napretka ovde, ostali klasteri ostaju zaključani.',
+    chapters_list_sq: ['Drejtësia dhe të drejtat themelore (Kap. 23)', 'Drejtësia, liria dhe siguria (Kap. 24)', 'Prokurimi publik (Kap. 5)', 'Statistikat (Kap. 18)', 'Kontrolli financiar (Kap. 32)', 'Funksionimi i institucioneve demokratike', 'Reforma e administratës publike'],
+    chapters_list_en: ['Judiciary & fundamental rights (Ch. 23)', 'Justice, freedom & security (Ch. 24)', 'Public procurement (Ch. 5)', 'Statistics (Ch. 18)', 'Financial control (Ch. 32)', 'Functioning of democratic institutions', 'Public administration reform'],
+    chapters_list_sr: ['Pravosuđe i osnovna prava (Pog. 23)', 'Pravda, sloboda i bezbednost (Pog. 24)', 'Javne nabavke (Pog. 5)', 'Statistika (Pog. 18)', 'Finansijska kontrola (Pog. 32)', 'Funkcionisanje demokratskih institucija', 'Reforma javne uprave'],
+    status_sq: 'Ende i hapur · pa progres formal për Kosovën',
+    status_en: 'Not yet opened · no formal progress for Kosovo',
+    status_sr: 'Još nije otvoren · bez formalnog napretka za Kosovo',
+  },
+  {
+    code: 2, name_sq: 'Tregu i brendshëm', name_en: 'Internal market', name_sr: 'Unutrašnje tržište',
+    color: 'var(--blue)', chapters: 6, weight: 20,
+    desc_sq: 'Liria për punë, mallra, kapital dhe shërbime mes shteteve të BE-së. Çdo qytetar i një anëtari mund të punojë e të bëjë biznes pa pengesa në 27 vende.',
+    desc_en: 'Free movement of work, goods, capital and services across the EU. Any citizen of a member state can work and do business freely in 27 countries.',
+    desc_sr: 'Sloboda rada, robe, kapitala i usluga širom EU. Svaki građanin članice može slobodno raditi i poslovati u 27 zemalja.',
+    chapters_list_sq: ['Lëvizja e lirë e mallrave (Kap. 1)', 'Lëvizja e lirë e punëtorëve (Kap. 2)', 'E drejta e themelimit & shërbimet (Kap. 3)', 'Lëvizja e lirë e kapitalit (Kap. 4)', 'Ligji i shoqërive tregtare (Kap. 6)', 'Pronësia intelektuale (Kap. 7)'],
+    chapters_list_en: ['Free movement of goods (Ch. 1)', 'Free movement of workers (Ch. 2)', 'Right of establishment & services (Ch. 3)', 'Free movement of capital (Ch. 4)', 'Company law (Ch. 6)', 'Intellectual property (Ch. 7)'],
+    chapters_list_sr: ['Slobodno kretanje robe (Pog. 1)', 'Slobodno kretanje radnika (Pog. 2)', 'Pravo osnivanja i usluga (Pog. 3)', 'Slobodno kretanje kapitala (Pog. 4)', 'Pravo privrednih društava (Pog. 6)', 'Intelektualna svojina (Pog. 7)'],
+    status_sq: 'I bllokuar derisa të hapen Themelet',
+    status_en: 'Blocked until Fundamentals opens',
+    status_sr: 'Blokiran dok se ne otvore Osnove',
+  },
+  {
+    code: 3, name_sq: 'Konkurrueshmëria & rritja', name_en: 'Competitiveness & growth', name_sr: 'Konkurentnost i rast',
+    color: 'var(--gold)', chapters: 8, weight: 18,
+    desc_sq: 'Rregullat ekonomike: konkurrenca e drejtë, tatimet, politika e punësimit, arsimi, shkenca dhe shoqëria dixhitale. Pjesa që ndikon më shumë në paga e mundësi.',
+    desc_en: 'Economic rules: fair competition, taxation, employment policy, education, science and the digital society. The part that affects wages and opportunities most.',
+    desc_sr: 'Ekonomska pravila: poštena konkurencija, oporezivanje, politika zapošljavanja, obrazovanje, nauka i digitalno društvo. Deo koji najviše utiče na plate i prilike.',
+    chapters_list_sq: ['Shoqëria e informacionit & media (Kap. 10)', 'Tatimi (Kap. 16)', 'Politika ekonomike & monetare (Kap. 17)', 'Politika sociale & punësimi (Kap. 19)', 'Politika industriale (Kap. 20)', 'Shkenca & kërkimi (Kap. 25)', 'Arsimi & kultura (Kap. 26)', 'Bashkimi doganor (Kap. 29)'],
+    chapters_list_en: ['Information society & media (Ch. 10)', 'Taxation (Ch. 16)', 'Economic & monetary policy (Ch. 17)', 'Social policy & employment (Ch. 19)', 'Industrial policy (Ch. 20)', 'Science & research (Ch. 25)', 'Education & culture (Ch. 26)', 'Customs union (Ch. 29)'],
+    chapters_list_sr: ['Informaciono društvo i mediji (Pog. 10)', 'Oporezivanje (Pog. 16)', 'Ekonomska i monetarna politika (Pog. 17)', 'Socijalna politika i zapošljavanje (Pog. 19)', 'Industrijska politika (Pog. 20)', 'Nauka i istraživanje (Pog. 25)', 'Obrazovanje i kultura (Pog. 26)', 'Carinska unija (Pog. 29)'],
+    status_sq: 'Përgatitje teknike · pritet hapja pas statusit kandidat',
+    status_en: 'Technical preparation · opening expected after candidate status',
+    status_sr: 'Tehnička priprema · otvaranje očekivano nakon statusa kandidata',
+  },
+  {
+    code: 4, name_sq: 'Agjenda e gjelbër', name_en: 'Green agenda', name_sr: 'Zelena agenda',
+    color: 'var(--sage)', chapters: 5, weight: 14,
+    desc_sq: 'Tranzicioni i Kosovës nga thëngjilli te energjia e ripërtëritshme, transporti i pastër dhe ujërat e mbeturinat sipas standardeve evropiane.',
+    desc_en: 'Kosovo\'s transition from coal to renewable energy, clean transport and EU-standard water and waste management.',
+    desc_sr: 'Tranzicija Kosova sa uglja na obnovljivu energiju, čisti transport i upravljanje vodama i otpadom po standardima EU.',
+    chapters_list_sq: ['Transporti (Kap. 14)', 'Energjia (Kap. 15)', 'Rrjeti trans-evropian (Kap. 21)', 'Mjedisi dhe ndryshimet klimatike (Kap. 27)', 'Mbrojtja e konsumatorit & shëndeti (Kap. 28)'],
+    chapters_list_en: ['Transport (Ch. 14)', 'Energy (Ch. 15)', 'Trans-European networks (Ch. 21)', 'Environment & climate change (Ch. 27)', 'Consumer & health protection (Ch. 28)'],
+    chapters_list_sr: ['Transport (Pog. 14)', 'Energija (Pog. 15)', 'Trans-evropske mreže (Pog. 21)', 'Životna sredina i klimatske promene (Pog. 27)', 'Zaštita potrošača i zdravlje (Pog. 28)'],
+    status_sq: 'Strategjia Energjetike 2022–2031 në zbatim',
+    status_en: 'Energy Strategy 2022–2031 being implemented',
+    status_sr: 'Energetska strategija 2022–2031 u sprovođenju',
+  },
+  {
+    code: 5, name_sq: 'Burimet & bujqësia', name_en: 'Resources & agriculture', name_sr: 'Resursi i poljoprivreda',
+    color: 'var(--rust)', chapters: 5, weight: 14,
+    desc_sq: 'Bujqësia, peshkimi, zhvillimi rural dhe politika rajonale. Fondet strukturore të BE-së vijnë në sektorin më kompleks për të menaxhuar.',
+    desc_en: 'Agriculture, fisheries, rural development and regional policy. EU structural funds flow into the sector that is hardest to administer.',
+    desc_sr: 'Poljoprivreda, ribarstvo, ruralni razvoj i regionalna politika. Strukturni fondovi EU teku u sektor koji je najteže administrirati.',
+    chapters_list_sq: ['Bujqësia & zhvillimi rural (Kap. 11)', 'Siguria ushqimore, veterinare & fitosanitare (Kap. 12)', 'Peshkimi (Kap. 13)', 'Politika rajonale & koordinimi i instrumenteve strukturore (Kap. 22)', 'Dispozita financiare e buxhetore (Kap. 33)'],
+    chapters_list_en: ['Agriculture & rural development (Ch. 11)', 'Food safety, veterinary & phytosanitary (Ch. 12)', 'Fisheries (Ch. 13)', 'Regional policy & structural instruments (Ch. 22)', 'Financial & budgetary provisions (Ch. 33)'],
+    chapters_list_sr: ['Poljoprivreda i ruralni razvoj (Pog. 11)', 'Bezbednost hrane, veterina i fitosanitarna (Pog. 12)', 'Ribarstvo (Pog. 13)', 'Regionalna politika i strukturni instrumenti (Pog. 22)', 'Finansijske i budžetske odredbe (Pog. 33)'],
+    status_sq: 'IPARD III aktiv për fermerët kosovarë',
+    status_en: 'IPARD III active for Kosovo farmers',
+    status_sr: 'IPARD III aktivan za kosovske poljoprivrednike',
+  },
+  {
+    code: 6, name_sq: 'Marrëdhënie të jashtme', name_en: 'External relations', name_sr: 'Spoljni odnosi',
+    color: '#7A6D5A', chapters: 2, weight: 12,
+    desc_sq: 'Përshtatja e politikës së jashtme dhe sigurisë me BE-në: sanksione të përbashkëta, marrëveshje tregtare dhe pjesëmarrje në misione paqeruajtëse.',
+    desc_en: 'Aligning foreign and security policy with the EU: joint sanctions, trade agreements and participation in peacekeeping missions.',
+    desc_sr: 'Usklađivanje spoljne i bezbednosne politike sa EU: zajedničke sankcije, trgovinski sporazumi i učešće u mirovnim misijama.',
+    chapters_list_sq: ['Marrëdhënie të jashtme (Kap. 30)', 'Politika e jashtme, e sigurisë & e mbrojtjes (Kap. 31)'],
+    chapters_list_en: ['External relations (Ch. 30)', 'Foreign, security & defence policy (Ch. 31)'],
+    chapters_list_sr: ['Spoljni odnosi (Pog. 30)', 'Spoljna, bezbednosna i odbrambena politika (Pog. 31)'],
+    status_sq: 'Përshtatje 90% me deklaratat e BE-së (raport EC 2024)',
+    status_en: '90% alignment with EU declarations (EC 2024 report)',
+    status_sr: '90% usklađenost sa izjavama EU (EK izveštaj 2024)',
+  },
 ];
 
 const OBJECTIVES = [
@@ -1106,6 +1178,7 @@ function Stat({ big, suffix, label_sq, label_en, label_sr, delta, note_sq, note_
 function Clusters({ lang, t }) {
   const data = useCmsArray('clusters', CLUSTERS);
   const total = data.reduce((s, c) => s + c.weight, 0);
+  const totalChapters = data.reduce((s, c) => s + c.chapters, 0);
   const R = 110, IR = 70, CX = 150, CY = 150;
   let acc = 0;
   const slices = data.map(c => {
@@ -1117,6 +1190,16 @@ function Clusters({ lang, t }) {
 
   const [active, setActive] = useState(0);
   const cur = data[active];
+  const curName = cur['name_' + lang] || cur.name_sq;
+  const curDesc = cur['desc_' + lang] || cur.desc_sq;
+  const curChapters = cur['chapters_list_' + lang] || cur.chapters_list_sq || [];
+  const curStatus = cur['status_' + lang] || cur.status_sq;
+
+  const labels = {
+    sq: { intro: 'Klikoni një klaster për të parë çfarë përmban', whatInside: 'Çfarë përfshihet', kosStatus: 'Statusi për Kosovën', weight: 'pesha në negociata', chapters: 'kapituj' },
+    en: { intro: 'Click a cluster to see what it contains', whatInside: 'What it covers', kosStatus: 'Status for Kosovo', weight: 'negotiation weight', chapters: 'chapters' },
+    sr: { intro: 'Kliknite klaster da vidite šta sadrži', whatInside: 'Šta pokriva', kosStatus: 'Status za Kosovo', weight: 'pregovaračka težina', chapters: 'poglavlja' },
+  }[lang] || {};
 
   const arcPath = (a0, a1, r, ir) => {
     const large = a1 - a0 > Math.PI ? 1 : 0;
@@ -1131,50 +1214,104 @@ function Clusters({ lang, t }) {
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
         <SectionHead eyebrow={t.cluster.eyebrow} title={t.cluster.title} sub={t.cluster.sub} num="03" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }} className="cluster-grid">
-          <div style={{ position: 'relative' }}>
-            <svg viewBox="0 0 300 300" style={{ width: '100%', maxWidth: 440, display: 'block', margin: '0 auto' }}>
-              {slices.map((s, i) => (
-                <path key={i} d={arcPath(s.a0, s.a1, i === active ? R + 8 : R, IR)} fill={s.color}
-                  opacity={i === active ? 1 : 0.85}
-                  onMouseEnter={() => setActive(i)}
-                  style={{ cursor: 'pointer', transition: 'd 240ms' }} />
-              ))}
-              <text x={CX} y={CY - 6} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)', textAnchor: 'middle', letterSpacing: '0.1em' }}>KLASTERI</text>
-              <text x={CX} y={CY + 18} className="serif" style={{ fontSize: 36, fill: 'var(--ink)', textAnchor: 'middle' }}>{cur.code}</text>
-              <text x={CX} y={CY + 38} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)', textAnchor: 'middle' }}>{cur.chapters} kapituj</text>
-            </svg>
-          </div>
+
+        <div className="cluster-grid" style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: 48, alignItems: 'start' }}>
+          {/* LEFT — donut + total stats */}
           <div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <svg viewBox="0 0 300 300" style={{ width: '100%', maxWidth: 380, display: 'block', margin: '0 auto' }} aria-label={t.cluster.eyebrow}>
+              {slices.map((s, i) => (
+                <path key={i} d={arcPath(s.a0, s.a1, i === active ? R + 10 : R, IR)} fill={s.color}
+                  opacity={i === active ? 1 : 0.78}
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                  tabIndex={0}
+                  style={{ cursor: 'pointer', transition: 'd 200ms, opacity 200ms', outline: 'none' }} />
+              ))}
+              <text x={CX} y={CY - 26} className="mono" style={{ fontSize: 9, fill: 'var(--ink-3)', textAnchor: 'middle', letterSpacing: '0.16em' }}>KLASTERI</text>
+              <text x={CX} y={CY + 10} className="serif" style={{ fontSize: 56, fill: cur.color === 'var(--ink)' ? 'var(--ink)' : cur.color, textAnchor: 'middle', fontStyle: 'italic' }}>{cur.code}</text>
+              <text x={CX} y={CY + 32} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)', textAnchor: 'middle' }}>{cur.chapters} {labels.chapters}</text>
+              <text x={CX} y={CY + 46} className="mono" style={{ fontSize: 9, fill: 'var(--ink-3)', textAnchor: 'middle', letterSpacing: '0.04em' }}>{cur.weight}% {labels.weight}</text>
+            </svg>
+
+            {/* Cluster list (compact tabs) */}
+            <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
               {data.map((c, i) => {
                 const name = c['name_' + lang] || c.name_sq;
                 const isActive = i === active;
                 return (
-                  <button key={c.code} onMouseEnter={() => setActive(i)}
+                  <button key={c.code}
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => setActive(i)}
                     style={{
-                      background: isActive ? 'var(--paper)' : 'transparent',
-                      border: 'none', textAlign: 'left',
-                      padding: '14px 16px',
-                      display: 'grid', gridTemplateColumns: '32px 1fr 60px 40px', gap: 12, alignItems: 'center',
-                      borderLeft: `3px solid ${isActive ? c.color : 'transparent'}`,
-                      transition: 'all 200ms',
+                      background: isActive ? 'var(--paper-2)' : 'var(--paper)',
+                      border: 'none', textAlign: 'left', cursor: 'pointer',
+                      padding: '12px 16px',
+                      display: 'grid', gridTemplateColumns: '6px 24px 1fr 48px', gap: 12, alignItems: 'center',
+                      transition: 'background 160ms',
                     }}>
-                    <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>0{c.code}</span>
-                    <span className="serif" style={{ fontSize: 22, color: 'var(--ink)' }}>{name}</span>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.chapters} kap.</span>
-                    <span style={{ width: 10, height: 10, background: c.color, borderRadius: 2, justifySelf: 'end' }} />
+                    <span style={{ width: 4, height: 24, background: isActive ? c.color : 'transparent', borderRadius: 2 }} />
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.06em' }}>0{c.code}</span>
+                    <span className="serif" style={{ fontSize: 18, color: 'var(--ink)', lineHeight: 1.15 }}>{name}</span>
+                    <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', textAlign: 'right' }}>{c.chapters} kap.</span>
                   </button>
                 );
               })}
             </div>
+            <div className="mono" style={{ marginTop: 14, fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.08em', textAlign: 'center' }}>
+              {totalChapters} {labels.chapters} · {data.length} klasterë
+            </div>
           </div>
+
+          {/* RIGHT — detail panel for active cluster */}
+          <article key={cur.code} className="cluster-detail" style={{
+            background: 'var(--paper-2)', border: '1px solid var(--line)',
+            padding: '32px 30px', position: 'relative', overflow: 'hidden',
+          }}>
+            <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: cur.color }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 18 }}>
+              <div className="mono" style={{ fontSize: 11, color: cur.color === 'var(--ink)' ? 'var(--ink)' : cur.color, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                Klaster 0{cur.code}
+              </div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.05em' }}>
+                {cur.chapters} {labels.chapters} · {cur.weight}% {labels.weight}
+              </div>
+            </div>
+            <h3 className="serif" style={{ fontSize: 'clamp(28px, 3.4vw, 40px)', lineHeight: 1.06, color: 'var(--ink)', marginBottom: 14 }}>{curName}</h3>
+            <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--ink-2)', marginTop: 0, marginBottom: 24 }}>{curDesc}</p>
+
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 12 }}>
+              {labels.whatInside}
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 18px' }}>
+              {curChapters.map((ch, i) => (
+                <li key={i} style={{ display: 'flex', gap: 10, fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.45 }}>
+                  <span className="mono" style={{ color: cur.color, flexShrink: 0, fontSize: 11, marginTop: 2 }}>→</span>
+                  <span>{ch}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div style={{ borderTop: '1px solid var(--line)', paddingTop: 16 }}>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 8 }}>
+                {labels.kosStatus}
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--paper)', border: `1px solid ${cur.color}`, padding: '8px 14px' }}>
+                <span style={{ width: 8, height: 8, background: cur.color, borderRadius: '50%' }} />
+                <span style={{ fontSize: 14, color: 'var(--ink)' }}>{curStatus}</span>
+              </div>
+            </div>
+          </article>
         </div>
 
+        <div className="mono" style={{ marginTop: 28, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.08em', textAlign: 'center' }}>
+          {labels.intro}
+        </div>
       </div>
       <style>{`
-        @media (max-width: 900px) {
-          .cluster-grid { grid-template-columns: 1fr !important; }
+        @media (max-width: 980px) {
+          .cluster-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .cluster-detail ul { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
