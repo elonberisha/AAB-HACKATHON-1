@@ -1900,13 +1900,47 @@ function ChatWidget({ lang, t, open, setOpen }) {
       setVoiceActive(false);
       setVolumeLevel(0);
     });
-    // When assistant finishes speaking, add transcript to chat
+    // Track partial transcripts to avoid duplicates
+    let lastUserPartial = '';
+    let lastBotPartial = '';
+
+    // Capture all transcripts — both user and assistant
     vapi.on('message', (msg) => {
+      // Final transcripts → add to chat
       if (msg.type === 'transcript' && msg.transcriptType === 'final') {
+        const text = (msg.transcript || '').trim();
+        if (!text) return;
         if (msg.role === 'user') {
-          setMsgs(m => [...m, { role: 'user', text: msg.transcript }]);
-        } else if (msg.role === 'assistant') {
-          setMsgs(m => [...m, { role: 'assistant', text: msg.transcript }]);
+          // Remove partial if exists, add final
+          setMsgs(m => {
+            const filtered = m.filter(x => x._partialUser !== true);
+            return [...filtered, { role: 'user', text }];
+          });
+          lastUserPartial = '';
+        } else if (msg.role === 'assistant' || msg.role === 'bot') {
+          setMsgs(m => {
+            const filtered = m.filter(x => x._partialBot !== true);
+            return [...filtered, { role: 'assistant', text }];
+          });
+          lastBotPartial = '';
+        }
+      }
+      // Partial transcripts → show live typing
+      if (msg.type === 'transcript' && msg.transcriptType === 'partial') {
+        const text = (msg.transcript || '').trim();
+        if (!text) return;
+        if (msg.role === 'user' && text !== lastUserPartial) {
+          lastUserPartial = text;
+          setMsgs(m => {
+            const filtered = m.filter(x => x._partialUser !== true);
+            return [...filtered, { role: 'user', text, _partialUser: true }];
+          });
+        } else if ((msg.role === 'assistant' || msg.role === 'bot') && text !== lastBotPartial) {
+          lastBotPartial = text;
+          setMsgs(m => {
+            const filtered = m.filter(x => x._partialBot !== true);
+            return [...filtered, { role: 'assistant', text, _partialBot: true }];
+          });
         }
       }
     });
