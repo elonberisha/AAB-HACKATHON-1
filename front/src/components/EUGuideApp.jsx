@@ -2194,9 +2194,16 @@ function ChatWidget({ lang, t, open, setOpen }) {
   const send = async (text) => {
     const message = (text || input).trim();
     if (!message) return;
+    // Count user messages before adding — if this is first, auto-title later
+    const userMsgCount = msgs.filter(m => m.role === 'user').length;
     setMsgs(m => [...m, { role: 'user', text: message }, { role: 'assistant', text: '' }]);
     setInput('');
     setTyping(true);
+
+    // Auto-title session with first user message
+    if (userMsgCount === 0) {
+      autoTitleSession(message);
+    }
 
     try {
       const res = await chatStream(message, getSession(), lang);
@@ -2247,23 +2254,30 @@ function ChatWidget({ lang, t, open, setOpen }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [activeSessionId, setActiveSessionId] = useState(() => getSession());
+  const [editingTitle, setEditingTitle] = useState(null); // session id being edited
+  const [editTitleValue, setEditTitleValue] = useState('');
 
-  // Load chat history from Supabase when sidebar opens
-  useEffect(() => {
-    if (!sidebarOpen || !user) return;
+  // Refresh history list
+  const refreshHistory = useCallback(async () => {
+    if (!user) return;
     setLoadingHistory(true);
-    supabase
-      .from('sessions')
-      .select('id, title, updated_at')
-      .eq('user_id', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(30)
-      .then(({ data }) => {
-        setChatHistory(data || []);
-        setLoadingHistory(false);
-      })
-      .catch(() => setLoadingHistory(false));
-  }, [sidebarOpen, user]);
+    try {
+      const { data } = await supabase
+        .from('sessions')
+        .select('id, title, updated_at')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(30);
+      setChatHistory(data || []);
+    } catch {}
+    setLoadingHistory(false);
+  }, [user]);
+
+  // Load chat history when sidebar opens
+  useEffect(() => {
+    if (sidebarOpen && user) refreshHistory();
+  }, [sidebarOpen, user, refreshHistory]);
 
   // Load a past session
   const loadSession = async (sessionId) => {
@@ -2276,25 +2290,62 @@ function ChatWidget({ lang, t, open, setOpen }) {
       if (data?.messages) {
         const parsed = typeof data.messages === 'string' ? JSON.parse(data.messages) : data.messages;
         setMsgs(parsed.map(m => ({ role: m.role, text: m.content || m.text || '' })));
-        // Set session ID so new messages continue in same session
         if (typeof window !== 'undefined') {
           window.localStorage.setItem('euguide-session-id', sessionId);
         }
+        setActiveSessionId(sessionId);
       }
-      // Don't close sidebar — user can browse more sessions
     } catch {}
   };
 
-  // New chat — keep sidebar open
+  // New chat — create fresh session
   const newChat = () => {
+    const next = crypto.randomUUID();
     setMsgs([{ role: 'assistant', text: t.chat.greeting }]);
     setInput('');
     if (typeof window !== 'undefined') {
-      const next = crypto.randomUUID();
       window.localStorage.setItem('euguide-session-id', next);
     }
-    // Don't close sidebar — user stays in sidebar to see history
+    setActiveSessionId(next);
   };
+
+  // Rename a session title
+  const saveTitle = async (sessionId) => {
+    const newTitle = editTitleValue.trim();
+    if (!newTitle) { setEditingTitle(null); return; }
+    try {
+      await supabase
+        .from('sessions')
+        .update({ title: newTitle })
+        .eq('id', sessionId);
+      setChatHistory(h => h.map(s => s.id === sessionId ? { ...s, title: newTitle } : s));
+    } catch {}
+    setEditingTitle(null);
+  };
+
+  // Auto-title: after first user message, set title if session has none
+  const autoTitleSession = useCallback(async (message) => {
+    if (!user) return;
+    const sid = typeof window !== 'undefined' ? window.localStorage.getItem('euguide-session-id') : null;
+    if (!sid) return;
+    try {
+      const { data } = await supabase
+        .from('sessions')
+        .select('title')
+        .eq('id', sid)
+        .single();
+      // Only auto-title if title is empty/null
+      if (!data?.title) {
+        const title = message.length > 40 ? message.slice(0, 40) + '...' : message;
+        await supabase
+          .from('sessions')
+          .update({ title })
+          .eq('id', sid);
+        // Refresh sidebar if open
+        if (sidebarOpen) refreshHistory();
+      }
+    } catch {}
+  }, [user, sidebarOpen, refreshHistory]);
 
   const drawerWidth = sidebarOpen && user ? 'min(640px, calc(100vw - 32px))' : 'min(420px, calc(100vw - 32px))';
 
@@ -2394,33 +2445,64 @@ function ChatWidget({ lang, t, open, setOpen }) {
                   <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.25)', display: 'block' }}>Asnje bisede e ruajtur</span>
                   <span style={{ fontSize: 10, color: 'rgba(242,239,232,0.15)', display: 'block', marginTop: 4 }}>Fillo bisede te re</span>
                 </div>
-              ) : chatHistory.map(session => (
-                <button key={session.id} onClick={() => loadSession(session.id)} style={{
-                  width: '100%', padding: '10px 10px',
-                  background: 'transparent', border: 'none',
-                  color: 'rgba(242,239,232,0.7)', fontSize: 12,
-                  cursor: 'pointer', textAlign: 'left',
-                  display: 'flex', alignItems: 'flex-start', gap: 8,
-                  transition: 'background 150ms',
-                  borderRadius: 6,
-                  marginBottom: 2,
-                }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(242,239,232,0.06)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(242,239,232,0.3)" strokeWidth="1.5" style={{ marginTop: 1, flexShrink: 0 }}>
-                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3, fontSize: 12 }}>
-                      {session.title || 'Bisede pa titull'}
-                    </div>
-                    <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.25)' }}>
-                      {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}
+              ) : chatHistory.map(session => {
+                const isActive = session.id === activeSessionId;
+                const isEditing = editingTitle === session.id;
+                return (
+                  <div key={session.id} style={{
+                    width: '100%', padding: '8px 8px',
+                    background: isActive ? 'rgba(59,130,246,0.12)' : 'transparent',
+                    borderRadius: 6, marginBottom: 2,
+                    transition: 'background 150ms',
+                    cursor: 'pointer',
+                    borderLeft: isActive ? '2px solid #3b82f6' : '2px solid transparent',
+                  }}
+                    onClick={() => !isEditing && loadSession(session.id)}
+                    onDoubleClick={() => {
+                      setEditingTitle(session.id);
+                      setEditTitleValue(session.title || '');
+                    }}
+                    onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(242,239,232,0.05)'; }}
+                    onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isActive ? '#60a5fa' : 'rgba(242,239,232,0.25)'} strokeWidth="1.5" style={{ marginTop: 2, flexShrink: 0 }}>
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        {isEditing ? (
+                          <input
+                            autoFocus
+                            value={editTitleValue}
+                            onChange={e => setEditTitleValue(e.target.value)}
+                            onBlur={() => saveTitle(session.id)}
+                            onKeyDown={e => { if (e.key === 'Enter') saveTitle(session.id); if (e.key === 'Escape') setEditingTitle(null); }}
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                              width: '100%', background: 'rgba(242,239,232,0.08)',
+                              border: '1px solid rgba(59,130,246,0.4)',
+                              borderRadius: 3, padding: '2px 6px',
+                              color: 'rgba(242,239,232,0.9)', fontSize: 11,
+                              outline: 'none', fontFamily: 'inherit',
+                            }}
+                          />
+                        ) : (
+                          <div style={{
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                            marginBottom: 2, fontSize: 12,
+                            color: isActive ? '#93c5fd' : 'rgba(242,239,232,0.65)',
+                          }}>
+                            {session.title || 'Bisede pa titull'}
+                          </div>
+                        )}
+                        <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.2)' }}>
+                          {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </button>
-              ))}
+                );
+              })}
             </div>
 
             {/* User info at bottom */}
