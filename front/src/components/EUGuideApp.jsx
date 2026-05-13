@@ -2281,18 +2281,19 @@ function ChatWidget({ lang, t, open, setOpen }) {
           window.localStorage.setItem('euguide-session-id', sessionId);
         }
       }
-      setSidebarOpen(false);
+      // Don't close sidebar — user can browse more sessions
     } catch {}
   };
 
-  // New chat
+  // New chat — keep sidebar open
   const newChat = () => {
     setMsgs([{ role: 'assistant', text: t.chat.greeting }]);
+    setInput('');
     if (typeof window !== 'undefined') {
       const next = crypto.randomUUID();
       window.localStorage.setItem('euguide-session-id', next);
     }
-    setSidebarOpen(false);
+    // Don't close sidebar — user stays in sidebar to see history
   };
 
   const drawerWidth = sidebarOpen && user ? 'min(640px, calc(100vw - 32px))' : 'min(420px, calc(100vw - 32px))';
@@ -2336,45 +2337,62 @@ function ChatWidget({ lang, t, open, setOpen }) {
       }}>
 
         {/* ---- History Sidebar ---- */}
-        {user && sidebarOpen && (
-          <div style={{
-            width: 220, minWidth: 220,
-            background: 'var(--ink)',
-            borderRight: '1px solid rgba(242,239,232,0.1)',
+        {user && (
+          <div className="chat-sidebar" style={{
+            width: sidebarOpen ? 230 : 0,
+            minWidth: sidebarOpen ? 230 : 0,
+            background: '#0f172a',
+            borderRight: sidebarOpen ? '1px solid rgba(242,239,232,0.08)' : 'none',
             display: 'flex', flexDirection: 'column',
-            animation: 'sidebarSlideIn 200ms ease',
+            overflow: 'hidden',
+            transition: 'width 250ms cubic-bezier(.2,.7,.2,1), min-width 250ms cubic-bezier(.2,.7,.2,1)',
           }}>
             {/* Sidebar header */}
-            <div style={{ padding: '14px 14px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="mono" style={{ fontSize: 10, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bisedat</span>
-              <button onClick={() => setSidebarOpen(false)} style={{ background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.4)', cursor: 'pointer', fontSize: 16, padding: '0 4px', lineHeight: 1 }}>×</button>
+            <div style={{ padding: '12px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(242,239,232,0.85)', whiteSpace: 'nowrap' }}>Bisedat</span>
+              <button onClick={() => setSidebarOpen(false)} style={{
+                background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.4)',
+                cursor: 'pointer', padding: '2px 6px', lineHeight: 1, fontSize: 15,
+                borderRadius: 4, transition: 'color 150ms',
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(242,239,232,0.8)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(242,239,232,0.4)'}
+              >×</button>
             </div>
 
             {/* New chat button */}
-            <button onClick={newChat} style={{
-              margin: '0 10px 8px', padding: '8px 12px',
-              background: 'rgba(242,239,232,0.08)',
-              border: '1px solid rgba(242,239,232,0.12)',
-              color: 'var(--paper)', fontSize: 12,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-              transition: 'background 150ms',
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(242,239,232,0.14)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(242,239,232,0.08)'}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              Bisede e re
-            </button>
+            <div style={{ padding: '0 8px 10px', flexShrink: 0 }}>
+              <button onClick={newChat} style={{
+                width: '100%', padding: '9px 12px',
+                background: 'rgba(59,130,246,0.15)',
+                border: '1px solid rgba(59,130,246,0.25)',
+                borderRadius: 6,
+                color: '#93c5fd', fontSize: 12, fontWeight: 500,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
+                transition: 'background 150ms, border-color 150ms',
+                whiteSpace: 'nowrap',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(59,130,246,0.25)'; e.currentTarget.style.borderColor = 'rgba(59,130,246,0.4)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(59,130,246,0.15)'; e.currentTarget.style.borderColor = 'rgba(59,130,246,0.25)'; }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                Bisede e re
+              </button>
+            </div>
 
             {/* History list */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '0 6px' }}>
               {loadingHistory ? (
-                <div style={{ padding: 16, textAlign: 'center' }}>
-                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.3)' }}>Duke ngarkuar...</span>
+                <div style={{ padding: 20, textAlign: 'center' }}>
+                  <div style={{ width: 20, height: 20, border: '2px solid rgba(242,239,232,0.1)', borderTopColor: 'rgba(59,130,246,0.5)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                 </div>
               ) : chatHistory.length === 0 ? (
-                <div style={{ padding: 16, textAlign: 'center' }}>
-                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.3)' }}>Asnje bisede e ruajtur</span>
+                <div style={{ padding: '24px 12px', textAlign: 'center' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(242,239,232,0.15)" strokeWidth="1.5" style={{ margin: '0 auto 8px', display: 'block' }}>
+                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.25)', display: 'block' }}>Asnje bisede e ruajtur</span>
+                  <span style={{ fontSize: 10, color: 'rgba(242,239,232,0.15)', display: 'block', marginTop: 4 }}>Fillo bisede te re</span>
                 </div>
               ) : chatHistory.map(session => (
                 <button key={session.id} onClick={() => loadSession(session.id)} style={{
@@ -2382,30 +2400,46 @@ function ChatWidget({ lang, t, open, setOpen }) {
                   background: 'transparent', border: 'none',
                   color: 'rgba(242,239,232,0.7)', fontSize: 12,
                   cursor: 'pointer', textAlign: 'left',
-                  display: 'block', transition: 'background 150ms',
-                  borderBottom: '1px solid rgba(242,239,232,0.05)',
+                  display: 'flex', alignItems: 'flex-start', gap: 8,
+                  transition: 'background 150ms',
+                  borderRadius: 6,
+                  marginBottom: 2,
                 }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(242,239,232,0.06)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>
-                    {session.title || 'Bisede pa titull'}
-                  </div>
-                  <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.3)' }}>
-                    {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(242,239,232,0.3)" strokeWidth="1.5" style={{ marginTop: 1, flexShrink: 0 }}>
+                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3, fontSize: 12 }}>
+                      {session.title || 'Bisede pa titull'}
+                    </div>
+                    <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.25)' }}>
+                      {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </div>
                   </div>
                 </button>
               ))}
             </div>
 
             {/* User info at bottom */}
-            <div style={{ padding: '10px 14px', borderTop: '1px solid rgba(242,239,232,0.08)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              {user.user_metadata?.avatar_url && (
-                <img src={user.user_metadata.avatar_url} alt="" style={{ width: 16, height: 16, borderRadius: '50%' }} />
+            <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(242,239,232,0.06)', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              {user.user_metadata?.avatar_url ? (
+                <img src={user.user_metadata.avatar_url} alt="" style={{ width: 22, height: 22, borderRadius: '50%', flexShrink: 0 }} />
+              ) : (
+                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(59,130,246,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#93c5fd', flexShrink: 0 }}>
+                  {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
+                </div>
               )}
-              <span className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user.user_metadata?.full_name || user.email}
-              </span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.user_metadata?.full_name || 'User'}
+                </div>
+                <div className="mono" style={{ fontSize: 8, color: 'rgba(242,239,232,0.3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.email}
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2531,9 +2565,9 @@ function ChatWidget({ lang, t, open, setOpen }) {
       </div>
 
       <style>{`
-        @keyframes sidebarSlideIn {
-          from { width: 0; opacity: 0; }
-          to { width: 220px; opacity: 1; }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </>
