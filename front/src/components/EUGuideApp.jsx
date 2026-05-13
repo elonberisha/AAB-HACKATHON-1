@@ -2995,6 +2995,142 @@ function DeepReadingSection({ topicKey, lang }) {
 }
 
 // ============================================================
+// Topic action (next-steps cards) — sundimi / korrupsioni / be
+// ============================================================
+const TOPIC_ACTION_CONTENT = {
+  sundimi: {
+    sq: {
+      eyebrow: 'Udhëzues praktik',
+      title: 'Sundimi i ligjit duhet të lexohet si rrugë qytetari',
+      intro: 'Përmbajtja duhet ta ndihmojë përdoruesin të kuptojë ku shkon një rast, cilat janë afatet dhe çfarë të drejtash ka kur institucioni nuk përgjigjet.',
+      cards: [
+        { k: '01', h: 'Harta e institucioneve', p: 'Policia mbledh informacion, prokuroria heton, gjykata vendos, Avokati i Popullit trajton shkelje nga administrata.' },
+        { k: '02', h: 'Afatet dhe ankesat', p: 'Afate tipike për ankesë administrative, padi, kërkesë urgjente dhe qasje në dokumente publike.' },
+        { k: '03', h: 'Ndihma juridike', p: 'Si aplikohet për ndihmë juridike falas, cilat janë kriteret bazë dhe dokumentet e nevojshme.' },
+      ],
+    },
+    en: {
+      eyebrow: 'Practical guide',
+      title: 'Rule of law should read as a citizen pathway',
+      intro: 'Content should help users understand where a case goes, what deadlines apply and what rights they have when an institution does not answer.',
+      cards: [
+        { k: '01', h: 'Institution map', p: 'Police collect information, prosecution investigates, courts decide, the Ombudsperson handles administrative rights violations.' },
+        { k: '02', h: 'Deadlines and appeals', p: 'Typical deadlines for administrative appeals, lawsuits, urgent requests and access to public documents.' },
+        { k: '03', h: 'Legal aid', p: 'How to apply for free legal aid, basic eligibility criteria and required documents.' },
+      ],
+    },
+    sr: {
+      eyebrow: 'Praktični vodič',
+      title: 'Vladavina prava treba da izgleda kao put građanina',
+      intro: 'Sadržaj treba da pomogne korisniku da razume gde ide predmet, koji rokovi važe i koja prava ima kada institucija ne odgovori.',
+      cards: [
+        { k: '01', h: 'Mapa institucija', p: 'Policija prikuplja informacije, tužilaštvo istražuje, sud odlučuje, Ombudsman rešava povrede prava od administracije.' },
+        { k: '02', h: 'Rokovi i žalbe', p: 'Tipični rokovi za administrativnu žalbu, tužbu, hitni zahtev i pristup javnim dokumentima.' },
+        { k: '03', h: 'Pravna pomoć', p: 'Kako se aplicira za besplatnu pravnu pomoć, osnovni kriterijumi i potrebni dokumenti.' },
+      ],
+    },
+  },
+  korrupsioni: {
+    sq: {
+      eyebrow: 'Nga dyshimi te raportimi',
+      title: 'Faqja duhet ta kthejë frikën në procedurë të qartë',
+      intro: 'Përdoruesi duhet të dijë çfarë quhet korrupsion, cilat prova ruhen, ku raportohet dhe çfarë mbrojtjeje ekziston për sinjalizuesit.',
+      cards: [
+        { k: '01', h: 'Checklist provash', p: 'Datë, vend, emër institucioni, dokumente, foto, mesazhe, dëshmitarë dhe çfarë u kërkua apo u premtua.' },
+        { k: '02', h: 'Kanale raportimi', p: 'Agjencia kundër Korrupsionit, Prokuroria Speciale, Policia, Avokati i Popullit dhe ALAC/KDI për këshillim të sigurt.' },
+        { k: '03', h: 'Shenja paralajmëruese', p: 'Kontratë pa konkurrencë, konflikt interesi, tender me specifika të ngushta, punësim familjar dhe pasuri e pajustifikuar.' },
+      ],
+    },
+    en: {
+      eyebrow: 'From suspicion to reporting',
+      title: 'Turn doubt into a clear procedure',
+      intro: 'Users should know what counts as corruption, what evidence to keep, where to report and what protection exists for whistleblowers.',
+      cards: [
+        { k: '01', h: 'Evidence checklist', p: 'Date, place, institution name, documents, photos, messages, witnesses and what was requested or promised.' },
+        { k: '02', h: 'Reporting channels', p: 'Anti-Corruption Agency, Special Prosecution, Police, Ombudsperson and ALAC/KDI for safe advice.' },
+        { k: '03', h: 'Red flags', p: 'No-competition contracts, conflict of interest, narrow tender specs, family hiring and unexplained wealth.' },
+      ],
+    },
+    sr: {
+      eyebrow: 'Od sumnje do prijave',
+      title: 'Pretvorite sumnju u jasnu proceduru',
+      intro: 'Korisnik treba da zna šta je korupcija, koje dokaze čuva, gde prijavljuje i kakva zaštita postoji za zviždače.',
+      cards: [
+        { k: '01', h: 'Lista dokaza', p: 'Datum, mesto, naziv institucije, dokumenti, fotografije, poruke, svedoci i šta je traženo ili obećano.' },
+        { k: '02', h: 'Kanali prijave', p: 'Antikorupcijska agencija, Specijalno tužilaštvo, Policija, Ombudsman i ALAC/KDI za bezbedan savet.' },
+        { k: '03', h: 'Signali rizika', p: 'Ugovor bez konkurencije, sukob interesa, uske tenderske specifikacije, porodično zapošljavanje i neobjašnjiva imovina.' },
+      ],
+    },
+  },
+  be: {
+    sq: {
+      eyebrow: 'Rruga e anëtarësimit',
+      title: 'Procesi i BE-së si një hartë e lexueshme',
+      intro: 'Faqja ndan qartë statusin aktual, hapin tjetër, vendimin politik dhe punën teknike që Kosova duhet ta bëjë brenda vendit.',
+      cards: [
+        { k: '01', h: 'Statusi aktual', p: 'Kosova është kandidat potencial; aplikimi është dorëzuar, por pritet opinioni i Komisionit dhe vendimi i Këshillit.' },
+        { k: '02', h: '5 mosnjohjet në BE', p: 'Spanja, Greqia, Qipro, Rumania dhe Sllovakia ndikojnë në konsensusin e Këshillit dhe shtyjnë vendimet kyçe.' },
+        { k: '03', h: 'Çfarë janë klasterët', p: 'Për secilin klaster: kapitujt, shembuj reformash dhe çfarë përfiton qytetari kur ai kapitull mbyllet.' },
+      ],
+    },
+    en: {
+      eyebrow: 'Membership path',
+      title: 'The EU process as a readable map',
+      intro: 'The page clearly separates the current status, next step, political decision and technical work Kosovo must do domestically.',
+      cards: [
+        { k: '01', h: 'Current status', p: 'Kosovo is a potential candidate; the application is submitted, but the Commission opinion and Council decision are pending.' },
+        { k: '02', h: '5 EU non-recognisers', p: 'Spain, Greece, Cyprus, Romania and Slovakia affect Council consensus and delay key decisions.' },
+        { k: '03', h: 'What clusters are', p: 'For each cluster: chapters, example reforms and what citizens gain when that chapter closes.' },
+      ],
+    },
+    sr: {
+      eyebrow: 'Put članstva',
+      title: 'Proces EU kao čitljiva mapa',
+      intro: 'Stranica jasno razdvaja trenutni status, sledeći korak, političku odluku i tehnički posao koji Kosovo mora uraditi kod kuće.',
+      cards: [
+        { k: '01', h: 'Trenutni status', p: 'Kosovo je potencijalni kandidat; aplikacija je predata, ali se čekaju mišljenje Komisije i odluka Saveta.' },
+        { k: '02', h: '5 nepriznanja u EU', p: 'Španija, Grčka, Kipar, Rumunija i Slovačka utiču na konsenzus Saveta i odlažu ključne odluke.' },
+        { k: '03', h: 'Šta su klasteri', p: 'Za svaki klaster: poglavlja, primeri reformi i šta građani dobijaju kada se poglavlje zatvori.' },
+      ],
+    },
+  },
+};
+
+function TopicActionSection({ topicKey, lang }) {
+  const topics = useCmsArray('topics', TOPICS);
+  const topic = topics.find(t => t.key === topicKey) || TOPICS.find(t => t.key === topicKey);
+  const accent = topic?.accent || 'var(--blue)';
+  const copy = TOPIC_ACTION_CONTENT[topicKey]?.[lang] || TOPIC_ACTION_CONTENT[topicKey]?.sq;
+  if (!copy) return null;
+  return (
+    <section style={{ padding: '88px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container topic-action-grid" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.4fr', gap: 60, alignItems: 'start' }}>
+        <div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>{copy.eyebrow}</div>
+          <h2 className="serif" style={{ fontSize: 'clamp(34px, 4.7vw, 58px)', lineHeight: 1.04, color: 'var(--ink)' }}>{copy.title}</h2>
+          <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', marginTop: 20, maxWidth: 520 }}>{copy.intro}</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="topic-action-cards">
+          {copy.cards.map(card => (
+            <article key={card.k} style={{ background: 'var(--paper-2)', padding: '26px 24px', minHeight: 240 }}>
+              <span className="serif" style={{ fontSize: 42, color: accent, lineHeight: 0.9 }}>{card.k}</span>
+              <h3 className="serif" style={{ fontSize: 25, lineHeight: 1.08, marginTop: 22, color: 'var(--ink)' }}>{card.h}</h3>
+              <p style={{ fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-2)', marginTop: 14 }}>{card.p}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 980px) {
+          .topic-action-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+          .topic-action-cards { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
+// ============================================================
 // Reforma — Shërbimet kryesore: para / pas dixhitalizimit
 // Sources: eKosova platform, SIGMA Monitoring Report (OECD/EU) 2023,
 // EC Kosovo Report 2024, Strategia e MAP 2022-2027, Ligji Nr. 06/L-113.
@@ -4299,6 +4435,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {topicKey === 'reforma' && <ReformaServicesSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaInstitutionsSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaSourcesSection lang={lang} />}
+      {topicKey !== 'reforma' && <TopicActionSection topicKey={topicKey} lang={lang} />}
       <NextTopicNav current={topicKey} lang={lang} t={t} />
     </>
   );
