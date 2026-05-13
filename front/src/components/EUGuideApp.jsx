@@ -1196,7 +1196,8 @@ function Clusters({ lang, t }) {
   });
   const total = data.reduce((s, c) => s + c.weight, 0);
   const totalChapters = data.reduce((s, c) => s + c.chapters, 0);
-  const R = 110, IR = 70, CX = 150, CY = 150;
+  /* Larger inner radius + centered label group so center copy stays inside the hole (no overlap on slices). */
+  const R = 110, IR = 84, CX = 150, CY = 150;
   let acc = 0;
   const slices = data.map(c => {
     const a0 = (acc / total) * 2 * Math.PI;
@@ -1237,7 +1238,7 @@ function Clusters({ lang, t }) {
           <div>
             <svg viewBox="0 0 300 300" style={{ width: '100%', maxWidth: 380, display: 'block', margin: '0 auto' }} aria-label={t.cluster.eyebrow}>
               {slices.map((s, i) => (
-                <path key={i} d={arcPath(s.a0, s.a1, i === active ? R + 10 : R, IR)} fill={s.color}
+                <path key={i} d={arcPath(s.a0, s.a1, i === active ? R + 8 : R, IR)} fill={s.color}
                   opacity={i === active ? 1 : 0.78}
                   onMouseEnter={() => setActive(i)}
                   onFocus={() => setActive(i)}
@@ -1245,10 +1246,16 @@ function Clusters({ lang, t }) {
                   tabIndex={0}
                   style={{ cursor: 'pointer', transition: 'd 200ms, opacity 200ms', outline: 'none' }} />
               ))}
-              <text x={CX} y={CY - 26} className="mono" style={{ fontSize: 9, fill: 'var(--ink-3)', textAnchor: 'middle', letterSpacing: '0.16em' }}>KLASTERI</text>
-              <text x={CX} y={CY + 10} className="serif" style={{ fontSize: 56, fill: cur.color === 'var(--ink)' ? 'var(--ink)' : cur.color, textAnchor: 'middle', fontStyle: 'italic' }}>{cur.code}</text>
-              <text x={CX} y={CY + 32} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)', textAnchor: 'middle' }}>{cur.chapters} {labels.chapters}</text>
-              <text x={CX} y={CY + 46} className="mono" style={{ fontSize: 9, fill: 'var(--ink-3)', textAnchor: 'middle', letterSpacing: '0.04em' }}>{cur.weight}% {labels.weight}</text>
+              <circle cx={CX} cy={CY} r={IR - 1} fill="var(--paper)" pointerEvents="none" aria-hidden="true" />
+              <g transform={`translate(${CX},${CY})`} style={{ pointerEvents: 'none' }}>
+                <text textAnchor="middle" y={-40} className="mono" style={{ fontSize: 8, fill: 'var(--ink-3)', letterSpacing: '0.16em' }}>{(t.cluster && t.cluster.cluster_label) || 'KLASTERI'}</text>
+                <text textAnchor="middle" dominantBaseline="central" y={-4} className="serif" style={{ fontSize: 44, fill: cur.color === 'var(--ink)' ? 'var(--ink)' : cur.color, fontStyle: 'italic' }}>{cur.code}</text>
+                <text textAnchor="middle" y={22} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)' }}>{cur.chapters} {labels.chapters}</text>
+                <text textAnchor="middle" y={34} className="mono" style={{ fontSize: 8, fill: 'var(--ink-3)', letterSpacing: '0.03em' }}>
+                  <tspan x={0}>{cur.weight}%</tspan>
+                  <tspan x={0} dy={12} style={{ fontSize: 7.5 }}>{labels.weight}</tspan>
+                </text>
+              </g>
             </svg>
 
             {/* Cluster list (compact tabs) */}
