@@ -1019,7 +1019,7 @@ function CPIChart({ lang, t }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)' }}>
       <div className="container">
-        <SectionHead eyebrow={t.chart1.eyebrow} title={t.chart1.title} sub={t.chart1.sub} num="03" />
+        <SectionHead eyebrow={t.chart1.eyebrow} title={t.chart1.title} sub={t.chart1.sub} num="02" />
         <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 56 }} className="cpi-grid">
           <div style={{ background: 'var(--paper-2)', padding: '32px 24px 24px', border: '1px solid var(--line)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
@@ -1130,7 +1130,7 @@ function Clusters({ lang, t }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
-        <SectionHead eyebrow={t.cluster.eyebrow} title={t.cluster.title} sub={t.cluster.sub} num="04" />
+        <SectionHead eyebrow={t.cluster.eyebrow} title={t.cluster.title} sub={t.cluster.sub} num="03" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }} className="cluster-grid">
           <div style={{ position: 'relative' }}>
             <svg viewBox="0 0 300 300" style={{ width: '100%', maxWidth: 440, display: 'block', margin: '0 auto' }}>
@@ -3102,11 +3102,16 @@ function TopicActionSection({ topicKey, lang }) {
   const accent = topic?.accent || 'var(--blue)';
   const copy = TOPIC_ACTION_CONTENT[topicKey]?.[lang] || TOPIC_ACTION_CONTENT[topicKey]?.sq;
   if (!copy) return null;
+  const numByTopic = { sundimi: '03', korrupsioni: '03', be: '05' };
+  const num = numByTopic[topicKey] || '';
   return (
     <section style={{ padding: '88px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container topic-action-grid" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.4fr', gap: 60, alignItems: 'start' }}>
         <div>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>{copy.eyebrow}</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
+            {num && <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)', letterSpacing: '0.06em' }}>§ {num}</span>}
+            <span className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', borderTop: '1px solid var(--rust)', paddingTop: 6 }}>{copy.eyebrow}</span>
+          </div>
           <h2 className="serif" style={{ fontSize: 'clamp(34px, 4.7vw, 58px)', lineHeight: 1.04, color: 'var(--ink)' }}>{copy.title}</h2>
           <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', marginTop: 20, maxWidth: 520 }}>{copy.intro}</p>
         </div>
@@ -3328,7 +3333,7 @@ function AcquisProgressSection({ lang, accent }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
-        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="03" />
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="04" />
 
         {/* Top: average + scale legend */}
         <div className="acquis-top" style={{
@@ -3483,7 +3488,7 @@ function ReformaServicesSection({ lang }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
-        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="05" />
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="02" />
 
         {/* Stat row */}
         <div className="reforma-stat-row" style={{
@@ -3650,7 +3655,7 @@ function ReformaInstitutionsSection({ lang }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
-        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="06" />
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="03" />
         <div className="reforma-inst-grid" style={{
           display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1,
           background: 'var(--line)', border: '1px solid var(--line)',
@@ -3759,7 +3764,7 @@ function ReformaSourcesSection({ lang }) {
       <div className="container">
         <div style={{ marginBottom: 56, maxWidth: 880 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
-            <span className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.06em' }}>§ 07</span>
+            <span className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.06em' }}>§ 04</span>
             <span className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--paper)', borderTop: '1px solid var(--paper)', paddingTop: 6 }}>{c.eyebrow}</span>
           </div>
           <h2 className="serif" style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: 1.04, color: 'var(--paper)' }}>{c.title}</h2>
@@ -4327,7 +4332,7 @@ function RuleOfLawMaterials({ lang }) {
           eyebrow={localizedValue(copy, 'eyebrow', lang)}
           title={localizedValue(copy, 'title', lang)}
           sub={localizedValue(copy, 'sub', lang)}
-          num="04"
+          num="02"
         />
         <PageActionCards items={actions.map(item => ({
           label: localizedValue(item, 'label', lang),
