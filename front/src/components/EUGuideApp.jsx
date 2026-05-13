@@ -2057,8 +2057,10 @@ function ChatWidget({ lang, t, open, setOpen }) {
             placeholder={t.chat.placeholder}
             style={{ flex: 1, border: '1px solid var(--line)', padding: '10px 12px', background: 'var(--paper)', fontSize: 14, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none' }} />
           <button onClick={() => send()} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '0 16px', fontSize: 13 }}>{t.chat.send}</button>
-          <button title="Voice" style={{ background: 'transparent', border: '1px solid var(--line)', padding: '0 12px' }}>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="6" y="2" width="4" height="9" rx="2" stroke="currentColor" strokeWidth="1.3" /><path d="M3 7 V8 a5 5 0 0 0 10 0 V7 M8 13 V15" stroke="currentColor" strokeWidth="1.3" fill="none" /></svg>
+          <button title="Voice" style={{ background: 'transparent', border: '1px solid var(--line)', padding: '0 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 10v3" /><path d="M6 6v11" /><path d="M10 3v18" /><path d="M14 8v7" /><path d="M18 5v13" /><path d="M22 10v3" />
+            </svg>
           </button>
         </div>
 
