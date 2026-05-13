@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { chatStream, getSession } from '@/lib/ai';
-import { supabase } from '@/lib/supabase';
+import { supabasePublic as supabase } from '@/lib/supabase';
 
 
 // ---- data.js ----
