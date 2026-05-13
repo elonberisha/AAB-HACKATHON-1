@@ -24,21 +24,24 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+  // /admin/login is public (login page inside admin)
+  if (request.nextUrl.pathname === '/admin/login') {
+    if (user) {
+      return NextResponse.redirect(new URL('/admin', request.url))
     }
+    return response
   }
 
-  // Redirect logged-in users away from login
-  if (request.nextUrl.pathname === '/login' && user) {
-    return NextResponse.redirect(new URL('/admin', request.url))
+  // Protect all other /admin routes
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
   }
 
   return response
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: ['/admin/:path*'],
 }

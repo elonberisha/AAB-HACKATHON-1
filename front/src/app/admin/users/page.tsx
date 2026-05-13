@@ -21,7 +21,10 @@ export default function AdminUsersPage() {
     setUsers(data ?? [])
   }
 
+  const SUPER_ADMIN = 'elonberisha1999@gmail.com'
+
   async function toggleRole(user: Profile) {
+    if (user.email === SUPER_ADMIN) return alert('Admini kryesor nuk mund të ndryshohet.')
     const newRole = user.role === 'admin' ? 'user' : 'admin'
     if (!confirm(`${newRole === 'admin' ? 'Promovo' : 'Ç-promovo'} ${user.email} si ${newRole}?`)) return
     await supabase.from('profiles').update({ role: newRole }).eq('id', user.id)
@@ -53,9 +56,13 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500">{new Date(u.created_at).toLocaleDateString('sq')}</td>
                 <td className="px-4 py-3 text-center">
-                  <button onClick={() => toggleRole(u)} className={`text-sm ${u.role === 'admin' ? 'text-orange-600' : 'text-blue-600'} hover:underline`}>
-                    {u.role === 'admin' ? 'Ç-promovo' : 'Promovo admin'}
-                  </button>
+                  {u.email === SUPER_ADMIN ? (
+                    <span className="text-xs text-gray-400">Admin kryesor</span>
+                  ) : (
+                    <button onClick={() => toggleRole(u)} className={`text-sm ${u.role === 'admin' ? 'text-orange-600' : 'text-blue-600'} hover:underline`}>
+                      {u.role === 'admin' ? 'Ç-promovo' : 'Promovo admin'}
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
