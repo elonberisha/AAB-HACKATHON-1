@@ -5,7 +5,25 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request: { headers: request.headers } })
   const hostname = request.headers.get('host') || ''
   const isAdminSubdomain = hostname.startsWith('admin.')
+  const path = request.nextUrl.pathname
 
+  // If on admin subdomain, rewrite all paths to /admin/...
+  if (isAdminSubdomain) {
+    // Don't rewrite if already going to /admin
+    if (!path.startsWith('/admin') && !path.startsWith('/_next') && !path.startsWith('/api') && path !== '/favicon.ico') {
+      const adminPath = path === '/' ? '/admin' : `/admin${path}`
+      const url = request.nextUrl.clone()
+      url.pathname = adminPath
+      return NextResponse.rewrite(url)
+    }
+  }
+
+  // Skip non-admin routes
+  if (!path.startsWith('/admin')) {
+    return response
+  }
+
+  // Create supabase client for auth check
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -26,55 +44,26 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Subdomain admin.euguide-ks.info → rewrite to /admin routes
-  if (isAdminSubdomain) {
-    const path = request.nextUrl.pathname
-
-    // admin.euguide-ks.info/login → /admin/login
-    if (path === '/login' || path === '/') {
-      if (user && path !== '/login') {
-        // Logged in, redirect to admin dashboard
-        return NextResponse.rewrite(new URL('/admin', request.url))
-      }
-      if (!user && path !== '/login') {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
-      if (path === '/login') {
-        if (user) {
-          return NextResponse.redirect(new URL('/', request.url))
-        }
-        return NextResponse.rewrite(new URL('/admin/login', request.url))
-      }
-    }
-
-    // All other paths on subdomain → rewrite to /admin/...
-    if (!path.startsWith('/admin')) {
-      const newUrl = new URL(`/admin${path}`, request.url)
-      if (!user && path !== '/login') {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
-      return NextResponse.rewrite(newUrl)
-    }
-  }
-
-  // /admin/login is public (login page inside admin)
-  if (request.nextUrl.pathname === '/admin/login') {
+  // /admin/login is public
+  if (path === '/admin/login') {
     if (user) {
-      return NextResponse.redirect(new URL('/admin', request.url))
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin'
+      return NextResponse.redirect(url)
     }
     return response
   }
 
-  // Protect all other /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/admin/login', request.url))
-    }
+  // All other /admin routes require auth
+  if (!user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/login'
+    return NextResponse.redirect(url)
   }
 
   return response
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login', '/((?!_next|api|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }
