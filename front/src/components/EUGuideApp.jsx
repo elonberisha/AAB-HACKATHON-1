@@ -2091,6 +2091,60 @@ function ChatWidget({ lang, t, open, setOpen }) {
     }
   };
 
+  // Chat history sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // Load chat history from Supabase when sidebar opens
+  useEffect(() => {
+    if (!sidebarOpen || !user) return;
+    setLoadingHistory(true);
+    supabase
+      .from('sessions')
+      .select('id, title, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(30)
+      .then(({ data }) => {
+        setChatHistory(data || []);
+        setLoadingHistory(false);
+      })
+      .catch(() => setLoadingHistory(false));
+  }, [sidebarOpen, user]);
+
+  // Load a past session
+  const loadSession = async (sessionId) => {
+    try {
+      const { data } = await supabase
+        .from('sessions')
+        .select('messages')
+        .eq('id', sessionId)
+        .single();
+      if (data?.messages) {
+        const parsed = typeof data.messages === 'string' ? JSON.parse(data.messages) : data.messages;
+        setMsgs(parsed.map(m => ({ role: m.role, text: m.content || m.text || '' })));
+        // Set session ID so new messages continue in same session
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('euguide-session-id', sessionId);
+        }
+      }
+      setSidebarOpen(false);
+    } catch {}
+  };
+
+  // New chat
+  const newChat = () => {
+    setMsgs([{ role: 'assistant', text: t.chat.greeting }]);
+    if (typeof window !== 'undefined') {
+      const next = crypto.randomUUID();
+      window.localStorage.setItem('euguide-session-id', next);
+    }
+    setSidebarOpen(false);
+  };
+
+  const drawerWidth = sidebarOpen && user ? 'min(640px, calc(100vw - 32px))' : 'min(420px, calc(100vw - 32px))';
+
   return (
     <>
       {/* Floating button */}
@@ -2115,118 +2169,221 @@ function ChatWidget({ lang, t, open, setOpen }) {
       {/* Drawer */}
       <div className="chat-drawer" style={{
         position: 'fixed', bottom: 24, right: 24, zIndex: 60,
-        width: 'min(420px, calc(100vw - 32px))',
+        width: drawerWidth,
         height: 'min(640px, calc(100vh - 64px))',
         background: 'var(--paper)',
         border: '1px solid var(--ink)',
         boxShadow: '0 16px 40px rgba(14,27,44,0.25)',
-        display: 'flex', flexDirection: 'column',
+        display: 'flex', flexDirection: 'row',
         transform: open ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
         opacity: open ? 1 : 0,
         pointerEvents: open ? 'auto' : 'none',
         transition: 'all 240ms cubic-bezier(.2,.7,.2,1)',
         transformOrigin: 'bottom right',
+        overflow: 'hidden',
       }}>
-        {/* Header */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--ink)', color: 'var(--paper)' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--sage)' }} />
-              <span className="serif" style={{ fontSize: 22 }}>{t.chat.title}</span>
-              <span className="mono" style={{ fontSize: 10, color: 'rgba(242,239,232,0.5)', marginLeft: 6 }}>· {lang.toUpperCase()}</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(242,239,232,0.6)', marginTop: 2 }}>{t.chat.sub}</div>
-          </div>
-          <button onClick={() => setOpen(false)} style={{ background: 'transparent', border: '1px solid rgba(242,239,232,0.3)', color: 'var(--paper)', width: 28, height: 28, fontSize: 14, lineHeight: 1 }}>×</button>
-        </div>
 
-        {/* Messages */}
-        <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {msgs.map((m, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-              <div style={{
-                maxWidth: '82%',
-                background: m.role === 'user' ? 'var(--ink)' : 'var(--paper-2)',
-                color: m.role === 'user' ? 'var(--paper)' : 'var(--ink)',
-                padding: '12px 14px',
-                fontSize: 14, lineHeight: 1.5,
-                border: m.role === 'user' ? 'none' : '1px solid var(--line)',
-              }}>
-                {m.text}
-              </div>
+        {/* ---- History Sidebar ---- */}
+        {user && sidebarOpen && (
+          <div style={{
+            width: 220, minWidth: 220,
+            background: 'var(--ink)',
+            borderRight: '1px solid rgba(242,239,232,0.1)',
+            display: 'flex', flexDirection: 'column',
+            animation: 'sidebarSlideIn 200ms ease',
+          }}>
+            {/* Sidebar header */}
+            <div style={{ padding: '14px 14px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="mono" style={{ fontSize: 10, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Bisedat</span>
+              <button onClick={() => setSidebarOpen(false)} style={{ background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.4)', cursor: 'pointer', fontSize: 16, padding: '0 4px', lineHeight: 1 }}>×</button>
             </div>
-          ))}
-          {typing && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-              <div style={{ background: 'var(--paper-2)', padding: '12px 14px', border: '1px solid var(--line)', display: 'flex', gap: 4 }}>
-                <Dot d={0} /><Dot d={150} /><Dot d={300} />
-              </div>
-            </div>
-          )}
-        </div>
 
-        {/* Sample chips */}
-        {msgs.length <= 1 && (
-          <div style={{ padding: '0 20px 14px', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {t.chat.sample.map(s => (
-              <button key={s} onClick={() => send(s)} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '6px 10px', fontSize: 12, color: 'var(--ink-2)', cursor: 'pointer' }}>
-                {s}
-              </button>
-            ))}
+            {/* New chat button */}
+            <button onClick={newChat} style={{
+              margin: '0 10px 8px', padding: '8px 12px',
+              background: 'rgba(242,239,232,0.08)',
+              border: '1px solid rgba(242,239,232,0.12)',
+              color: 'var(--paper)', fontSize: 12,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+              transition: 'background 150ms',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(242,239,232,0.14)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(242,239,232,0.08)'}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Bisede e re
+            </button>
+
+            {/* History list */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px' }}>
+              {loadingHistory ? (
+                <div style={{ padding: 16, textAlign: 'center' }}>
+                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.3)' }}>Duke ngarkuar...</span>
+                </div>
+              ) : chatHistory.length === 0 ? (
+                <div style={{ padding: 16, textAlign: 'center' }}>
+                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.3)' }}>Asnje bisede e ruajtur</span>
+                </div>
+              ) : chatHistory.map(session => (
+                <button key={session.id} onClick={() => loadSession(session.id)} style={{
+                  width: '100%', padding: '10px 10px',
+                  background: 'transparent', border: 'none',
+                  color: 'rgba(242,239,232,0.7)', fontSize: 12,
+                  cursor: 'pointer', textAlign: 'left',
+                  display: 'block', transition: 'background 150ms',
+                  borderBottom: '1px solid rgba(242,239,232,0.05)',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(242,239,232,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>
+                    {session.title || 'Bisede pa titull'}
+                  </div>
+                  <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.3)' }}>
+                    {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* User info at bottom */}
+            <div style={{ padding: '10px 14px', borderTop: '1px solid rgba(242,239,232,0.08)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              {user.user_metadata?.avatar_url && (
+                <img src={user.user_metadata.avatar_url} alt="" style={{ width: 16, height: 16, borderRadius: '50%' }} />
+              )}
+              <span className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user.user_metadata?.full_name || user.email}
+              </span>
+            </div>
           </div>
         )}
 
-        {/* Input */}
-        <div className="chat-input-row" style={{ padding: 14, borderTop: '1px solid var(--line)', display: 'flex', gap: 8 }}>
-          <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-            placeholder={t.chat.placeholder}
-            style={{ flex: 1, border: '1px solid var(--line)', padding: '10px 12px', background: 'var(--paper)', fontSize: 14, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none' }} />
-          <button onClick={() => send()} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '0 16px', fontSize: 13 }}>{t.chat.send}</button>
-          <button title="Voice" onClick={startVoice} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '0 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 10v3" /><path d="M6 6v11" /><path d="M10 3v18" /><path d="M14 8v7" /><path d="M18 5v13" /><path d="M22 10v3" />
-            </svg>
-          </button>
-        </div>
+        {/* ---- Main Chat Area ---- */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0 }}>
+          {/* Header */}
+          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--ink)', color: 'var(--paper)', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+              {/* Sidebar toggle (only for logged-in users) */}
+              {user && (
+                <button onClick={() => setSidebarOpen(v => !v)} title="Bisedat" style={{
+                  background: sidebarOpen ? 'rgba(242,239,232,0.12)' : 'transparent',
+                  border: 'none', color: 'var(--paper)',
+                  width: 28, height: 28, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 4, transition: 'background 150ms',
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <path d="M3 4h18M3 12h18M3 20h18"/>
+                  </svg>
+                </button>
+              )}
+              <div style={{ minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--sage)', flexShrink: 0 }} />
+                  <span className="serif" style={{ fontSize: 20 }}>{t.chat.title}</span>
+                  <span className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.5)' }}>· {lang.toUpperCase()}</span>
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.5)', marginTop: 1 }}>{t.chat.sub}</div>
+              </div>
+            </div>
+            <button onClick={() => setOpen(false)} style={{ background: 'transparent', border: '1px solid rgba(242,239,232,0.3)', color: 'var(--paper)', width: 26, height: 26, fontSize: 13, lineHeight: 1, flexShrink: 0, cursor: 'pointer' }}>×</button>
+          </div>
 
-        {/* Auth hint */}
-        <div className="chat-auth-row" style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
-          {user ? (
-            <>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                {user.user_metadata?.avatar_url && (
-                  <img src={user.user_metadata.avatar_url} alt="" style={{ width: 18, height: 18, borderRadius: '50%' }} />
-                )}
-                <span className="mono" style={{ fontSize: 10, color: 'var(--ink-2)' }}>{user.user_metadata?.full_name || user.email}</span>
-              </span>
-              <button onClick={handleLogout} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '4px 10px', fontSize: 10, color: 'var(--ink-3)', cursor: 'pointer' }}>
-                Dil
-              </button>
-            </>
-          ) : (
-            <>
-              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.chat.auth}</span>
-              <button onClick={handleGoogleLogin} style={{ background: 'transparent', border: '1px solid var(--ink-2)', padding: '4px 10px', fontSize: 11, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Google
-              </button>
-            </>
+          {/* Messages */}
+          <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {msgs.map((m, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                <div style={{
+                  maxWidth: '82%',
+                  background: m.role === 'user' ? 'var(--ink)' : 'var(--paper-2)',
+                  color: m.role === 'user' ? 'var(--paper)' : 'var(--ink)',
+                  padding: '11px 13px',
+                  fontSize: 13, lineHeight: 1.5,
+                  border: m.role === 'user' ? 'none' : '1px solid var(--line)',
+                }}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+            {typing && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{ background: 'var(--paper-2)', padding: '11px 13px', border: '1px solid var(--line)', display: 'flex', gap: 4 }}>
+                  <Dot d={0} /><Dot d={150} /><Dot d={300} />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sample chips */}
+          {msgs.length <= 1 && !voiceActive && (
+            <div style={{ padding: '0 18px 12px', display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+              {t.chat.sample.map(s => (
+                <button key={s} onClick={() => send(s)} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '5px 9px', fontSize: 11, color: 'var(--ink-2)', cursor: 'pointer' }}>
+                  {s}
+                </button>
+              ))}
+            </div>
           )}
+
+          {/* Input */}
+          <div className="chat-input-row" style={{ padding: 12, borderTop: '1px solid var(--line)', display: 'flex', gap: 6 }}>
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
+              placeholder={t.chat.placeholder}
+              style={{ flex: 1, border: '1px solid var(--line)', padding: '9px 11px', background: 'var(--paper)', fontSize: 13, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none', minWidth: 0 }} />
+            <button onClick={() => send()} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '0 14px', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>{t.chat.send}</button>
+            <button title="Voice" onClick={startVoice} style={{ background: voiceActive ? 'var(--ink)' : 'transparent', border: '1px solid var(--line)', padding: '0 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0, color: voiceActive ? 'var(--paper)' : 'inherit', transition: 'all 150ms' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 10v3" /><path d="M6 6v11" /><path d="M10 3v18" /><path d="M14 8v7" /><path d="M18 5v13" /><path d="M22 10v3" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Auth hint */}
+          <div className="chat-auth-row" style={{ padding: '7px 12px 10px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
+            {user ? (
+              <>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  {user.user_metadata?.avatar_url && (
+                    <img src={user.user_metadata.avatar_url} alt="" style={{ width: 16, height: 16, borderRadius: '50%' }} />
+                  )}
+                  <span className="mono" style={{ fontSize: 10, color: 'var(--ink-2)' }}>{user.user_metadata?.full_name || user.email}</span>
+                </span>
+                <button onClick={handleLogout} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '3px 8px', fontSize: 10, color: 'var(--ink-3)', cursor: 'pointer' }}>
+                  Dil
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.chat.auth}</span>
+                <button onClick={handleGoogleLogin} style={{ background: 'transparent', border: '1px solid var(--ink-2)', padding: '3px 8px', fontSize: 11, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  Google
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Voice overlay — inside chat widget */}
+          <VoiceOverlay
+            active={voiceActive}
+            onClose={stopVoice}
+            status={voiceStatus}
+            volumeLevel={volumeLevel}
+          />
         </div>
       </div>
 
-      {/* Voice overlay — ChatGPT-style */}
-      <VoiceOverlay
-        active={voiceActive}
-        onClose={stopVoice}
-        status={voiceStatus}
-        volumeLevel={volumeLevel}
-      />
+      <style>{`
+        @keyframes sidebarSlideIn {
+          from { width: 0; opacity: 0; }
+          to { width: 220px; opacity: 1; }
+        }
+      `}</style>
     </>
   );
 }
