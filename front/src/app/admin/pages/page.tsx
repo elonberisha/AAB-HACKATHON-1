@@ -478,10 +478,23 @@ export default function AdminPagesPage() {
     setKosovaField(lang, 'hero', hero)
   }
 
+  function setKosovaStringArray(lang: string, field: string, index: number, value: string) {
+    const langCopy = asRecord(kosovaPage[lang])
+    const list = Array.isArray(langCopy[field]) ? [...langCopy[field] as CmsValue[]] : []
+    list[index] = value
+    setKosovaField(lang, field, list)
+  }
+
   function updateKosovaList(lang: string, listKey: string, index: number, field: string, value: CmsValue) {
     const langCopy = asRecord(kosovaPage[lang])
     const list = Array.isArray(langCopy[listKey]) ? langCopy[listKey] as AnyRecord[] : []
     setKosovaField(lang, listKey, list.map((item, i) => i === index ? { ...item, [field]: value } : item))
+  }
+
+  function removeKosovaListItem(lang: string, listKey: string, index: number) {
+    const langCopy = asRecord(kosovaPage[lang])
+    const list = Array.isArray(langCopy[listKey]) ? langCopy[listKey] as AnyRecord[] : []
+    setKosovaField(lang, listKey, list.filter((_, i) => i !== index))
   }
 
   async function upsertCollectionBlock(key: string, title: string, items: AnyRecord[], sortOrder: number) {
@@ -1056,8 +1069,12 @@ export default function AdminPagesPage() {
                 {(['sq', 'en', 'sr'] as const).map(lang => {
                   const copy = asRecord(kosovaPage[lang])
                   const hero = Array.isArray(copy.hero) ? copy.hero : ['', '', '']
+                  const historyTitle = Array.isArray(copy.historyTitle) ? copy.historyTitle : ['', '', '']
                   const timeline = Array.isArray(copy.timeline) ? copy.timeline as AnyRecord[] : []
+                  const woundStats = Array.isArray(copy.woundStats) ? copy.woundStats as CmsValue[][] : []
+                  const facts = Array.isArray(copy.facts) ? copy.facts as CmsValue[][] : []
                   const pillars = Array.isArray(copy.pillars) ? copy.pillars as AnyRecord[] : []
+                  const milestones = Array.isArray(copy.milestones) ? copy.milestones as CmsValue[][] : []
                   return (
                     <div key={lang} className="space-y-3">
                       <h4 className="text-xs font-semibold uppercase text-gray-400">{lang}</h4>
@@ -1067,13 +1084,45 @@ export default function AdminPagesPage() {
                       <Field label="Hero line 3" value={hero[2]} onChange={v => setKosovaHeroLine(lang, 2, v)} />
                       <TextArea label="Hero subtitle" value={copy.heroSub} onChange={v => setKosovaField(lang, 'heroSub', v)} />
                       <Field label="History label" value={copy.historyLabel} onChange={v => setKosovaField(lang, 'historyLabel', v)} />
+                      <Field label="History title line 1" value={historyTitle[0]} onChange={v => setKosovaStringArray(lang, 'historyTitle', 0, v)} />
+                      <Field label="History title line 2" value={historyTitle[1]} onChange={v => setKosovaStringArray(lang, 'historyTitle', 1, v)} />
+                      <Field label="History title line 3" value={historyTitle[2]} onChange={v => setKosovaStringArray(lang, 'historyTitle', 2, v)} />
                       <TextArea label="History P1" value={copy.historyP1} onChange={v => setKosovaField(lang, 'historyP1', v)} />
                       <TextArea label="History P2" value={copy.historyP2} onChange={v => setKosovaField(lang, 'historyP2', v)} />
                       <TextArea label="Quote" value={copy.quote} onChange={v => setKosovaField(lang, 'quote', v)} />
                       <Field label="Quote by" value={copy.quoteBy} onChange={v => setKosovaField(lang, 'quoteBy', v)} />
+                      <Field label="Rebuild label" value={copy.rebuildLabel} onChange={v => setKosovaField(lang, 'rebuildLabel', v)} />
+                      <Field label="Rebuild title A" value={copy.rebuildTitleA} onChange={v => setKosovaField(lang, 'rebuildTitleA', v)} />
+                      <Field label="Rebuild title B" value={copy.rebuildTitleB} onChange={v => setKosovaField(lang, 'rebuildTitleB', v)} />
+                      <Field label="People label" value={copy.peopleLabel} onChange={v => setKosovaField(lang, 'peopleLabel', v)} />
+                      <TextArea label="People title" value={copy.peopleTitle} onChange={v => setKosovaField(lang, 'peopleTitle', v)} />
                       <TextArea label="People text" value={copy.peopleText} onChange={v => setKosovaField(lang, 'peopleText', v)} />
+                      <Field label="Values label" value={copy.valuesLabel} onChange={v => setKosovaField(lang, 'valuesLabel', v)} />
+                      <TextArea label="Values title" value={copy.valuesTitle} onChange={v => setKosovaField(lang, 'valuesTitle', v)} />
+                      <Field label="Land label" value={copy.landLabel} onChange={v => setKosovaField(lang, 'landLabel', v)} />
+                      <TextArea label="Land quote" value={copy.landQuote} onChange={v => setKosovaField(lang, 'landQuote', v)} />
+                      <Field label="EU label" value={copy.euLabel} onChange={v => setKosovaField(lang, 'euLabel', v)} />
+                      <TextArea label="EU title" value={copy.euTitle} onChange={v => setKosovaField(lang, 'euTitle', v)} />
                       <TextArea label="EU text" value={copy.euText} onChange={v => setKosovaField(lang, 'euText', v)} />
+                      <TextArea label="EU quote" value={copy.euQuote} onChange={v => setKosovaField(lang, 'euQuote', v)} />
+                      <Field label="Voices" value={copy.voices} onChange={v => setKosovaField(lang, 'voices', v)} />
+                      <Field label="Final label" value={copy.finalLabel} onChange={v => setKosovaField(lang, 'finalLabel', v)} />
+                      <TextArea label="Final title" value={copy.finalTitle} onChange={v => setKosovaField(lang, 'finalTitle', v)} />
                       <Field label="CTA" value={copy.cta} onChange={v => setKosovaField(lang, 'cta', v)} />
+                      <KosovaPairList
+                        title="Wound stats"
+                        rows={woundStats}
+                        onAdd={() => setKosovaField(lang, 'woundStats', [...woundStats, ['', '']])}
+                        onDelete={i => setKosovaField(lang, 'woundStats', woundStats.filter((_, idx) => idx !== i))}
+                        onChange={(i, col, value) => setKosovaField(lang, 'woundStats', woundStats.map((row, idx) => idx === i ? row.map((cell, cellIdx) => cellIdx === col ? value : cell) : row))}
+                      />
+                      <KosovaPairList
+                        title="Facts"
+                        rows={facts}
+                        onAdd={() => setKosovaField(lang, 'facts', [...facts, ['', '']])}
+                        onDelete={i => setKosovaField(lang, 'facts', facts.filter((_, idx) => idx !== i))}
+                        onChange={(i, col, value) => setKosovaField(lang, 'facts', facts.map((row, idx) => idx === i ? row.map((cell, cellIdx) => cellIdx === col ? value : cell) : row))}
+                      />
                       <div className="border rounded-lg p-3 space-y-2">
                         <div className="flex items-center justify-between">
                           <h5 className="text-xs font-semibold uppercase text-gray-400">Timeline</h5>
@@ -1083,6 +1132,7 @@ export default function AdminPagesPage() {
                           <div key={i} className="grid grid-cols-3 gap-2">
                             <Field label="Year" value={row.year} onChange={v => updateKosovaList(lang, 'timeline', i, 'year', v)} />
                             <div className="col-span-2"><Field label="Text" value={row.text} onChange={v => updateKosovaList(lang, 'timeline', i, 'text', v)} /></div>
+                            <button onClick={() => removeKosovaListItem(lang, 'timeline', i)} className="col-span-3 text-xs text-red-600 text-left">Fshi</button>
                           </div>
                         ))}
                       </div>
@@ -1096,9 +1146,17 @@ export default function AdminPagesPage() {
                             <Field label="Icon" value={row.icon} onChange={v => updateKosovaList(lang, 'pillars', i, 'icon', v)} />
                             <Field label="Title" value={row.title} onChange={v => updateKosovaList(lang, 'pillars', i, 'title', v)} />
                             <TextArea label="Text" value={row.text} onChange={v => updateKosovaList(lang, 'pillars', i, 'text', v)} />
+                            <button onClick={() => removeKosovaListItem(lang, 'pillars', i)} className="text-xs text-red-600 text-left">Fshi</button>
                           </div>
                         ))}
                       </div>
+                      <KosovaPairList
+                        title="Milestones"
+                        rows={milestones}
+                        onAdd={() => setKosovaField(lang, 'milestones', [...milestones, ['', '']])}
+                        onDelete={i => setKosovaField(lang, 'milestones', milestones.filter((_, idx) => idx !== i))}
+                        onChange={(i, col, value) => setKosovaField(lang, 'milestones', milestones.map((row, idx) => idx === i ? row.map((cell, cellIdx) => cellIdx === col ? value : cell) : row))}
+                      />
                     </div>
                   )
                 })}
@@ -1310,6 +1368,37 @@ function MultiLangCardsEditor({
         ))}
       </div>
     </section>
+  )
+}
+
+function KosovaPairList({
+  title,
+  rows,
+  onAdd,
+  onDelete,
+  onChange,
+}: {
+  title: string
+  rows: CmsValue[][]
+  onAdd: () => void
+  onDelete: (index: number) => void
+  onChange: (index: number, column: number, value: string) => void
+}) {
+  return (
+    <div className="border rounded-lg p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <h5 className="text-xs font-semibold uppercase text-gray-400">{title}</h5>
+        <button onClick={onAdd} className="text-xs text-blue-600">+ Shto</button>
+      </div>
+      {rows.map((row, i) => (
+        <div key={i} className="grid grid-cols-5 gap-2">
+          <div className="col-span-2"><Field label="Vlera" value={row[0]} onChange={v => onChange(i, 0, v)} /></div>
+          <div className="col-span-2"><Field label="Teksti" value={row[1]} onChange={v => onChange(i, 1, v)} /></div>
+          <button onClick={() => onDelete(i)} className="self-end text-xs text-red-600">Fshi</button>
+        </div>
+      ))}
+      {rows.length === 0 && <p className="text-xs text-gray-400">Nuk ka rreshta.</p>}
+    </div>
   )
 }
 
