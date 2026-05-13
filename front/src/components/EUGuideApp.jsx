@@ -3806,6 +3806,329 @@ function ReformaSourcesSection({ lang }) {
   );
 }
 
+// ============================================================
+// Korrupsioni — Checklist i provave
+// ============================================================
+const KORRUPSION_EVIDENCE = [
+  { k: '01', h_sq: 'Datë dhe orë', h_en: 'Date and time', h_sr: 'Datum i vreme',
+    p_sq: 'Shëno datën, orën dhe kohëzgjatjen e takimit ose ngjarjes.',
+    p_en: 'Note the date, time and duration of the meeting or event.',
+    p_sr: 'Zabeležite datum, vreme i trajanje sastanka ili događaja.' },
+  { k: '02', h_sq: 'Vendi', h_en: 'Place', h_sr: 'Mesto',
+    p_sq: 'Adresa, zyra, kati, sportel — sa më e saktë.',
+    p_en: 'Address, office, floor, counter — as precise as possible.',
+    p_sr: 'Adresa, kancelarija, sprat, šalter — što preciznije.' },
+  { k: '03', h_sq: 'Institucioni', h_en: 'Institution', h_sr: 'Institucija',
+    p_sq: 'Emri i institucionit, departamenti dhe njësia konkrete.',
+    p_en: 'Institution name, department and specific unit.',
+    p_sr: 'Naziv institucije, departman i konkretna jedinica.' },
+  { k: '04', h_sq: 'Personat e përfshirë', h_en: 'People involved', h_sr: 'Osobe',
+    p_sq: 'Emër, mbiemër, pozicion ose, nëse mungojnë, përshkrim fizik.',
+    p_en: 'Name, surname, position, or physical description if unknown.',
+    p_sr: 'Ime, prezime, pozicija ili fizički opis ako nisu poznati.' },
+  { k: '05', h_sq: 'Dokumentet', h_en: 'Documents', h_sr: 'Dokumenti',
+    p_sq: 'Çdo letër, formular, faturë apo vërtetim që ke marrë ose që të është treguar.',
+    p_en: 'Any letter, form, invoice or certificate received or shown.',
+    p_sr: 'Svako pismo, formular, račun ili potvrda koja je primljena ili prikazana.' },
+  { k: '06', h_sq: 'Foto dhe ekrane', h_en: 'Photos / screens', h_sr: 'Fotografije / ekrani',
+    p_sq: 'Foto të dokumenteve, ekraneve dhe vendit; ruaj origjinalet.',
+    p_en: 'Photos of documents, screens and the place; keep originals.',
+    p_sr: 'Fotografije dokumenata, ekrana i mesta; sačuvajte originale.' },
+  { k: '07', h_sq: 'Mesazhet', h_en: 'Messages', h_sr: 'Poruke',
+    p_sq: 'SMS, WhatsApp, email, thirrje — eksporto dhe ruaj me datën origjinale.',
+    p_en: 'SMS, WhatsApp, email, calls — export and keep with original timestamps.',
+    p_sr: 'SMS, WhatsApp, email, pozivi — izvezite i sačuvajte sa originalnim datumom.' },
+  { k: '08', h_sq: 'Dëshmitarët', h_en: 'Witnesses', h_sr: 'Svedoci',
+    p_sq: 'Kush ishte i pranishëm; emër dhe kontakt nëse pranojnë.',
+    p_en: 'Who was present; name and contact if they agree.',
+    p_sr: 'Ko je bio prisutan; ime i kontakt ako se slože.' },
+  { k: '09', h_sq: 'Çfarë u kërkua', h_en: 'What was requested', h_sr: 'Šta je traženo',
+    p_sq: 'Çfarë "shërbimi" po kërkoje dhe çfarë u kërkua ose u premtua në shkëmbim.',
+    p_en: 'What "service" you were asking for and what was requested or promised in return.',
+    p_sr: 'Koju "uslugu" ste tražili i šta je traženo ili obećano u zamenu.' },
+];
+
+function KorrupsionEvidenceSection({ lang }) {
+  const data = KORRUPSION_EVIDENCE;
+  const copy = {
+    sq: {
+      eyebrow: 'Checklist i provave',
+      title: 'Çfarë të ruash para se të raportosh',
+      sub: 'Korrupsioni hetohet vetëm me prova të dokumentuara. Para se të shkosh në një institucion, mblidh këto nëntë gjëra. Asnjë nuk është detyrimisht e nevojshme veçmas, por sa më shumë të kesh, aq më e besueshme është dëshmia.',
+      note: 'Mos krijo prova të rreme. Mos rrezikon sigurinë tënde — nëse ndjehesh i kërcënuar, raporto fillimisht në polici.',
+    },
+    en: {
+      eyebrow: 'Evidence checklist',
+      title: 'What to keep before you report',
+      sub: 'Corruption is only investigated with documented evidence. Before going to an institution, collect these nine items. None is strictly required on its own, but the more you have, the stronger the case.',
+      note: 'Do not fabricate evidence. Do not risk your safety — if you feel threatened, report to the police first.',
+    },
+    sr: {
+      eyebrow: 'Lista dokaza',
+      title: 'Šta sačuvati pre prijave',
+      sub: 'Korupcija se istražuje samo sa dokumentovanim dokazima. Pre nego što odete u instituciju, prikupite ovih devet stavki. Nijedna nije obavezna sama po sebi, ali što više imate, jači je predmet.',
+      note: 'Ne falsifikujte dokaze. Ne ugrožavajte svoju bezbednost — ako se osećate ugroženo, prvo prijavite policiji.',
+    },
+  }[lang] || null;
+  const c = copy || {};
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container">
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="03" />
+        <div className="korr-evidence-grid" style={{
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1,
+          background: 'var(--line)', border: '1px solid var(--line)',
+        }}>
+          {data.map((it, i) => (
+            <article key={it.k} style={{ background: 'var(--paper-2)', padding: '24px 22px', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+              <span className="serif" style={{ fontSize: 38, color: 'oklch(58% 0.14 82)', lineHeight: 0.9, marginBottom: 14 }}>{it.k}</span>
+              <h4 className="serif" style={{ fontSize: 22, lineHeight: 1.12, color: 'var(--ink)', marginBottom: 10 }}>{it['h_' + lang] || it.h_sq}</h4>
+              <p style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)', margin: 0 }}>{it['p_' + lang] || it.p_sq}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mono" style={{ marginTop: 18, fontSize: 11, color: 'var(--rust)', letterSpacing: '0.05em' }}>
+          ⚠ {c.note}
+        </p>
+      </div>
+      <style>{`
+        @media (max-width: 980px) { .korr-evidence-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 560px) { .korr-evidence-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+// ============================================================
+// Korrupsioni — Kanalet e raportimit (institucione reale)
+// ============================================================
+const KORRUPSION_CHANNELS = [
+  {
+    key: 'akk', short: 'AKK',
+    name_sq: 'Agjencia kundër Korrupsionit',
+    name_en: 'Anti-Corruption Agency',
+    name_sr: 'Antikorupcijska agencija',
+    role_sq: 'Parandalim, monitorim i deklarimit të pasurisë, konflikt interesi dhe pranim i kallëzimeve.',
+    role_en: 'Prevention, asset-declaration monitoring, conflict of interest and complaint intake.',
+    role_sr: 'Prevencija, praćenje prijave imovine, sukob interesa i prijem prijava.',
+    contact: 'akk-ks.org · 038 511 467',
+    anon_sq: 'Pranon kallëzime anonime',
+    anon_en: 'Accepts anonymous complaints',
+    anon_sr: 'Prima anonimne prijave',
+  },
+  {
+    key: 'psrk', short: 'PSRK',
+    name_sq: 'Prokuroria Speciale',
+    name_en: 'Special Prosecution',
+    name_sr: 'Specijalno tužilaštvo',
+    role_sq: 'Hetim i korrupsionit në nivel të lartë, krimit të organizuar dhe pastrimit të parave.',
+    role_en: 'High-level corruption, organised crime and money-laundering investigations.',
+    role_sr: 'Istrage korupcije na visokom nivou, organizovanog kriminala i pranja novca.',
+    contact: 'prokuroria-rks.org',
+    anon_sq: 'Identifikimi opsional',
+    anon_en: 'Identification optional',
+    anon_sr: 'Identifikacija opciona',
+  },
+  {
+    key: 'police', short: 'PK',
+    name_sq: 'Policia e Kosovës',
+    name_en: 'Kosovo Police',
+    name_sr: 'Kosovska policija',
+    role_sq: 'Hetim i krimit ekonomik, ryshfetit dhe abuzimeve me detyrën zyrtare në bashkëpunim me Prokurorinë.',
+    role_en: 'Economic crime, bribery and abuse-of-office investigations, alongside Prosecution.',
+    role_sr: 'Istrage ekonomskog kriminala, mita i zloupotrebe službene dužnosti, uz Tužilaštvo.',
+    contact: 'kosovopolice.com · 192 · 0800 80 800',
+    anon_sq: 'Linjë e gjelbër anonime',
+    anon_en: 'Anonymous tip line',
+    anon_sr: 'Anonimna linija prijave',
+  },
+  {
+    key: 'ombud', short: 'IAP',
+    name_sq: 'Avokati i Popullit',
+    name_en: 'Ombudsperson Institution',
+    name_sr: 'Institucija ombudsmana',
+    role_sq: 'Mbron qytetarët nga keqpërdorimi i pushtetit ose mosveprimi i administratës publike.',
+    role_en: 'Protects citizens from abuse of power or administrative inaction.',
+    role_sr: 'Štiti građane od zloupotrebe vlasti ili neaktivnosti uprave.',
+    contact: 'oik-rks.org · 038 223 782',
+    anon_sq: 'Identifikimi nuk është i detyrueshëm',
+    anon_en: 'Identification not required',
+    anon_sr: 'Identifikacija nije obavezna',
+  },
+  {
+    key: 'alac', short: 'ALAC',
+    name_sq: 'ALAC · KDI / Lëvizja FOL',
+    name_en: 'ALAC · KDI / FOL Movement',
+    name_sr: 'ALAC · KDI / Pokret FOL',
+    role_sq: 'Qendra për këshillim juridik falas të sigurt nga shoqëria civile; orientim para raportimit zyrtar.',
+    role_en: 'Civil-society safe legal-advice centre; orientation before formal reporting.',
+    role_sr: 'Centar za bezbedan pravni savet civilnog društva; orijentacija pre zvanične prijave.',
+    contact: 'kdi-kosova.org',
+    anon_sq: 'Konsultim plotësisht anonim',
+    anon_en: 'Fully anonymous consultation',
+    anon_sr: 'Potpuno anonimna konsultacija',
+  },
+  {
+    key: 'whistle', short: '06/L-085',
+    name_sq: 'Mbrojtja e sinjalizuesve',
+    name_en: 'Whistleblower protection',
+    name_sr: 'Zaštita zviždača',
+    role_sq: 'Ligji Nr. 06/L-085 garanton anonimat, mbrojtje juridike e profesionale dhe ndalim të hakmarrjes.',
+    role_en: 'Law No. 06/L-085 guarantees anonymity, legal and professional protection, and a ban on retaliation.',
+    role_sr: 'Zakon br. 06/L-085 garantuje anonimnost, pravnu i profesionalnu zaštitu i zabranu odmazde.',
+    contact: 'gzk.rks-gov.net · Ligji Nr. 06/L-085',
+    anon_sq: 'Mbron çdo punonjës që raporton në mirëbesim',
+    anon_en: 'Covers any employee reporting in good faith',
+    anon_sr: 'Obuhvata svakog zaposlenog koji prijavljuje u dobroj veri',
+  },
+];
+
+function KorrupsionChannelsSection({ lang }) {
+  const data = KORRUPSION_CHANNELS;
+  const copy = {
+    sq: {
+      eyebrow: 'Kanalet e raportimit',
+      title: 'Ku raportohet korrupsioni në Kosovë',
+      sub: 'Pesë institucione zyrtare dhe një ligj që mbron sinjalizuesin. Mund të zgjedhësh më shumë se një kanal — ato shkëmbejnë informacion në rastet me dyshime serioze.',
+    },
+    en: {
+      eyebrow: 'Reporting channels',
+      title: 'Where to report corruption in Kosovo',
+      sub: 'Five official institutions and a law that protects whistleblowers. You can use more than one channel — they share information in serious cases.',
+    },
+    sr: {
+      eyebrow: 'Kanali prijave',
+      title: 'Gde prijaviti korupciju na Kosovu',
+      sub: 'Pet zvaničnih institucija i zakon koji štiti zviždače. Možete koristiti više od jednog kanala — razmenjuju informacije u ozbiljnim slučajevima.',
+    },
+  }[lang] || null;
+  const c = copy || {};
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+      <div className="container">
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="04" />
+        <div className="korr-channels-grid" style={{
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1,
+          background: 'var(--line)', border: '1px solid var(--line)',
+        }}>
+          {data.map((it, i) => (
+            <article key={it.key} style={{ background: 'var(--paper)', padding: '28px 26px', minHeight: 240, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                <span className="serif" style={{ fontSize: 32, color: 'oklch(58% 0.14 82)', lineHeight: 0.9 }}>{it.short}</span>
+                <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>{String(i + 1).padStart(2, '0')} / 0{data.length}</span>
+              </div>
+              <h4 className="serif" style={{ fontSize: 24, lineHeight: 1.15, color: 'var(--ink)', marginBottom: 12 }}>{it['name_' + lang] || it.name_sq}</h4>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ink-2)', margin: 0, flex: 1 }}>{it['role_' + lang] || it.role_sq}</p>
+              <div className="mono" style={{ marginTop: 16, paddingTop: 12, borderTop: '1px dashed var(--line)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
+                {it.contact}
+              </div>
+              <div className="mono" style={{ marginTop: 8, fontSize: 10, letterSpacing: '0.04em', color: 'var(--rust)' }}>
+                ✓ {it['anon_' + lang] || it.anon_sq}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 980px) { .korr-channels-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 560px) { .korr-channels-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+// ============================================================
+// Korrupsioni — Shenjat paralajmëruese (red flags) + burimet
+// ============================================================
+const KORRUPSION_RED_FLAGS = [
+  {
+    cat_sq: 'Prokurimi publik', cat_en: 'Public procurement', cat_sr: 'Javne nabavke',
+    items_sq: ['Tender me afate jorealisht të shkurtra', 'Specifika që përshtaten për një ofertues të vetëm', 'Kontratë e dhënë pa konkurrencë', 'Çmime që devijojnë ndjeshëm nga tregu'],
+    items_en: ['Tenders with unrealistically short deadlines', 'Specs tailored to a single bidder', 'Contracts awarded without competition', 'Prices that deviate significantly from the market'],
+    items_sr: ['Tenderi sa nerealno kratkim rokovima', 'Specifikacije skrojene za jednog ponuđača', 'Ugovori dodeljeni bez konkurencije', 'Cene koje znatno odstupaju od tržišta'],
+  },
+  {
+    cat_sq: 'Punësimi në sektorin publik', cat_en: 'Public-sector hiring', cat_sr: 'Zapošljavanje u javnom sektoru',
+    items_sq: ['Konkurs i shpallur dhe vlerësuar brenda pak ditësh', 'Kërkesa me kritere që përshtatin një kandidat', 'Anëtarë familjeje në komision intervistues', 'Pozicione drejtuese që nuk publikohen'],
+    items_en: ['Vacancies opened and decided within days', 'Criteria tailored to a single candidate', 'Family members on selection panels', 'Leadership posts not publicly announced'],
+    items_sr: ['Konkursi otvoreni i odlučeni za nekoliko dana', 'Kriterijumi skrojeni za jednog kandidata', 'Članovi porodice u komisiji', 'Rukovodeća mesta koja se ne objavljuju'],
+  },
+  {
+    cat_sq: 'Konflikti i interesit', cat_en: 'Conflict of interest', cat_sr: 'Sukob interesa',
+    items_sq: ['Zyrtari miraton kontratë me biznesin e familjes', 'Anëtarë bordi që votojnë për veten', 'Konsulent që rrjedh nga institucioni i kontraktuesit', 'Mungesë e deklarimit në AKK'],
+    items_en: ['Officials approving contracts with family-owned firms', 'Board members voting on their own interests', 'Consultants flowing from contracting institution', 'No declaration filed at AKK'],
+    items_sr: ['Službenici koji odobravaju ugovore sa porodičnim firmama', 'Članovi odbora koji glasaju o sopstvenim interesima', 'Konsultanti iz ugovorne institucije', 'Bez prijave u AKK'],
+  },
+  {
+    cat_sq: 'Pasuria e pajustifikuar', cat_en: 'Unexplained wealth', cat_sr: 'Neobjašnjiva imovina',
+    items_sq: ['Pronë e blerë mbi pagën zyrtare', 'Mospërputhje ndërmjet deklaratës dhe stilit të jetës', 'Para të transferuara në llogari të të afërmve', 'Aktivitete biznesi pa burim të dukshëm'],
+    items_en: ['Property purchased beyond declared salary', 'Lifestyle inconsistent with the declaration', 'Money routed through relatives\' accounts', 'Business activity with no visible source'],
+    items_sr: ['Imovina kupljena iznad prijavljene plate', 'Stil života koji odstupa od prijave', 'Novac usmeravan preko rodbinskih računa', 'Poslovanje bez vidljivog izvora'],
+  },
+];
+
+function KorrupsionRedFlagsSection({ lang }) {
+  const data = KORRUPSION_RED_FLAGS;
+  const copy = {
+    sq: {
+      eyebrow: 'Shenjat paralajmëruese',
+      title: 'Kur diçka nuk shkon — si dukët korrupsioni në praktikë',
+      sub: 'Lista e mëposhtme nuk është dëshmi e fajësisë, por shenja statistikisht të lidhura me skemat e raportuara. Nëse vëren disa prej tyre në të njëjtin rast, ia vlen të raportohet për shqyrtim institucional.',
+      src: 'Burime: GRECO Round V Evaluation Report on Kosovo · Transparency International Kosovo · KDI · Raporti EC Kosovo 2025 (kap. anti-corruption).',
+    },
+    en: {
+      eyebrow: 'Red flags',
+      title: 'When something is off — what corruption looks like in practice',
+      sub: 'The list below is not proof of guilt, but signs statistically associated with reported schemes. If several appear in the same case, it is worth reporting for institutional review.',
+      src: 'Sources: GRECO Round V Evaluation Report on Kosovo · Transparency International Kosovo · KDI · EC Kosovo Report 2025 (anti-corruption chapter).',
+    },
+    sr: {
+      eyebrow: 'Signali rizika',
+      title: 'Kada nešto ne valja — kako korupcija izgleda u praksi',
+      sub: 'Lista ispod nije dokaz krivice, već signali statistički povezani sa prijavljenim šemama. Ako se nekoliko pojavi u istom slučaju, vredi prijaviti radi institucionalnog razmatranja.',
+      src: 'Izvori: GRECO Round V Evaluation Report on Kosovo · Transparency International Kosovo · KDI · EK Izveštaj o Kosovu 2025 (poglavlje antikorupcija).',
+    },
+  }[lang] || null;
+  const c = copy || {};
+  return (
+    <section style={{ padding: '100px 0 120px', borderTop: '1px solid var(--line)', background: 'var(--ink)', color: 'var(--paper)' }}>
+      <div className="container">
+        <div style={{ marginBottom: 56, maxWidth: 880 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
+            <span className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.06em' }}>§ 05</span>
+            <span className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--paper)', borderTop: '1px solid var(--paper)', paddingTop: 6 }}>{c.eyebrow}</span>
+          </div>
+          <h2 className="serif" style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: 1.04, color: 'var(--paper)' }}>{c.title}</h2>
+          <p style={{ fontSize: 17, color: 'rgba(242,239,232,0.7)', maxWidth: 640, marginTop: 18 }}>{c.sub}</p>
+        </div>
+        <div className="korr-redflags-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
+          {data.map((g, gi) => (
+            <div key={gi} style={{ borderTop: '1px solid rgba(242,239,232,0.25)', paddingTop: 22 }}>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(242,239,232,0.75)', marginBottom: 22 }}>
+                <span style={{ color: 'oklch(78% 0.14 82)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {(g['items_' + lang] || g.items_sq).map((item, ii) => (
+                  <li key={ii} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <span className="mono" style={{ fontSize: 11, color: 'oklch(78% 0.14 82)', flexShrink: 0, marginTop: 2 }}>⚠</span>
+                    <span style={{ fontSize: 15, lineHeight: 1.55, color: 'rgba(242,239,232,0.85)' }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mono" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid rgba(242,239,232,0.15)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(242,239,232,0.5)' }}>
+          {c.src}
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 900px) { .korr-redflags-grid { grid-template-columns: 1fr !important; gap: 24px !important; } }
+      `}</style>
+    </section>
+  );
+}
+
 
 // ============================================================
 // Home summary previews (short versions linking to detail pages)
@@ -4723,7 +5046,10 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {topicKey === 'reforma' && <ReformaServicesSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaInstitutionsSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaSourcesSection lang={lang} />}
-      {topicKey !== 'reforma' && <TopicActionSection topicKey={topicKey} lang={lang} />}
+      {topicKey === 'korrupsioni' && <KorrupsionEvidenceSection lang={lang} />}
+      {topicKey === 'korrupsioni' && <KorrupsionChannelsSection lang={lang} />}
+      {topicKey === 'korrupsioni' && <KorrupsionRedFlagsSection lang={lang} />}
+      {topicKey !== 'reforma' && topicKey !== 'korrupsioni' && <TopicActionSection topicKey={topicKey} lang={lang} />}
       <NextTopicNav current={topicKey} lang={lang} t={t} />
     </>
   );
