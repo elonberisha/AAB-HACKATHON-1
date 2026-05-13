@@ -1176,7 +1176,24 @@ function Stat({ big, suffix, label_sq, label_en, label_sr, delta, note_sq, note_
 // Clusters — donut + reform progress bars
 // ============================================================
 function Clusters({ lang, t }) {
-  const data = useCmsArray('clusters', CLUSTERS);
+  const cmsClusters = useCmsArray('clusters', CLUSTERS);
+  const data = cmsClusters.map((row, idx) => {
+    const fallback = CLUSTERS.find(c => String(c.code) === String(row.code)) || CLUSTERS[idx] || {};
+    const definedRow = Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined && value !== null && value !== ''));
+    return {
+      ...fallback,
+      ...definedRow,
+      desc_sq: row.desc_sq || row.description_sq || fallback.desc_sq,
+      desc_en: row.desc_en || row.description_en || fallback.desc_en,
+      desc_sr: row.desc_sr || row.description_sr || fallback.desc_sr,
+      chapters_list_sq: row.chapters_list_sq || fallback.chapters_list_sq,
+      chapters_list_en: row.chapters_list_en || fallback.chapters_list_en,
+      chapters_list_sr: row.chapters_list_sr || fallback.chapters_list_sr,
+      status_sq: row.status_sq || fallback.status_sq,
+      status_en: row.status_en || fallback.status_en,
+      status_sr: row.status_sr || fallback.status_sr,
+    };
+  });
   const total = data.reduce((s, c) => s + c.weight, 0);
   const totalChapters = data.reduce((s, c) => s + c.chapters, 0);
   const R = 110, IR = 70, CX = 150, CY = 150;
