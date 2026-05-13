@@ -49,7 +49,7 @@ const STRINGS = {
     info: { eyebrow: 'Infografika', title: 'Të shpjeguara në një faqe.' },
     cta: { title_a: 'Pyet', title_b: ', dhe asistenti përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.', sub: 'I trajnuar mbi raportet e Komisionit Evropian, ligjet vendore dhe analizat e shoqërisë civile. I përdorshëm me tekst ose me zë.', card_top: 'ASISTENT · SQ/EN/SR', card_action: 'Shkruaj pyetjen', card_hint: '↩ enter për të dërguar' },
     chat: { title: 'Asistent', sub: 'Pyet diçka për reformat ose BE-në', greeting: 'Përshëndetje. Mund të të ndihmoj me reformën në administratë, sundimin e ligjit, luftën kundër korrupsionit dhe procesin e BE-së. Çfarë do të dije?', placeholder: 'Shkruaj pyetjen tënde…', send: 'Dërgo', sample: ['Çfarë është SAA?', 'Si raportohet korrupsioni?', 'Cilat janë kushtet për anëtarësim?'], auth: 'Vazhdo me Google për të ruajtur historinë' },
-    footer: { tagline: 'Burim i pavarur, jo-zyrtar, për qytetarët e Kosovës që duan të kuptojnë procesin evropian.', cols: { temat: 'Temat', burimet: 'Burimet', platforma: 'Platforma' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
+    footer: { tagline: 'Platformë informative dhe edukative për vizualizimin, analizën dhe kuptimin e procesit të integrimit europian të Kosovës.', about: 'euguide-ks është një iniciativë edukative e zhvilluar për të rritur qasjen në të dhëna dhe për të nxitur transparencën në procesin e integrimit europian përmes teknologjisë dhe të dhënave të hapura.', funded: 'Projekti u financua nga:', cols: { temat: 'Temat', burimet: 'Burimet', rreth: 'Rreth projektit' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
     kosova: {
       eyebrow: 'Rreth Kosovës',
       title: 'Republika e Kosovës — fakte, datat, instancat.',
@@ -108,7 +108,7 @@ const STRINGS = {
     info: { eyebrow: 'Infographics', title: 'Explained on a single page.' },
     cta: { title_a: 'Ask', title_b: ', and the assistant answers in Albanian, English or Serbian — with reference to the source document.', sub: 'Trained on EC reports, domestic laws and civil-society analysis. Works with text or voice.', card_top: 'ASSISTANT · SQ/EN/SR', card_action: 'Type your question', card_hint: '↩ enter to send' },
     chat: { title: 'Assistant', sub: 'Ask anything about reforms or the EU', greeting: 'Hello. I can help with public administration reform, rule of law, anti-corruption and the EU process. What would you like to know?', placeholder: 'Type your question…', send: 'Send', sample: ['What is the SAA?', 'How do I report corruption?', 'What are the membership conditions?'], auth: 'Continue with Google to save history' },
-    footer: { tagline: 'An independent, non-official source for citizens of Kosovo who want to understand the European process.', cols: { temat: 'Topics', burimet: 'Sources', platforma: 'Platform' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
+    footer: { tagline: 'An informative and educational platform for visualising, analysing and understanding Kosovo’s European integration process.', about: 'euguide-ks is an educational initiative developed to increase access to data and encourage transparency in the European integration process through technology and open data.', funded: 'Project funded by:', cols: { temat: 'Topics', burimet: 'Sources', rreth: 'About project' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
     kosova: {
       eyebrow: 'About Kosovo',
       title: 'Republic of Kosovo — facts, dates, institutions.',
@@ -167,7 +167,7 @@ const STRINGS = {
     info: { eyebrow: 'Infografike', title: 'Sve na jednoj stranici.' },
     cta: { title_a: 'Pitaj', title_b: ', a asistent odgovara na albanskom, engleskom ili srpskom — sa referencom na izvor.', sub: 'Obučen na izveštajima EK, domaćim zakonima i analizama civilnog društva. Radi sa tekstom ili glasom.', card_top: 'ASISTENT · SQ/EN/SR', card_action: 'Upiši pitanje', card_hint: '↩ enter za slanje' },
     chat: { title: 'Asistent', sub: 'Pitaj bilo šta o reformama ili EU', greeting: 'Zdravo. Mogu vam pomoći sa reformom uprave, vladavinom prava, antikorupcijom i procesom EU. Šta želite da znate?', placeholder: 'Upišite pitanje…', send: 'Pošalji', sample: ['Šta je SSP?', 'Kako se prijavljuje korupcija?', 'Koji su uslovi za članstvo?'], auth: 'Nastavi sa Google nalogom da sačuvaš istoriju' },
-    footer: { tagline: 'Nezavisan, nezvaničan izvor za građane Kosova koji žele da razumeju evropski proces.', cols: { temat: 'Teme', burimet: 'Izvori', platforma: 'Platforma' }, copy: '© 2026 · MIT licencirani otvoreni podaci · Hackathon Edition', built: 'euguide-ks.info · napravljeno za Kosovo · Hackathon Maj 2026' },
+    footer: { tagline: 'Informativna i edukativna platforma za vizualizaciju, analizu i razumevanje procesa evropskih integracija Kosova.', about: 'euguide-ks je edukativna inicijativa razvijena radi povećanja pristupa podacima i podsticanja transparentnosti u procesu evropskih integracija kroz tehnologiju i otvorene podatke.', funded: 'Projekat je finansiran od:', cols: { temat: 'Teme', burimet: 'Izvori', rreth: 'O projektu' }, copy: '© 2026 · MIT licencirani otvoreni podaci · Hackathon Edition', built: 'euguide-ks.info · napravljeno za Kosovo · Hackathon Maj 2026' },
     kosova: {
       eyebrow: 'O Kosovu',
       title: 'Republika Kosovo — činjenice, datumi, institucije.',
@@ -1800,44 +1800,162 @@ function CTABand({ lang, onChat }) {
 // Footer
 // ============================================================
 function Footer({ lang, t }) {
+  const topicItems = [
+    { label: t.nav.reforma, href: '#/reforma' },
+    { label: t.nav.sundimi, href: '#/sundimi' },
+    { label: t.nav.korrupsioni, href: '#/korrupsioni' },
+    { label: t.nav.be, href: '#/be' },
+  ];
+  const resourceItems = [
+    { label: 'Raportet EC', url: 'https://neighbourhood-enlargement.ec.europa.eu/enlargement-policy/strategy-and-reports_en' },
+    { label: 'SAA', url: 'https://mei-ks.net/sq/marreveshja-e-stabilizim-asociimit-msa' },
+    { label: 'TI-CPI', url: 'https://www.transparency.org/en/countries/kosovo' },
+    { label: 'OSBE / OSCE', url: 'https://www.osce.org/mission-in-kosovo' },
+    { label: 'Avokati i Popullit', url: 'https://www.oik-ks.org/' },
+  ];
+
   return (
-    <footer style={{ padding: '80px 0 40px', borderTop: '1px solid var(--line)', background: 'var(--ink)', color: 'var(--paper)' }}>
+    <footer style={{ padding: '58px 0 0', borderTop: '1px solid rgba(242,239,232,0.12)', background: '#071421', color: 'var(--paper)', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr', gap: 48 }} className="foot-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 58, alignItems: 'start' }} className="foot-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
               <Logo />
-              <span className="serif" style={{ fontSize: 26 }}>euguide<span style={{ color: 'rgba(242,239,232,0.4)' }}>-ks</span></span>
+              <span className="serif" style={{ fontSize: 31, color: '#F6F0E6', lineHeight: 1 }}>euguide<span style={{ color: 'rgba(199,173,112,0.72)' }}>-ks</span></span>
             </div>
-            <p style={{ fontSize: 15, color: 'rgba(242,239,232,0.7)', maxWidth: 360, lineHeight: 1.5 }}>{t.footer.tagline}</p>
-            <div className="mono" style={{ fontSize: 11, color: 'rgba(242,239,232,0.4)', marginTop: 24, letterSpacing: '0.1em' }}>
-              © 2026 · MIT-licensed open data · Hackathon Edition
-            </div>
+            <p style={{ fontSize: 14, color: 'rgba(242,239,232,0.62)', maxWidth: 310, lineHeight: 1.75, margin: 0 }}>{t.footer.tagline}</p>
           </div>
-          <FootCol title={t.footer.cols.temat} items={[t.nav.reforma, t.nav.sundimi, t.nav.korrupsioni, t.nav.be]} />
-          <FootCol title={t.footer.cols.burimet} items={['Raportet EC', 'SAA', 'TI-CPI', 'OSBE / OSCE', 'Avokati i Popullit']} />
-          <FootCol title={t.footer.cols.platforma} items={['Infografika', t.nav.faq, 'Objektivat', 'API e hapur', 'GitHub']} />
+          <FootCol title={t.footer.cols.temat} items={topicItems} />
+          <FootCol title={t.footer.cols.burimet} items={resourceItems} />
+          <div>
+            <FooterTitle>{t.footer.cols.rreth}</FooterTitle>
+            <p style={{ fontSize: 14, color: 'rgba(242,239,232,0.62)', lineHeight: 1.75, margin: 0 }}>{t.footer.about}</p>
+          </div>
         </div>
-        <div style={{ marginTop: 64, paddingTop: 28, borderTop: '1px solid rgba(242,239,232,0.15)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }} className="mono">
-          <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.1em' }}>euguide-ks.info · built for Kosovo · Hackathon May 2026</span>
-          <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.1em' }}>★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★</span>
+
+        <div style={{ marginTop: 42 }} className="mono">
+          <span style={{ display: 'block', fontSize: 11, color: 'rgba(242,239,232,0.62)', letterSpacing: '0.08em' }}>
+              {t.footer.copy}
+          </span>
+        </div>
+
+        <div style={{ marginTop: 28, padding: '24px 0 28px', borderTop: '1px solid rgba(242,239,232,0.12)', textAlign: 'center' }}>
+          <div className="mono" style={{ fontSize: 11, color: 'rgba(242,239,232,0.68)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18, fontWeight: 700 }}>
+            {t.footer.funded}
+          </div>
+          <div className="funding-logos" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 34, flexWrap: 'wrap' }}>
+            <FundingLogo type="eu" />
+            <FundingDivider />
+            <FundingLogo type="ko" />
+            <FundingDivider />
+            <FundingLogo type="aab" />
+          </div>
         </div>
       </div>
       <style>{`
-        @media (max-width: 900px) { .foot-grid { grid-template-columns: 1fr 1fr !important; } }
-        @media (max-width: 520px) { .foot-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 900px) {
+          .foot-grid { grid-template-columns: 1fr 1fr !important; gap: 36px !important; }
+          .funding-logos { gap: 22px !important; }
+        }
+        @media (max-width: 620px) {
+          .foot-grid { grid-template-columns: 1fr !important; }
+          .footer-funding-divider { display: none !important; }
+        }
       `}</style>
     </footer>
+  );
+}
+
+function FooterTitle({ children }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.7)', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700 }}>{children}</div>
+      <div style={{ width: 24, height: 1, background: 'rgba(199,173,112,0.78)', marginTop: 10 }} />
+    </div>
   );
 }
 
 function FootCol({ title, items }) {
   return (
     <div>
-      <div className="mono" style={{ fontSize: 10, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.18em', marginBottom: 18, textTransform: 'uppercase' }}>{title}</div>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {items.map(it => <li key={it}><a href="#" style={{ fontSize: 14, color: 'var(--paper)', opacity: 0.85 }}>{it}</a></li>)}
+      <FooterTitle>{title}</FooterTitle>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {items.map((it) => {
+          const item = typeof it === 'string' ? { label: it } : it;
+          const href = item.url || item.href;
+          const isExternal = Boolean(item.url);
+          return (
+            <li key={item.label}>
+              {href ? (
+                <a href={href} target={isExternal ? '_blank' : undefined} rel={isExternal ? 'noreferrer' : undefined} style={{ fontSize: 14, color: 'rgba(242,239,232,0.72)', textDecoration: 'none' }}>{item.label}</a>
+              ) : (
+                <span style={{ fontSize: 14, color: 'rgba(242,239,232,0.72)' }}>{item.label}</span>
+              )}
+            </li>
+          );
+        })}
       </ul>
+    </div>
+  );
+}
+
+function FundingDivider() {
+  return <span className="footer-funding-divider" style={{ width: 1, height: 46, background: 'rgba(242,239,232,0.16)', display: 'inline-block' }} />;
+}
+
+function FundingLogo({ type }) {
+  if (type === 'eu') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 174 }}>
+        <div style={{ width: 64, height: 42, background: '#244C9A', border: '1px solid rgba(242,239,232,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="42" height="30" viewBox="0 0 42 30" fill="none" aria-hidden="true">
+            {Array.from({ length: 12 }).map((_, i) => {
+              const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+              const cx = 21 + 10 * Math.cos(a);
+              const cy = 15 + 10 * Math.sin(a);
+              return <circle key={i} cx={cx} cy={cy} r="1.2" fill="#F4D35E" />;
+            })}
+          </svg>
+        </div>
+        <div style={{ color: 'rgba(242,239,232,0.88)', fontSize: 12, lineHeight: 1.25, textAlign: 'left', fontWeight: 700 }}>
+          Co-funded by<br />the European Union
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'ko') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 188 }}>
+        <svg width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+          <circle cx="21" cy="21" r="18" stroke="rgba(242,239,232,0.92)" strokeWidth="4" />
+          <path d="M5 21H37M21 3C15 8 12 14 12 21C12 28 15 34 21 39M21 3C27 8 30 14 30 21C30 28 27 34 21 39" stroke="rgba(242,239,232,0.92)" strokeWidth="2" />
+        </svg>
+        <div style={{ color: 'rgba(242,239,232,0.92)', textAlign: 'left', lineHeight: 1 }}>
+          <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em' }}>KO-in-EU</div>
+          <div style={{ fontSize: 9, color: 'rgba(242,239,232,0.62)', marginTop: 4 }}>Shaping Kosovo's EU Future</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 260 }}>
+      <svg width="86" height="58" viewBox="0 0 240 164" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+        <path d="M18 105C8 65 23 29 71 0C52 31 39 67 35 99C53 69 82 45 121 31C79 63 46 88 18 105Z" fill="#D43B34" />
+        <path d="M102 3H133V122H102V3Z" fill="#D43B34" />
+        <path d="M139 3H169C188 40 204 78 217 122H187C176 82 160 43 139 3Z" fill="#D43B34" />
+        <path d="M176 4C206 9 230 27 239 57C226 49 209 46 188 51C185 34 181 19 176 4Z" fill="#D43B34" />
+        <path d="M0 144C40 96 99 62 166 43C204 32 234 35 239 52C244 69 221 90 184 105C211 84 206 72 177 70C122 67 53 95 0 144Z" fill="#D43B34" />
+        <path d="M0 124C42 91 94 67 157 52C194 43 225 45 232 59C239 73 220 89 186 101C204 86 199 78 173 78C119 77 50 100 0 124Z" fill="#D43B34" />
+        <text x="32" y="160" fill="#D43B34" fontFamily="Inter, Arial, sans-serif" fontSize="30" fontWeight="900" letterSpacing="1">PRISHTINE</text>
+      </svg>
+      <div style={{ color: 'rgba(242,239,232,0.9)', textAlign: 'left', lineHeight: 1 }}>
+        <div className="serif" style={{ fontSize: 30, color: 'rgba(242,239,232,0.9)', whiteSpace: 'nowrap' }}>Kolegji AAB</div>
+        <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.56)', fontWeight: 800, letterSpacing: '0.08em', marginTop: 8, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+          Cilësi. Lidership. Sukses!
+        </div>
+      </div>
     </div>
   );
 }
