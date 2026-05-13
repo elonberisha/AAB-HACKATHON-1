@@ -3369,49 +3369,48 @@ function PageActionCards({ items }) {
 
 function BEObjectivesEntry({ lang }) {
   const fallback = [{
-    eyebrow_sq: 'Objektivat e anëtarësimit',
+    eyebrow_sq: 'Kushtet për integrimin në BE',
     eyebrow_en: 'Membership objectives',
     eyebrow_sr: 'Ciljevi clanstva',
-    title_sq: 'Objektivat konkrete janë këtu, brenda Integrimit në BE.',
-    title_en: 'The concrete objectives are here, inside EU Integration.',
-    title_sr: 'Konkretni ciljevi su ovde, unutar EU integracija.',
-    body_sq: 'Hape listën e objektivave për të parë kushtet, progresin, kapitujt, burimet zyrtare dhe materialet që lidhen me anëtarësimin.',
-    body_en: 'Open the objectives list to see conditions, progress, chapters, official sources and materials linked to membership.',
-    body_sr: 'Otvori listu ciljeva da vidis uslove, napredak, poglavlja, zvanicne izvore i materijale povezane sa clanstvom.',
-    cta_sq: 'Hap objektivat',
-    cta_en: 'Open objectives',
-    cta_sr: 'Otvori ciljeve',
+    title_sq: 'Shiko listën e objektivave, kapitujve dhe burimeve zyrtare.',
+    title_en: 'See the list of objectives, chapters and official sources.',
+    title_sr: 'Pogledaj listu ciljeva, poglavlja i zvanicnih izvora.',
+    body_sq: 'Të gjitha kushtet dhe objektivat e integrimit janë mbledhur në një pamje të veçantë.',
+    body_en: 'All integration conditions and objectives are collected in one dedicated view.',
+    body_sr: 'Svi uslovi i ciljevi integracija nalaze se u posebnom prikazu.',
+    cta_sq: 'Objektivat e integrimit',
+    cta_en: 'Integration objectives',
+    cta_sr: 'Ciljevi integracija',
     href: '#/objektivat',
     variant: 'dark',
   }];
   const entries = useCmsArray('be_actions', fallback);
   if (!entries.length) return null;
   return (
-    <section style={{ padding: '46px 0 68px', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+    <section style={{ padding: '22px 0 44px', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.25fr', gap: 42, alignItems: 'center', border: '1px solid var(--line)', background: 'var(--paper)', padding: 30 }} className="be-objectives-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 28, alignItems: 'center', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', padding: '24px 0' }} className="be-objectives-grid">
           <div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8 }}>
               {localizedValue(entries[0], 'eyebrow', lang)}
             </div>
-            <h2 className="serif" style={{ fontSize: 'clamp(32px, 4.4vw, 54px)', lineHeight: 1.02, color: 'var(--ink)' }}>
+            <h2 className="serif" style={{ fontSize: 'clamp(24px, 3vw, 34px)', lineHeight: 1.08, color: 'var(--ink)', margin: 0 }}>
               {localizedValue(entries[0], 'title', lang)}
             </h2>
-          </div>
-          <div>
-            <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.65, margin: 0, maxWidth: 720 }}>
+            <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.55, margin: '10px 0 0', maxWidth: 680 }}>
               {localizedValue(entries[0], 'body', lang)}
             </p>
-            <PageActionCards items={entries.map(item => ({
-              label: localizedValue(item, 'cta', lang),
-              href: item.href || '#/objektivat',
-              variant: item.variant || 'dark',
-            }))} />
           </div>
+          <PageActionCards items={entries.map(item => ({
+            label: localizedValue(item, 'cta', lang),
+            href: item.href || '#/objektivat',
+            variant: item.variant || 'dark',
+          }))} />
         </div>
       </div>
       <style>{`
-        @media (max-width: 900px) { .be-objectives-grid { grid-template-columns: 1fr !important; gap: 28px !important; } }
+        .be-objectives-grid > div:last-child { margin-top: 0 !important; }
+        @media (max-width: 900px) { .be-objectives-grid { grid-template-columns: 1fr !important; gap: 18px !important; } }
       `}</style>
     </section>
   );
