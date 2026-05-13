@@ -19,8 +19,7 @@ export async function POST(req: NextRequest) {
   ])
 
   const hasLocalContext = context.length > 0
-
-  console.log(`[chat] path=${hasLocalContext ? 'RAG' : 'WEB_SEARCH'} | msg="${message.slice(0, 60)}"`)
+  const path = hasLocalContext ? 'rag' : 'web'
 
   let fullReply = ''
   const encoder = new TextEncoder()
@@ -39,6 +38,7 @@ export async function POST(req: NextRequest) {
 
     const readable = new ReadableStream({
       async start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ path })}\n\n`))
         for await (const chunk of stream) {
           const delta = chunk.choices[0]?.delta?.content ?? ''
           if (delta) {
@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
 
   const readable = new ReadableStream({
     async start(controller) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ path })}\n\n`))
       for await (const event of stream) {
         if (event.type === 'response.output_text.delta') {
           const delta = event.delta ?? ''

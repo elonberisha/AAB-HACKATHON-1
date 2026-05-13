@@ -2673,6 +2673,9 @@ function ChatWidget({ lang, t, open, setOpen }) {
 
           try {
             const data = JSON.parse(payload);
+            if (data.path) {
+              console.log(`[euguide] chat path: ${data.path.toUpperCase()}`);
+            }
             if (data.delta) {
               received = true;
               appendAssistantDelta(data.delta);
