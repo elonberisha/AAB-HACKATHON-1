@@ -4354,7 +4354,7 @@ function RuleOfLawMaterials({ lang }) {
         )}
 
         {!!catalog.length && (
-          <div style={{ marginTop: 64 }}>
+          <div id="katalogu-materialeve" style={{ marginTop: 64 }}>
             <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
               {localizedValue(copy, 'catalog_title', lang)}
             </h3>
@@ -4368,10 +4368,18 @@ function RuleOfLawMaterials({ lang }) {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }} className="materials-catalog-grid">
                     {items.map((item, i) => (
                       <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 18, color: 'var(--ink)' }}>
-                        <div style={{ fontSize: 15, lineHeight: 1.35 }}>{item.title}</div>
+                        <div style={{ fontSize: 15, lineHeight: 1.35, fontWeight: 650 }}>{item.title}</div>
+                        {item.summary_sq && (
+                          <p style={{ margin: '8px 0 0', fontSize: 12.5, lineHeight: 1.45, color: 'var(--ink-2)' }}>
+                            {item.summary_sq}
+                          </p>
+                        )}
                         <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.08em', marginTop: 10, textTransform: 'uppercase' }}>
-                          {item.status || 'to_collect'}
+                          {item.source_label || item.material_type || item.status}
                         </div>
+                        {item.status && (
+                          <div style={{ marginTop: 8, fontSize: 11.5, lineHeight: 1.45, color: 'var(--ink-3)' }}>{item.status}</div>
+                        )}
                       </a>
                     ))}
                   </div>
