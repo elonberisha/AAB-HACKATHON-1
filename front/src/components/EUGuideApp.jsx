@@ -1903,6 +1903,10 @@ function Footer({ lang, t }) {
     { label: 'TI-CPI', url: 'https://www.transparency.org/en/countries/kosovo' },
     { label: 'OSBE / OSCE', url: 'https://www.osce.org/mission-in-kosovo' },
     { label: 'Avokati i Popullit', url: 'https://www.oik-ks.org/' },
+    { label: 'Standardi i burimeve', href: '#/burimet' },
+    { label: 'Privacy Policy', href: '#/privatesia' },
+    { label: 'Terms', href: '#/kushtet' },
+    { label: 'Accessibility', href: '#/aksesueshmeria' },
   ];
 
   return (
@@ -5175,6 +5179,219 @@ function MaterialsCatalogPage({ lang }) {
   );
 }
 
+const EU_ROADMAP_STEPS = [
+  { step: '01', title_sq: 'MSA në fuqi', status_sq: 'E plotësuar', body_sq: 'Marrëveshja e Stabilizim-Asociimit është baza kontraktuale Kosovë-BE dhe është në fuqi nga 1 prill 2016.', source: 'European Commission / SAA', progress: 100 },
+  { step: '02', title_sq: 'Aplikimi për BE', status_sq: 'E plotësuar', body_sq: 'Kosova dorëzoi aplikimin për anëtarësim në Bashkimin Evropian në dhjetor 2022.', source: 'Council / Kosovo application', progress: 100 },
+  { step: '03', title_sq: 'Opinion i Komisionit', status_sq: 'Në pritje', body_sq: 'Këshilli duhet t’i kërkojë Komisionit Evropian opinion për aplikimin. Ky hap kërkon vullnet politik të shteteve anëtare.', source: 'EU enlargement procedure', progress: 35 },
+  { step: '04', title_sq: 'Status kandidat', status_sq: 'Në pritje', body_sq: 'Statusi kandidat kërkon vendim unanim në Këshill dhe progres të besueshëm në reforma, sundim ligji dhe normalizim rajonal.', source: 'Copenhagen criteria', progress: 30 },
+  { step: '05', title_sq: 'Screening dhe klasterë', status_sq: 'Hap i ardhshëm teknik', body_sq: 'Pas statusit kandidat, acquis-ja shqyrtohet në klasterë dhe kapituj për të matur harmonizimin ligjor dhe zbatimin praktik.', source: 'EU revised enlargement methodology', progress: 20 },
+  { step: '06', title_sq: 'Traktati i anëtarësimit', status_sq: 'Final', body_sq: 'Mbyllja e kapitujve dhe ratifikimi nga të gjitha shtetet anëtare janë hapi përfundimtar para anëtarësimit.', source: 'EU accession treaty process', progress: 5 },
+];
+
+const EU_PROGRESS_TRACKER = [
+  { area_sq: 'Sundimi i ligjit', owner_sq: 'KGJK, KPK, Ministria e Drejtësisë', status_sq: 'Në progres', deadline_sq: '2025-2027', source_sq: 'Kosovo Report 2025', progress: 35 },
+  { area_sq: 'Lufta kundër korrupsionit', owner_sq: 'APK, Prokuroria Speciale, Kuvendi', status_sq: 'Në progres', deadline_sq: '2025-2028', source_sq: 'Strategjia anti-korrupsion / EC', progress: 32 },
+  { area_sq: 'Administrata publike', owner_sq: 'MAPL/MPB, Qeveria, komunat', status_sq: 'Në progres', deadline_sq: '2025-2027', source_sq: 'SIGMA / EC', progress: 45 },
+  { area_sq: 'Të drejtat themelore', owner_sq: 'Qeveria, Avokati i Popullit, Kuvendi', status_sq: 'Në progres', deadline_sq: '2025-2027', source_sq: 'EC / Ombudsperson', progress: 45 },
+  { area_sq: 'Media dhe liria e shprehjes', owner_sq: 'KPM, Kuvendi, RTK', status_sq: 'Në progres', deadline_sq: '2025-2026', source_sq: 'EC / media acquis', progress: 40 },
+  { area_sq: 'Normalizimi Kosovë-Serbi', owner_sq: 'Qeveria, BE facilitator', status_sq: 'Kusht politik', deadline_sq: 'Vazhdimisht', source_sq: 'EU-facilitated dialogue', progress: 30 },
+  { area_sq: 'Ekonomia e tregut', owner_sq: 'MFPT, BQK, ARBK, Autoriteti i Konkurrencës', status_sq: 'Në progres', deadline_sq: '2025-2028', source_sq: 'EC economic criteria', progress: 48 },
+];
+
+const EU_ACQUIS_CLUSTERS = [
+  { cluster: 'Themelet', chapters: '23, 24, ekonomi, institucione demokratike, administratë publike', citizen_sq: 'Gjykata më të pavarura, procedura më të drejta, institucione që përgjigjen dhe të drejta të zbatueshme.', progress: 38 },
+  { cluster: 'Tregu i brendshëm', chapters: '1, 2, 3, 4, 6, 7, 8, 9, 28', citizen_sq: 'Mbrojtje konsumatore, konkurrencë e drejtë, standarde të produkteve dhe shërbime më të sigurta.', progress: 42 },
+  { cluster: 'Konkurrueshmëria dhe rritja', chapters: '10, 16, 17, 19, 20, 25, 26, 29', citizen_sq: 'Ekonomi më formale, arsim më cilësor, taksa më transparente dhe treg pune më i drejtë.', progress: 44 },
+  { cluster: 'Agjenda e gjelbër dhe lidhshmëria', chapters: '14, 15, 21, 27', citizen_sq: 'Ajër më i pastër, energji më e sigurt, transport më i mirë dhe mbrojtje e mjedisit.', progress: 34 },
+  { cluster: 'Burimet, bujqësia dhe kohezioni', chapters: '11, 12, 13, 22, 33', citizen_sq: 'Siguri ushqimore, zhvillim rural, fonde më të menaxhuara dhe statistika më të besueshme.', progress: 31 },
+  { cluster: 'Marrëdhëniet e jashtme', chapters: '30, 31', citizen_sq: 'Përafrim me politikën e jashtme të BE-së, tregti më e qartë dhe partneritet ndërkombëtar.', progress: 52 },
+];
+
+const EC_RECOMMENDATIONS = [
+  { pillar_sq: 'Drejtësia', recommendation_sq: 'Të forcohet llogaridhënia e KGJK/KPK, menaxhimi i rasteve dhe zbatimi i standardeve të integritetit.', source_sq: 'Kosovo Report 2025', priority: 'High' },
+  { pillar_sq: 'Anti-korrupsioni', recommendation_sq: 'Të ketë rezultate më të matshme në rastet e profilit të lartë, deklarim pasurie dhe konflikt interesi.', source_sq: 'Kosovo Report 2025', priority: 'High' },
+  { pillar_sq: 'Administrata publike', recommendation_sq: 'Të rritet rekrutimi meritor, të zvogëlohen ushtruesit e detyrës dhe të racionalizohen agjencitë.', source_sq: 'SIGMA / EC', priority: 'High' },
+  { pillar_sq: 'Media', recommendation_sq: 'Të garantohet pavarësia e rregullatorëve, transparenca e pronësisë dhe financimi i qëndrueshëm i transmetuesit publik.', source_sq: 'EC media recommendations', priority: 'Medium' },
+  { pillar_sq: 'Të drejtat themelore', recommendation_sq: 'Të zbatohet mbrojtja nga diskriminimi, të drejtat e fëmijëve, personave me aftësi të kufizuara dhe komuniteteve.', source_sq: 'EC / Ombudsperson', priority: 'High' },
+  { pillar_sq: 'Prokurimi publik', recommendation_sq: 'Të rritet transparenca, konkurrenca dhe kontrolli i kontratave publike me rrezik të lartë.', source_sq: 'EU rule-of-law standards', priority: 'High' },
+];
+
+const CITIZEN_ACTIONS = [
+  { title_sq: 'Kërko dokument publik', body_sq: 'Përdor të drejtën për qasje në dokumente publike për kontrata, vendime, buxhete dhe raporte.', source_sq: 'Ligji për Qasje në Dokumente Publike' },
+  { title_sq: 'Raporto korrupsion', body_sq: 'Ruaj datën, vendin, dokumentet dhe komunikimet; raporto te APK, prokuroria ose kanale të sigurta këshillimi.', source_sq: 'Ligji për sinjalizuesit / APK' },
+  { title_sq: 'Ankohu ndaj administratës', body_sq: 'Nëse institucioni nuk përgjigjet ose vendos padrejtësisht, përdor ankesën administrative dhe pastaj mjetet gjyqësore.', source_sq: 'Ligji për Procedurën e Përgjithshme Administrative' },
+  { title_sq: 'Kërko ndihmë juridike falas', body_sq: 'Për raste sociale, familjare, pronësore ose administrative, kontrollo kriteret për ndihmë juridike falas.', source_sq: 'Agjencia për Ndihmë Juridike Falas' },
+];
+
+function EUIntegrationImpactSections({ lang }) {
+  const roadmap = useCmsArray('eu_roadmap_steps', EU_ROADMAP_STEPS);
+  const tracker = useCmsArray('eu_progress_tracker', EU_PROGRESS_TRACKER);
+  const clusters = useCmsArray('eu_acquis_clusters', EU_ACQUIS_CLUSTERS);
+  const recommendations = useCmsArray('ec_recommendations', EC_RECOMMENDATIONS);
+  const actions = useCmsArray('citizen_actions', CITIZEN_ACTIONS);
+  return (
+    <>
+      <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+        <div className="container">
+          <SectionHead eyebrow="Roadmap i anëtarësimit" title="Ku është Kosova tash dhe çka vjen më pas" sub="Ky roadmap e ndan procesin politik dhe teknik në hapa të lexueshëm për qytetarë dhe prezantim institucional." num="05" />
+          <div className="eu-roadmap-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+            {roadmap.map(item => (
+              <article key={item.step} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 260 }}>
+                <div className="mono" style={{ color: 'var(--rust)', fontSize: 11, letterSpacing: '0.14em' }}>{item.step} / {item.status_sq}</div>
+                <h3 className="serif" style={{ fontSize: 30, lineHeight: 1.05, color: 'var(--ink)', marginTop: 18 }}>{item.title_sq}</h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: 14.5, lineHeight: 1.6 }}>{item.body_sq}</p>
+                <div style={{ height: 8, background: 'var(--paper-3)', marginTop: 18 }}><div style={{ width: `${item.progress}%`, height: '100%', background: 'var(--blue)' }} /></div>
+                <div className="mono" style={{ marginTop: 12, fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{item.source}</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+        <div className="container">
+          <SectionHead eyebrow="Tracker reformash" title="Objektivat që duhet të maten, jo vetëm të përmenden" sub="Çdo objektiv lidhet me institucion, afat, burim dhe progres. Kjo është forma që e bën platformën të dobishme për monitorim publik." num="06" />
+          <div style={{ border: '1px solid var(--line)', background: 'var(--paper)' }}>
+            {tracker.map((row, i) => (
+              <div key={row.area_sq} className="eu-tracker-row" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.2fr 0.8fr 0.8fr 1fr', gap: 18, padding: '18px 20px', borderTop: i ? '1px solid var(--line)' : 'none', alignItems: 'center' }}>
+                <strong style={{ color: 'var(--ink)' }}>{row.area_sq}</strong>
+                <span style={{ color: 'var(--ink-2)', fontSize: 13 }}>{row.owner_sq}</span>
+                <span className="mono" style={{ color: 'var(--rust)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{row.status_sq}</span>
+                <span style={{ color: 'var(--ink-2)', fontSize: 13 }}>{row.deadline_sq}</span>
+                <span><span style={{ display: 'block', height: 7, background: 'var(--paper-3)' }}><span style={{ display: 'block', width: `${row.progress}%`, height: '100%', background: 'var(--sage)' }} /></span><span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{row.progress}% · {row.source_sq}</span></span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+        <div className="container">
+          <SectionHead eyebrow="Acquis dhe klasterë" title="35 kapitujt duhet të shpjegohen si përfitime konkrete" sub="Përafrimi me acquis nuk është ushtrim teknik vetëm për juristë. Çdo klaster duhet të tregojë çka ndryshon në jetë të përditshme." num="07" />
+          <div className="eu-cluster-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+            {clusters.map(item => (
+              <article key={item.cluster} style={{ background: 'var(--paper-2)', padding: 26 }}>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{item.chapters}</div>
+                <h3 className="serif" style={{ fontSize: 34, lineHeight: 1.05, marginTop: 12 }}>{item.cluster}</h3>
+                <p style={{ color: 'var(--ink-2)', lineHeight: 1.6 }}>{item.citizen_sq}</p>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>Përafrim indikativ: {item.progress}/100</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+        <div className="container">
+          <SectionHead eyebrow="Raporti i Komisionit Evropian" title="Rekomandimet kryesore të kthehen në punë konkrete" sub="Këto pika e bëjnë faqen të flasë me gjuhën e progres-raporteve: rekomandim, prioritet, burim dhe fushë." num="08" />
+          <div className="ec-recommendations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+            {recommendations.map(item => (
+              <article key={item.pillar_sq} style={{ background: 'var(--paper)', padding: 24, minHeight: 220 }}>
+                <span className="mono" style={{ color: item.priority === 'High' ? 'var(--rust)' : 'var(--blue)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{item.priority}</span>
+                <h3 className="serif" style={{ fontSize: 28, marginTop: 14 }}>{item.pillar_sq}</h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: 14.5, lineHeight: 1.6 }}>{item.recommendation_sq}</p>
+                <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{item.source_sq}</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+        <div className="container citizen-action-grid" style={{ display: 'grid', gridTemplateColumns: '0.8fr 1.4fr', gap: 56 }}>
+          <SectionHead eyebrow="Çka bën qytetari" title="Integrimi bëhet praktik kur qytetari di ku të veprojë" sub="Këto janë veprimet që e lidhin procesin evropian me jetën reale: transparencë, raportim, ankesë dhe ndihmë juridike." num="09" />
+          <div style={{ display: 'grid', gap: 12 }}>
+            {actions.map((item, i) => (
+              <article key={item.title_sq} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)', padding: 20 }}>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em' }}>0{i + 1} · {item.source_sq}</div>
+                <h3 className="serif" style={{ fontSize: 27, marginTop: 10 }}>{item.title_sq}</h3>
+                <p style={{ color: 'var(--ink-2)', lineHeight: 1.6 }}>{item.body_sq}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+        <style>{`
+          @media (max-width: 980px) {
+            .eu-roadmap-grid, .ec-recommendations-grid { grid-template-columns: 1fr !important; }
+            .eu-cluster-grid, .citizen-action-grid { grid-template-columns: 1fr !important; }
+            .eu-tracker-row { grid-template-columns: 1fr !important; }
+          }
+        `}</style>
+      </section>
+    </>
+  );
+}
+
+const LEGAL_PAGE_COPY = {
+  privatesia: {
+    eyebrow: 'Privacy Policy',
+    title: 'Politika e Privatësisë',
+    sub: 'Standard evropian për transparencë, minimizim të të dhënave dhe përdorim të përgjegjshëm të AI-së.',
+    sections: [
+      ['Çfarë mbledhim', 'Platforma mund të përdorë email për kyçje në admin, mesazhe chat-i, dokumente të ngarkuara dhe statistika teknike të domosdoshme për funksionim.'],
+      ['Pse i përdorim', 'Të dhënat përdoren për autentikim, menaxhim përmbajtjeje, përgjigje të chatbot-it, siguri, auditim dhe përmirësim të shërbimit.'],
+      ['Parimet GDPR', 'Minimizim, kufizim qëllimi, saktësi, ruajtje e kufizuar, siguri, transparencë dhe e drejtë për qasje/korrigjim/fshirje kur aplikohet.'],
+      ['AI dhe dokumentet', 'Përgjigjet e AI duhet të citohen me burime. Për çështje ligjore konkrete përdoruesi udhëzohet të konsultojë jurist të licencuar.'],
+    ],
+  },
+  kushtet: {
+    eyebrow: 'Terms of Use',
+    title: 'Kushtet e Përdorimit',
+    sub: 'Platforma është informative dhe edukative; nuk zëvendëson këshillën juridike profesionale.',
+    sections: [
+      ['Përdorimi i drejtë', 'Përdoruesi nuk duhet të ngarkojë përmbajtje të paligjshme, të dhëna të panevojshme personale ose materiale që shkelin të drejta të palëve të treta.'],
+      ['Saktësia', 'Ekipi përdor burime zyrtare kur është e mundur, por përdoruesi duhet të verifikojë vendime ligjore në Gazetën Zyrtare ose institucionin kompetent.'],
+      ['Kufizimi', 'euguide-ks nuk është institucion publik dhe nuk jep vendime administrative, opinione ligjore detyruese ose përfaqësim juridik.'],
+      ['Licenca', 'Materialet publike synohen për edukim, citim dhe përdorim qytetar me atribuuim të burimit.'],
+    ],
+  },
+  aksesueshmeria: {
+    eyebrow: 'Accessibility',
+    title: 'Deklarata e Aksesueshmërisë',
+    sub: 'Synimi është përputhje praktike me WCAG 2.2 AA dhe me parimet evropiane të aksesit dixhital.',
+    sections: [
+      ['Struktura', 'Faqet përdorin tituj të qartë, kontrast të lartë, layout responsiv dhe navigim me linke të kuptueshme.'],
+      ['Kërkimi dhe leximi', 'Faqet me shumë materiale kanë search bar, lista të ndara dhe tekst të shkurtër për skanim të shpejtë.'],
+      ['Përmirësime të ardhshme', 'Duhet shtuar audit i plotë keyboard-only, aria labels për të gjitha ikonat dhe testim me screen readers.'],
+      ['Raportim problemi', 'Përdoruesit mund të raportojnë pengesa aksesueshmërie te ekipi i platformës.'],
+    ],
+  },
+  burimet: {
+    eyebrow: 'Sources Standard',
+    title: 'Standardi i Burimeve dhe Citimeve',
+    sub: 'Çdo e dhënë e rëndësishme duhet të jetë e lidhur me burim zyrtar ose raport të njohur ndërkombëtar.',
+    sections: [
+      ['Burime primare', 'Gazeta Zyrtare, Kuvendi, Qeveria, ministritë, Komisioni Evropian, EUR-Lex dhe institucionet e pavarura.'],
+      ['Burime sekondare', 'SIGMA/OECD, Transparency International, Freedom House, BIRN/KDI dhe raporte të organizatave me metodologji publike.'],
+      ['Rregulli i citimit', 'Çdo chart, objektiv ose material ligjor duhet të ketë titull, datë/vit, institucion, link dhe shënim për statusin.'],
+      ['Kujdes ligjor', 'Kur ligji ka amendamente, përdoret akti i konsoliduar ose shënohet qartë statusi dhe data e kontrollit.'],
+    ],
+  },
+};
+
+function LegalStandardPage({ type }) {
+  const copy = LEGAL_PAGE_COPY[type] || LEGAL_PAGE_COPY.privatesia;
+  return (
+    <>
+      <MaterialsPageHero eyebrow={copy.eyebrow} title={copy.title} sub={copy.sub} stat="EU" statLabel="standard" />
+      <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="legal-grid">
+            {copy.sections.map(([title, body], i) => (
+              <article key={title} style={{ background: 'var(--paper-2)', padding: 28, minHeight: 220 }}>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.14em' }}>0{i + 1}</div>
+                <h2 className="serif" style={{ fontSize: 34, lineHeight: 1.05, marginTop: 16 }}>{title}</h2>
+                <p style={{ color: 'var(--ink-2)', lineHeight: 1.7 }}>{body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+        <style>{`@media (max-width: 760px) { .legal-grid { grid-template-columns: 1fr !important; } }`}</style>
+      </section>
+    </>
+  );
+}
+
 // ============================================================
 // Detail pages
 // ============================================================
@@ -5191,6 +5408,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {topicKey === 'korrupsioni' && <CPIChart lang={lang} t={t} />}
       {topicKey === 'sundimi' && <RuleOfLawMaterials lang={lang} />}
       {topicKey === 'be' && <AcquisProgressSection lang={lang} accent={topic.accent} />}
+      {topicKey === 'be' && <EUIntegrationImpactSections lang={lang} />}
       {topicKey === 'reforma' && <ReformaServicesSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaInstitutionsSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaSourcesSection lang={lang} />}
@@ -5791,6 +6009,8 @@ function App() {
     page = <FundamentalLawsPage lang={lang} />;
   } else if (route === 'katalogu-materialeve') {
     page = <MaterialsCatalogPage lang={lang} />;
+  } else if (['privatesia', 'kushtet', 'aksesueshmeria', 'burimet'].includes(route)) {
+    page = <LegalStandardPage type={route} />;
   } else if (route === 'faq') {
     page = <FAQPage lang={lang} t={t} onChat={() => setChatOpen(true)} />;
   } else if (route === 'infografika') {

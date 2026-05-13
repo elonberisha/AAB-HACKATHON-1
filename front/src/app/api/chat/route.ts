@@ -32,6 +32,9 @@ Faqja Integrimi ne BE:
   reformat e nevojshme dhe perafrimin me acquis te BE-se.
 - Permend se procesi lidhet me standarde demokratike, sundim te ligjit dhe
   administrate funksionale.
+- Permban roadmap te anetaresimit, tracker progresi, klasteret/acquis,
+  rekomandime te Komisionit Evropian, veprime praktike per qytetare dhe
+  standard burimesh/citimesh.
 
 Faqja Objektivat:
 - Paraqet objektiva praktike per qytetaret: kuptim me te mire te reformave,
@@ -52,6 +55,15 @@ Faqja Rreth Kosoves:
   qendrueshmerine dhe rrugen evropiane te Kosoves.
 - Permend momente si shpallja e pavaresise me 17 shkurt 2008, njohjet
   diplomatike dhe aspiraten per integrim ne BE.
+
+Faqet standarde:
+- Privacy Policy shpjegon minimizimin e te dhenave, qellimin e perdorimit,
+  parimet GDPR dhe perdorimin e pergjegjshem te AI-se.
+- Kushtet e Perdorimit sqarojne se platforma eshte informative dhe nuk
+  zevendeson keshillen juridike profesionale.
+- Aksesueshmeria synon WCAG 2.2 AA dhe navigim te qarte per qytetare.
+- Standardi i Burimeve kerkon qe cdo e dhene e rendesishme te kete burim,
+  institucion, link dhe status/date kontrolli.
 `.trim();
 
 const LABELS = {
@@ -205,6 +217,12 @@ Rules:
 - Do not invent legal articles, dates, numbers, or official decisions.
 - For specific legal problems, recommend consulting a licensed lawyer.
 - When you rely on page content, mention the relevant page or section name.
+- For legal, reform, statistics or EU accession answers, include at least one
+  source cue such as: Gazeta Zyrtare, European Commission Kosovo Report,
+  SIGMA/OECD, Transparency International, Ombudsperson, or the relevant
+  euguide-ks page section.
+- If you cannot identify a source, say that the answer needs official
+  verification instead of presenting it as fact.
 - If the information is not in the site context, say so clearly and suggest checking official sources.
 - Be concise, friendly, and practical.
 `.trim();
