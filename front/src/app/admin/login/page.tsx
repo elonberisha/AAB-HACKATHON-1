@@ -13,13 +13,54 @@ export default function AdminLoginPage() {
 
   // Handle magic link callback + check if already logged in
   useEffect(() => {
+    async function finishMagicLink() {
+      const url = new URL(window.location.href)
+      const code = url.searchParams.get('code')
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+      const accessToken = hash.get('access_token')
+      const refreshToken = hash.get('refresh_token')
+      const authError = hash.get('error_description') || hash.get('error')
+
+      if (authError) {
+        setError(authError)
+        window.history.replaceState({}, document.title, window.location.pathname)
+        return
+      }
+
+      if (accessToken && refreshToken) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        })
+        window.history.replaceState({}, document.title, window.location.pathname)
+        if (error) {
+          setError(error.message)
+          return
+        }
+        router.replace('/admin')
+        return
+      }
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        window.history.replaceState({}, document.title, window.location.pathname)
+        if (error) {
+          setError(error.message)
+          return
+        }
+        router.replace('/admin')
+      }
+    }
+
+    finishMagicLink()
+
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) router.push('/admin')
+      if (data.user) router.replace('/admin')
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
-        router.push('/admin')
+        router.replace('/admin')
       }
     })
     return () => subscription.unsubscribe()
@@ -35,7 +76,9 @@ export default function AdminLoginPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
-        redirectTo: `${window.location.origin}/admin/auth/callback`,
+        redirectTo: window.location.hostname.startsWith('admin.')
+          ? `${window.location.origin}/login`
+          : `${window.location.origin}/admin/login`,
       }),
     })
     const data = await res.json().catch(() => ({}))
