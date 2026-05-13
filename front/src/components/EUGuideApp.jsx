@@ -15,6 +15,10 @@ function tr(obj, field, lang) {
   return obj[field + '_' + lang] || obj[field + '_sq'] || obj[field] || '';
 };
 
+function stableNum(value) {
+  return Number(value.toFixed(4)).toString();
+}
+
 const CmsContext = React.createContext({
   settings: {},
   collections: {},
@@ -350,7 +354,7 @@ const REGION = [
 
 const HOME_STATS = [
   { top: '1247', suffix: '', label_sq: 'ditë qysh nga aplikimi për anëtarësim', label_en: 'days since membership application', label_sr: 'dana od aplikacije', accent: 'var(--ink)' },
-  { top: '41', suffix: '/100', label_sq: 'CPI 2025, +8 në 10 vjet', label_en: 'CPI 2025, +8 in 10 years', label_sr: 'CPI 2025, +8 za 10 godina', accent: 'var(--rust)' },
+  { top: '43', suffix: '/100', label_sq: 'CPI 2025, +10 në 10 vjet', label_en: 'CPI 2025, +10 in 10 years', label_sr: 'CPI 2025, +10 za 10 godina', accent: 'var(--rust)' },
   { top: '6', suffix: '/12', label_sq: 'klasterë të hapur në negociata (objektiv)', label_en: 'open negotiation clusters (target)', label_sr: 'otvorenih klastera (cilj)', accent: 'var(--blue)' },
   { top: '0', suffix: '', label_sq: 'anëtarësime në BE që nga 2013', label_en: 'EU memberships since 2013', label_sr: 'EU pristupanja od 2013', accent: 'var(--gold)' },
 ];
@@ -1730,8 +1734,8 @@ function Logo() {
       {Array.from({ length: 12 }).map((_, i) => {
         const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
         const r = 13;
-        const cx = 20 + r * Math.cos(a);
-        const cy = 20 + r * Math.sin(a);
+        const cx = stableNum(20 + r * Math.cos(a));
+        const cy = stableNum(20 + r * Math.sin(a));
         return <circle key={i} cx={cx} cy={cy} r="1.4" fill="var(--gold)" />;
       })}
       <text x="20" y="24" className="serif" style={{ fontSize: 13, fill: 'var(--paper)', textAnchor: 'middle' }}>k</text>
@@ -2024,8 +2028,8 @@ function FundingLogo({ type }) {
           <svg width="42" height="30" viewBox="0 0 42 30" fill="none" aria-hidden="true">
             {Array.from({ length: 12 }).map((_, i) => {
               const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
-              const cx = 21 + 10 * Math.cos(a);
-              const cy = 15 + 10 * Math.sin(a);
+              const cx = stableNum(21 + 10 * Math.cos(a));
+              const cy = stableNum(15 + 10 * Math.sin(a));
               return <circle key={i} cx={cx} cy={cy} r="1.2" fill="#F4D35E" />;
             })}
           </svg>
@@ -2725,23 +2729,26 @@ function ChatWidget({ lang, t, open, setOpen }) {
 
           {/* Messages */}
           <div className="chat-messages" ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {msgs.map((m, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                <div style={{
-                  maxWidth: '82%',
-                  background: m.role === 'user' ? 'var(--ink)' : 'var(--paper-2)',
-                  color: m.role === 'user' ? 'var(--paper)' : 'var(--ink)',
-                  padding: '11px 13px',
-                  fontSize: 13, lineHeight: 1.5,
-                  border: m.role === 'user' ? 'none' : '1px solid var(--line)',
-                }}>
-                  {m.text}
+            {msgs.map((m, i) => {
+              if (m.role === 'assistant' && !String(m.text || '').trim()) return null;
+              return (
+                <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                  <div style={{
+                    maxWidth: '82%',
+                    background: m.role === 'user' ? 'var(--ink)' : 'var(--paper-2)',
+                    color: m.role === 'user' ? 'var(--paper)' : 'var(--ink)',
+                    padding: '11px 13px',
+                    fontSize: 13, lineHeight: 1.5,
+                    border: m.role === 'user' ? 'none' : '1px solid var(--line)',
+                  }}>
+                    {m.text}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {typing && (
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <div style={{ background: 'var(--paper-2)', padding: '11px 13px', border: '1px solid var(--line)', display: 'flex', gap: 4 }}>
+                <div style={{ background: 'var(--paper-2)', padding: '11px 13px', border: '1px solid var(--line)', display: 'flex', gap: 4, minWidth: 48, justifyContent: 'center' }}>
                   <Dot d={0} /><Dot d={150} /><Dot d={300} />
                 </div>
               </div>
@@ -3045,6 +3052,126 @@ function PreviewBlock({ eyebrow, title, sub, num, to, ctaLabel, children }) {
   );
 }
 
+function RecognitionHomeSection({ lang }) {
+  const data = useCmsArray('recognitions', RECOGNITIONS);
+  const [activeYear, setActiveYear] = useState(data[data.length - 1]?.y || 2025);
+  const active = data.find(d => d.y === activeYear) || data[data.length - 1] || { y: 2025, n: 118 };
+  const max = Math.max(...data.map(d => d.n), 120);
+  const recognitionCopy = {
+    sq: {
+      eyebrow: 'Njohjet ndër vite',
+      title: <>Sa shtete e kanë njohur <span style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Kosovën?</span></>,
+      sub: 'Pas shpalljes së pavarësisë në vitin 2008, numri i njohjeve diplomatike u rrit me valë. Grafiku tregon rritjen kumulative të njohjeve të raportuara ndër vite.',
+      current: 'njohje të raportuara',
+      source: 'Burim: MPJD / listë kronologjike e njohjeve',
+      selected: 'viti i zgjedhur',
+    },
+    en: {
+      eyebrow: 'Recognitions over time',
+      title: <>How many states have recognised <span style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Kosovo?</span></>,
+      sub: 'After the 2008 declaration of independence, diplomatic recognitions grew in waves. The chart shows the cumulative growth of reported recognitions over time.',
+      current: 'reported recognitions',
+      source: 'Source: MFAD / chronological recognition list',
+      selected: 'selected year',
+    },
+    sr: {
+      eyebrow: 'Priznanja kroz godine',
+      title: <>Koliko država je priznalo <span style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Kosovo?</span></>,
+      sub: 'Posle proglašenja nezavisnosti 2008. diplomatska priznanja rasla su u talasima. Grafikon prikazuje kumulativni rast prijavljenih priznanja kroz godine.',
+      current: 'prijavljena priznanja',
+      source: 'Izvor: MPJD / hronološka lista priznanja',
+      selected: 'izabrana godina',
+    },
+  };
+  const copy = recognitionCopy[lang] || recognitionCopy.sq;
+
+  return (
+    <section className="recognition-home-section" style={{ padding: '92px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)' }}>
+      <div className="container recognition-home" style={{ display: 'grid', gridTemplateColumns: '0.88fr 1.42fr', gap: 58, alignItems: 'end' }}>
+        <div>
+          <div className="mono" style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-3)', borderTop: '1px solid var(--ink-3)', paddingTop: 8, display: 'inline-block' }}>
+            {copy.eyebrow}
+          </div>
+          <h2 className="serif" style={{ fontSize: 'clamp(36px, 5.2vw, 66px)', lineHeight: 1.04, marginTop: 22, color: 'var(--ink)' }}>{copy.title}</h2>
+          <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--ink-2)', marginTop: 22, maxWidth: 560 }}>{copy.sub}</p>
+          <div style={{ marginTop: 34, border: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--line)' }} className="recognition-facts">
+            <div style={{ background: 'var(--paper-2)', padding: 22 }}>
+              <div className="serif" style={{ fontSize: 54, color: 'var(--gold)', lineHeight: 0.9 }}>{active.n}</div>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', marginTop: 12, textTransform: 'uppercase' }}>{copy.current}</div>
+            </div>
+            <div style={{ background: 'var(--paper-2)', padding: 22 }}>
+              <div className="serif" style={{ fontSize: 54, color: 'var(--ink)', lineHeight: 0.9 }}>{active.y}</div>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', marginTop: 12, textTransform: 'uppercase' }}>{copy.selected}</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${data.length}, minmax(28px, 1fr))`, gap: 5, height: 330, alignItems: 'end', borderBottom: '1px solid var(--line)', paddingBottom: 12 }} className="recognition-bars" role="list" aria-label={copy.eyebrow}>
+            {data.map((d) => {
+              const h = `${Math.max(12, (d.n / max) * 88)}%`;
+              const mark = [2008, 2011, 2014, 2017, 2020, 2023, 2025].includes(d.y);
+              const selected = d.y === active.y;
+              return (
+                <button
+                  key={d.y}
+                  type="button"
+                  onMouseEnter={() => setActiveYear(d.y)}
+                  onFocus={() => setActiveYear(d.y)}
+                  onClick={() => setActiveYear(d.y)}
+                  style={{ minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
+                  aria-label={`${d.y}: ${d.n}`}
+                  role="listitem">
+                  <div style={{
+                    height: h,
+                    background: selected ? 'var(--gold)' : d.y === 2008 ? 'var(--rust)' : 'var(--ink)',
+                    opacity: selected ? 1 : 0.72,
+                    position: 'relative',
+                    boxShadow: selected ? '0 -10px 24px rgba(199,173,112,0.26)' : 'none',
+                    transition: 'height 180ms ease, opacity 180ms ease, box-shadow 180ms ease, background 180ms ease',
+                    width: '100%',
+                  }}>
+                    {(mark || selected) && <span className="mono" style={{ position: 'absolute', top: -22, left: 0, right: 0, textAlign: 'center', fontSize: 10, color: selected ? 'var(--ink)' : 'var(--ink-3)' }}>{d.n}</span>}
+                  </div>
+                  <span className="mono" style={{ fontSize: 9, color: selected || mark ? 'var(--ink)' : 'var(--ink-3)', writingMode: 'vertical-rl', transform: 'rotate(180deg)', margin: '10px auto 0', height: 38 }}>
+                    {d.y}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', textAlign: 'center', marginTop: 14 }}>
+            {copy.source}
+          </div>
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 980px) {
+          .recognition-home { grid-template-columns: 1fr !important; align-items: start !important; }
+          .recognition-bars { grid-template-columns: repeat(18, minmax(0, 1fr)) !important; height: 250px !important; padding-top: 24px; overflow: visible !important; }
+        }
+        @media (max-width: 560px) {
+          .recognition-home-section { padding: 64px 0 !important; }
+          .recognition-home { gap: 34px !important; }
+          .recognition-facts { grid-template-columns: 1fr !important; }
+          .recognition-bars {
+            height: 220px !important;
+            gap: 3px !important;
+            grid-template-columns: repeat(18, minmax(0, 1fr)) !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+          .recognition-bars > button { min-width: 0 !important; }
+          .recognition-bars span { font-size: 7px !important; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 // ============================================================
 // Home Page
 // ============================================================
@@ -3088,7 +3215,7 @@ function HomePage({ lang, t, onChat }) {
                 paddingLeft: isKosova ? 16 : 0, paddingRight: isKosova ? 16 : 0,
               }} className="region-row">
                 <span className="mono" style={{ fontSize: 16, color: 'var(--ink)' }}>{c.code}</span>
-                <span className="serif" style={{ fontSize: 20, color: 'var(--ink)' }}>{c.name}{isKosova && <span style={{ color: 'var(--rust)', marginLeft: 6 }}>★</span>}</span>
+                <span className="serif" style={{ fontSize: 20, color: 'var(--ink)' }}>{c['name_' + lang] || c.name_sq || c.name}{isKosova && <span style={{ color: 'var(--rust)', marginLeft: 6 }}>★</span>}</span>
                 <div style={{ height: 14, background: 'var(--paper-3)', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0, width: c.progress + '%', background: color }} />
                 </div>
@@ -3098,6 +3225,8 @@ function HomePage({ lang, t, onChat }) {
           })}
         </div>
       </PreviewBlock>
+
+      <RecognitionHomeSection lang={lang} />
 
       {/* Stats strip */}
       <section style={{ padding: '80px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
@@ -3142,7 +3271,7 @@ function HomePage({ lang, t, onChat }) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: 'var(--paper)', fontSize: 11, fontWeight: 700,
                   }}>{o.completed ? '✓' : ''}</span>
-                  <span className="serif" style={{ fontSize: 20, color: 'var(--ink)', lineHeight: 1.2 }}>{o.name_sq}</span>
+                  <span className="serif" style={{ fontSize: 20, color: 'var(--ink)', lineHeight: 1.2 }}>{o['name_' + lang] || o.name_sq || o.name}</span>
                   <span className="mono" style={{ fontSize: 10, padding: '3px 8px', border: `1px solid ${cl.color}`, color: cl.color, justifySelf: 'start' }}>{cl[lang] || cl.sq}</span>
                   <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', textAlign: 'right' }}>{o.completed ? 100 : o.progress}%</span>
                 </div>
@@ -3164,10 +3293,10 @@ function HomePage({ lang, t, onChat }) {
           {faqPreview.map((f, i) => (
             <details key={i} style={{ borderTop: '1px solid var(--line)' }}>
               <summary style={{ padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, cursor: 'pointer', listStyle: 'none' }}>
-                <span className="serif" style={{ fontSize: 22, lineHeight: 1.2, color: 'var(--ink)' }}>{f.q_sq}</span>
+                <span className="serif" style={{ fontSize: 22, lineHeight: 1.2, color: 'var(--ink)' }}>{f['q_' + lang] || f.q_sq || f.question}</span>
                 <span style={{ fontSize: 22, color: 'var(--ink-2)', flexShrink: 0 }}>+</span>
               </summary>
-              <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.55, margin: 0, padding: '0 60px 24px 0' }}>{f.a_sq}</p>
+              <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.55, margin: 0, padding: '0 60px 24px 0' }}>{f['a_' + lang] || f.a_sq || f.answer}</p>
             </details>
           ))}
           <div style={{ borderTop: '1px solid var(--line)' }} />
