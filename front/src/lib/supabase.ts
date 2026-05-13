@@ -17,6 +17,7 @@ export function createClient() {
 }
 
 // Public supabase instance — for chat widget Google auth (public pages)
+// Uses localStorage with custom key — does NOT touch cookies
 export const supabasePublic = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     storageKey: 'euguide-public-auth',
@@ -25,11 +26,7 @@ export const supabasePublic = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY, {
   },
 });
 
-// Admin supabase instance — completely separate session for admin panel
-export const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    storageKey: 'euguide-admin-auth',
-    autoRefreshToken: true,
-    persistSession: true,
-  },
-});
+// Admin supabase instance — uses @supabase/ssr (cookie-based + PKCE)
+// This stores auth in cookies so middleware can read it
+// PKCE flow ensures magic link callback works with server-side code exchange
+export const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_KEY);
