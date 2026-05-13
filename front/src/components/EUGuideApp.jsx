@@ -15,6 +15,93 @@ function tr(obj, field, lang) {
   return obj[field + '_' + lang] || obj[field + '_sq'] || obj[field] || '';
 };
 
+const CmsContext = React.createContext({
+  settings: {},
+  collections: {},
+});
+
+function deepMerge(base, override) {
+  if (!override || typeof override !== 'object' || Array.isArray(override)) return base;
+  const next = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    if (value && typeof value === 'object' && !Array.isArray(value) && base?.[key] && typeof base[key] === 'object' && !Array.isArray(base[key])) {
+      next[key] = deepMerge(base[key], value);
+    } else if (value !== undefined && value !== null) {
+      next[key] = value;
+    }
+  }
+  return next;
+}
+
+function useCmsArray(key, fallback) {
+  const cms = React.useContext(CmsContext);
+  const value = cms.collections?.[key];
+  return Array.isArray(value) && value.length ? value : fallback;
+}
+
+function mapObjective(row) {
+  return {
+    id: row.slug || row.id,
+    name_sq: row.name_sq || '',
+    name_en: row.name_en || row.name_sq || '',
+    name_sr: row.name_sr || row.name_sq || '',
+    desc_sq: row.description_sq || row.conditions_sq || '',
+    desc_en: row.description_en || row.conditions_en || row.description_sq || '',
+    desc_sr: row.description_sr || row.conditions_sr || row.description_sq || '',
+    conditions_sq: row.conditions_sq || '',
+    conditions_en: row.conditions_en || '',
+    conditions_sr: row.conditions_sr || '',
+    cluster: row.cluster || 'other',
+    completed: !!row.completed,
+    progress: row.completed ? 100 : (row.progress_percent ?? 0),
+    source: row.source_url || '',
+  };
+}
+
+function mapFaq(row) {
+  return {
+    cat: row.category || row.cat || 'be',
+    q_sq: row.question_sq || '',
+    q_en: row.question_en || row.question_sq || '',
+    q_sr: row.question_sr || row.question_sq || '',
+    a_sq: row.answer_sq || '',
+    a_en: row.answer_en || row.answer_sq || '',
+    a_sr: row.answer_sr || row.answer_sq || '',
+  };
+}
+
+function mapInfographic(row) {
+  return {
+    tag: row.category || 'INFO',
+    title_sq: row.title_sq || '',
+    title_en: row.title_en || row.title_sq || '',
+    title_sr: row.title_sr || row.title_sq || '',
+    description_sq: row.description_sq || '',
+    description_en: row.description_en || row.description_sq || '',
+    description_sr: row.description_sr || row.description_sq || '',
+    image_url: row.image_url || '',
+    shape: row.shape || 'grid',
+  };
+}
+
+function buildCmsPayload({ settingsRows = [], blockRows = [], chartRows = [], faqRows = [], objectiveRows = [], infographicRows = [] }) {
+  const settings = {};
+  const collections = {};
+
+  for (const row of settingsRows) settings[row.key] = row.value;
+  for (const row of chartRows) collections[row.key] = row.data;
+  for (const row of blockRows) {
+    if (row.type === 'collection' && row.content?.key && Array.isArray(row.content?.items)) {
+      collections[row.content.key] = row.content.items;
+    }
+  }
+  if (faqRows.length) collections.faq = faqRows.map(mapFaq);
+  if (objectiveRows.length) collections.objectives = objectiveRows.map(mapObjective);
+  if (infographicRows.length) collections.infographics = infographicRows.map(mapInfographic);
+
+  return { settings, collections };
+}
+
 const STRINGS = {
   sq: {
     nav: { reforma: 'Reforma', sundimi: 'Sundimi i ligjit', korrupsioni: 'Korrupsioni', be: 'Integrimi në BE', objektivat: 'Objektivat', faq: 'Pyetje', kosova: 'Rreth Kosovës', kerko: 'Kërko' },
@@ -735,6 +822,7 @@ function SectionHead({ eyebrow, title, sub, align = 'left', kicker, num }) {
 // ============================================================
 function Topics({ lang, t }) {
   const [hovered, setHovered] = useState(null);
+  const topics = useCmsArray('topics', TOPICS);
   return (
     <section style={{ padding: '120px 0 100px', borderTop: '1px solid var(--line)' }}>
       <div className="container">
@@ -746,7 +834,7 @@ function Topics({ lang, t }) {
           background: 'var(--line)',
           border: '1px solid var(--line)',
         }}>
-          {TOPICS.map((topic, i) => {
+          {topics.map((topic, i) => {
             const title = topic['title_' + lang] || topic.title_sq;
             const blurb = topic['blurb_' + lang] || topic.blurb_sq;
             const metricLabel = topic['metric_label_' + lang] || topic.metric_label_sq;
@@ -813,7 +901,7 @@ function Topics({ lang, t }) {
 // Region — horizontal bar comparison
 // ============================================================
 function RegionChart({ lang, t }) {
-  const data = REGION;
+  const data = useCmsArray('region', REGION);
   const max = 100;
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)' }}>
@@ -899,7 +987,7 @@ function LegendDot({ color, label }) {
 // CPI Chart — area chart over time
 // ============================================================
 function CPIChart({ lang, t }) {
-  const data = CPI;
+  const data = useCmsArray('cpi', CPI);
   const [hover, setHover] = useState(null);
   const W = 800, H = 320, P = { l: 50, r: 30, t: 30, b: 40 };
   const minY = 25, maxY = 50;
@@ -997,7 +1085,8 @@ function Stat({ big, suffix, label_sq, label_en, label_sr, delta, note_sq, note_
 // Clusters — donut + reform progress bars
 // ============================================================
 function Clusters({ lang, t }) {
-  const data = CLUSTERS;
+  const data = useCmsArray('clusters', CLUSTERS);
+  const reform = useCmsArray('reform', REFORM);
   const total = data.reduce((s, c) => s + c.weight, 0);
   const R = 110, IR = 70, CX = 150, CY = 150;
   let acc = 0;
@@ -1073,7 +1162,7 @@ function Clusters({ lang, t }) {
             <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>vlerësim 2025 · %</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px 56px' }} className="reform-grid">
-            {REFORM.map(r => {
+            {reform.map(r => {
               const label = r['label_' + lang] || r.label_sq;
               return (
                 <div key={r.key} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 40px', alignItems: 'center', gap: 16 }}>
@@ -1108,7 +1197,7 @@ function Objectives({ lang, t }) {
   const [filter, setFilter] = useState('all');
   const [cluster, setCluster] = useState('all');
   const [open, setOpen] = useState(null);
-  const objs = OBJECTIVES;
+  const objs = useCmsArray('objectives', OBJECTIVES);
 
   const filtered = objs.filter(o => {
     if (filter === 'completed' && !o.completed) return false;
@@ -1274,7 +1363,7 @@ function Objectives({ lang, t }) {
 // Infographics — gallery with SVG placeholders
 // ============================================================
 function Infographics({ lang, t }) {
-  const items = INFOGRAPHICS;
+  const items = useCmsArray('infographics', INFOGRAPHICS);
   return (
     <section style={{ padding: '120px 0 100px', borderTop: '1px solid var(--line)' }}>
       <div className="container">
@@ -1381,7 +1470,8 @@ function InfoSketch({ shape }) {
 function FAQ({ lang, t }) {
   const [open, setOpen] = useState(0);
   const [cat, setCat] = useState('all');
-  const list = FAQ_DATA.filter(f => cat === 'all' || f.cat === cat);
+  const faqData = useCmsArray('faq', FAQ_DATA);
+  const list = faqData.filter(f => cat === 'all' || f.cat === cat);
 
   return (
     <section style={{ padding: '120px 0 100px', borderTop: '1px solid var(--line)' }}>
@@ -2936,13 +3026,15 @@ function PreviewBlock({ eyebrow, title, sub, num, to, ctaLabel, children }) {
 // ============================================================
 function HomePage({ lang, t, onChat }) {
   // Mini regional bars (top 4)
-  const top = REGION;
+  const top = useCmsArray('region', REGION);
   // Mini objectives preview
-  const objsPreview = OBJECTIVES.slice(0, 4);
-  const totalCompleted = OBJECTIVES.filter(o => o.completed).length;
-  const globalProgress = Math.round(OBJECTIVES.reduce((s, o) => s + (o.completed ? 100 : o.progress), 0) / OBJECTIVES.length);
+  const objectives = useCmsArray('objectives', OBJECTIVES);
+  const faqData = useCmsArray('faq', FAQ_DATA);
+  const objsPreview = objectives.slice(0, 4);
+  const totalCompleted = objectives.filter(o => o.completed).length;
+  const globalProgress = Math.round(objectives.reduce((s, o) => s + (o.completed ? 100 : o.progress), 0) / objectives.length);
   // Mini FAQ
-  const faqPreview = FAQ_DATA.slice(0, 3);
+  const faqPreview = faqData.slice(0, 3);
 
   return (
     <>
@@ -3012,7 +3104,7 @@ function HomePage({ lang, t, onChat }) {
             <div style={{ height: 6, background: 'var(--paper-3)', position: 'relative', marginBottom: 18 }}>
               <div style={{ position: 'absolute', inset: 0, width: globalProgress + '%', background: 'var(--gold)' }} />
             </div>
-            <div className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 12 }}>{totalCompleted} të plotësuara nga {OBJECTIVES.length}</div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 12 }}>{totalCompleted} të plotësuara nga {objectives.length}</div>
           </div>
           <div>
             {objsPreview.map(o => {
@@ -3097,7 +3189,9 @@ function PageHeader({ kicker, title, sub, accent = 'var(--ink)' }) {
 // Detail pages
 // ============================================================
 function TopicPage({ topicKey, lang, t, onChat }) {
-  const topic = TOPICS.find(t => t.key === topicKey);
+  const topics = useCmsArray('topics', TOPICS);
+  const reform = useCmsArray('reform', REFORM);
+  const topic = topics.find(t => t.key === topicKey) || TOPICS.find(t => t.key === topicKey);
   const title = topic['title_' + lang] || topic.title_sq;
   const blurb = topic['blurb_' + lang] || topic.blurb_sq;
   return (
@@ -3112,7 +3206,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
           <div className="container">
             <SectionHead eyebrow={lang === 'sq' ? 'Progres' : lang === 'en' ? 'Progress' : 'Napredak'} title={lang === 'sq' ? 'Përafrimi me acquis-në' : lang === 'en' ? 'Alignment with the acquis' : 'Usaglašavanje sa acquis'} num="03" />
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px 56px' }} className="reform-grid">
-              {REFORM.map(r => {
+              {reform.map(r => {
                 const label = r['label_' + lang] || r.label_sq;
                 return (
                   <div key={r.key} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 40px', alignItems: 'center', gap: 16 }}>
@@ -3135,10 +3229,11 @@ function TopicPage({ topicKey, lang, t, onChat }) {
 }
 
 function NextTopicNav({ current, lang, t }) {
-  const keys = TOPICS.map(x => x.key);
+  const topics = useCmsArray('topics', TOPICS);
+  const keys = topics.map(x => x.key);
   const idx = keys.indexOf(current);
-  const next = TOPICS[(idx + 1) % keys.length];
-  const prev = TOPICS[(idx - 1 + keys.length) % keys.length];
+  const next = topics[(idx + 1) % keys.length];
+  const prev = topics[(idx - 1 + keys.length) % keys.length];
   return (
     <section style={{ padding: '60px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
@@ -3637,12 +3732,43 @@ function InfographicsGuide({ lang }) {
 function App() {
   const [lang, setLang] = useState('sq');
   const [chatOpen, setChatOpen] = useState(false);
+  const [cms, setCms] = useState({ settings: {}, collections: {} });
   const [route, setRoute] = useRoute();
-  const t = STRINGS[lang];
+  const t = deepMerge(STRINGS[lang], cms.settings?.strings?.[lang]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCms() {
+      try {
+        const [settingsRes, blocksRes, chartsRes, faqRes, objectivesRes, infoRes] = await Promise.all([
+          supabase.from('site_settings').select('key,value'),
+          supabase.from('page_blocks').select('page_slug,type,content,sort_order,published').eq('published', true).order('sort_order'),
+          supabase.from('chart_series').select('key,data,published').eq('published', true),
+          supabase.from('faq_items').select('*').eq('published', true).order('sort_order'),
+          supabase.from('eu_objectives').select('*').eq('published', true).order('sort_order'),
+          supabase.from('infographics').select('*').eq('published', true).order('sort_order'),
+        ]);
+
+        if (cancelled) return;
+        setCms(buildCmsPayload({
+          settingsRows: settingsRes.data ?? [],
+          blockRows: blocksRes.data ?? [],
+          chartRows: chartsRes.data ?? [],
+          faqRows: faqRes.data ?? [],
+          objectiveRows: objectivesRes.data ?? [],
+          infographicRows: infoRes.data ?? [],
+        }));
+      } catch {
+        if (!cancelled) setCms({ settings: {}, collections: {} });
+      }
+    }
+    loadCms();
+    return () => { cancelled = true; };
+  }, []);
 
   let page;
   if (['reforma', 'sundimi', 'korrupsioni', 'be'].includes(route)) {
@@ -3660,7 +3786,7 @@ function App() {
   }
 
   return (
-    <>
+    <CmsContext.Provider value={cms}>
       <div className="euguide-zoom">
       <Navbar lang={lang} setLang={setLang} t={t} route={route} onChat={() => setChatOpen(true)} />
         <main key={route}>{page}</main>
@@ -3674,7 +3800,7 @@ function App() {
         main { animation: fadeIn 280ms ease both; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
-    </>
+    </CmsContext.Provider>
   );
 }
 

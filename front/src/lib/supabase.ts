@@ -23,6 +23,7 @@ export const supabasePublic = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY, {
     storageKey: 'euguide-public-auth',
     autoRefreshToken: true,
     persistSession: true,
+    flowType: 'implicit', // token in URL hash — works with popup windows
   },
 });
 
