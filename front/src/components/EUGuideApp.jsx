@@ -1017,7 +1017,7 @@ function CPIChart({ lang, t }) {
   const areaPath = linePath + ` L ${xScale(data.length - 1)} ${H - P.b} L ${xScale(0)} ${H - P.b} Z`;
 
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
         <SectionHead eyebrow={t.chart1.eyebrow} title={t.chart1.title} sub={t.chart1.sub} num="02" />
         <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 56 }} className="cpi-grid">
@@ -3105,7 +3105,7 @@ function TopicActionSection({ topicKey, lang }) {
   const numByTopic = { sundimi: '03', korrupsioni: '03', be: '05' };
   const num = numByTopic[topicKey] || '';
   return (
-    <section style={{ padding: '88px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container topic-action-grid" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.4fr', gap: 60, alignItems: 'start' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
@@ -3662,7 +3662,7 @@ function ReformaInstitutionsSection({ lang }) {
         }}>
           {data.map((it, i) => (
             <article key={it.key} style={{
-              background: 'var(--paper)', padding: '28px 26px', minHeight: 260,
+              background: 'var(--paper)', padding: '28px 26px', minHeight: 240,
               display: 'flex', flexDirection: 'column',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
@@ -4326,7 +4326,7 @@ function RuleOfLawMaterials({ lang }) {
   }, {});
 
   return (
-    <section id="materialet-ligjore" style={{ padding: '96px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+    <section id="materialet-ligjore" style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
         <SectionHead
           eyebrow={localizedValue(copy, 'eyebrow', lang)}
