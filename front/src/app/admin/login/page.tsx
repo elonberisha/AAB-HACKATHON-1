@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
@@ -12,6 +12,22 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  // Handle magic link callback - detect auth token in URL and redirect
+  useEffect(() => {
+    // Check if already logged in
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) router.push('/admin')
+    })
+
+    // Listen for auth state changes (magic link returns with token)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        router.push('/admin')
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [router])
+
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -21,7 +37,7 @@ export default function AdminLoginPage() {
       email,
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/admin`,
+        emailRedirectTo: `${window.location.origin}/admin/auth/callback`,
       },
     })
 
