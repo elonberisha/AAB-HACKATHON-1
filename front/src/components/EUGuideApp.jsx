@@ -1469,7 +1469,7 @@ function useRoute() {
 // ============================================================
 // Navbar — sticky, with language switcher
 // ============================================================
-function Navbar({ lang, setLang, t, route }) {
+function Navbar({ lang, setLang, t, route, onChat }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -1496,10 +1496,10 @@ function Navbar({ lang, setLang, t, route }) {
       borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',
       transition: 'all 240ms ease',
     }}>
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px' }}>
-        <a href="#/" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="container nav-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px' }}>
+        <a href="#/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Logo />
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+          <div className="brand-copy" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
             <span className="serif" style={{ fontSize: 22, color: 'var(--ink)' }}>euguide<span style={{ color: 'var(--ink-3)' }}>-ks</span></span>
             <span className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.1em', marginTop: 2 }}>UDHËZUES QYTETAR · v2.1</span>
           </div>
@@ -1520,7 +1520,7 @@ function Navbar({ lang, setLang, t, route }) {
           })}
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <a href="#/kosova" className="kosova-link" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             border: route === 'kosova' ? '1px solid var(--ink)' : '1px solid var(--line)',
@@ -1553,6 +1553,43 @@ function Navbar({ lang, setLang, t, route }) {
 
       {mobileOpen && (
         <div style={{ borderTop: '1px solid var(--line)', padding: '12px 20px 18px', background: 'var(--paper)' }} className="mobile-menu">
+          <button
+            className="mobile-chat-link"
+            onClick={() => {
+              setMobileOpen(false);
+              onChat?.();
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 14,
+              padding: '14px 0',
+              border: 'none',
+              borderBottom: '1px solid var(--line)',
+              background: 'transparent',
+              color: 'var(--ink)',
+              textAlign: 'left',
+            }}
+          >
+            <span>
+              <span className="mono" style={{ display: 'block', fontSize: 10, color: 'var(--rust)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                Assistant
+              </span>
+              <span className="serif" style={{ display: 'block', fontSize: 24, lineHeight: 1.05, marginTop: 4 }}>
+                {t.chat.title}
+              </span>
+            </span>
+            <span style={{ display: 'inline-flex', width: 34, height: 34, alignItems: 'center', justifyContent: 'center', border: '1px solid var(--ink)', borderRadius: '50%', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M3 5 H21 V17 H13 L8 21 V17 H3 Z" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                <circle cx="9" cy="11" r="1" fill="currentColor" />
+                <circle cx="12" cy="11" r="1" fill="currentColor" />
+                <circle cx="15" cy="11" r="1" fill="currentColor" />
+              </svg>
+            </span>
+          </button>
           <a href="#/kosova" onClick={() => setMobileOpen(false)} style={{ display: 'block', padding: '12px 0', borderBottom: '1px solid var(--line)', fontSize: 16, color: route === 'kosova' ? 'var(--ink)' : 'var(--ink-2)', fontWeight: route === 'kosova' ? 500 : 400 }}>{t.nav.kosova}</a>
           {links.map(l => {
             const active = route === l.key;
@@ -1932,7 +1969,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
   return (
     <>
       {/* Floating button */}
-      <button onClick={() => setOpen(!open)} style={{
+      <button className="chat-fab" onClick={() => setOpen(!open)} style={{
         position: 'fixed', bottom: 24, right: 24, zIndex: 60,
         width: 60, height: 60, borderRadius: '50%',
         background: 'var(--ink)', color: 'var(--paper)',
@@ -1951,7 +1988,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
       </button>
 
       {/* Drawer */}
-      <div style={{
+      <div className="chat-drawer" style={{
         position: 'fixed', bottom: 24, right: 24, zIndex: 60,
         width: 'min(420px, calc(100vw - 32px))',
         height: 'min(640px, calc(100vh - 64px))',
@@ -2015,7 +2052,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
         )}
 
         {/* Input */}
-        <div style={{ padding: 14, borderTop: '1px solid var(--line)', display: 'flex', gap: 8 }}>
+        <div className="chat-input-row" style={{ padding: 14, borderTop: '1px solid var(--line)', display: 'flex', gap: 8 }}>
           <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
             placeholder={t.chat.placeholder}
             style={{ flex: 1, border: '1px solid var(--line)', padding: '10px 12px', background: 'var(--paper)', fontSize: 14, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none' }} />
@@ -2026,6 +2063,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
         </div>
 
         {/* Auth hint */}
+<<<<<<< HEAD
         <div style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
           {user ? (
             <>
@@ -2053,6 +2091,14 @@ function ChatWidget({ lang, t, open, setOpen }) {
               </button>
             </>
           )}
+=======
+        <div className="chat-auth-row" style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
+          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.chat.auth}</span>
+          <button style={{ background: 'transparent', border: '1px solid var(--ink-2)', padding: '4px 10px', fontSize: 11, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 10, height: 10, background: 'conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4)', borderRadius: '50%' }} />
+            Google
+          </button>
+>>>>>>> fdc434aba37ecce8621fa01871758a5253feb5e7
         </div>
       </div>
     </>
@@ -2425,7 +2471,7 @@ function BigStat({ top, suffix, label_sq, label_en, label_sr, lang, accent, bord
 // ============================================================
 function PageHeader({ kicker, title, sub, accent = 'var(--ink)' }) {
   return (
-    <section style={{ padding: '40px 0 64px', borderBottom: '1px solid var(--line)' }}>
+    <section className="page-header" style={{ padding: '40px 0 64px', borderBottom: '1px solid var(--line)' }}>
       <div className="container">
         <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.18em', marginBottom: 24 }}>
           <a href="#/" style={{ color: 'var(--ink-3)' }}>HOME</a> / {kicker.toUpperCase()}
@@ -3015,7 +3061,7 @@ function App() {
   return (
     <>
       <div className="euguide-zoom">
-        <Navbar lang={lang} setLang={setLang} t={t} route={route} />
+      <Navbar lang={lang} setLang={setLang} t={t} route={route} onChat={() => setChatOpen(true)} />
         <main key={route}>{page}</main>
         <Footer lang={lang} t={t} />
       </div>
