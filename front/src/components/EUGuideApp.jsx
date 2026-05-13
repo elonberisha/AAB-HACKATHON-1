@@ -1897,22 +1897,53 @@ function Footer({ lang, t }) {
     { label: t.nav.korrupsioni, href: '#/korrupsioni' },
     { label: t.nav.be, href: '#/be' },
   ];
+  const footerLegalCopy = {
+    sq: {
+      legalTitle: 'Standardet',
+      ecReports: 'Raportet EC',
+      ombudsperson: 'Avokati i Popullit',
+      sources: 'Standardi i burimeve',
+      privacy: 'Politika e privatësisë',
+      terms: 'Kushtet e përdorimit',
+      accessibility: 'Aksesueshmëria',
+    },
+    en: {
+      legalTitle: 'Standards',
+      ecReports: 'EC reports',
+      ombudsperson: 'Ombudsperson',
+      sources: 'Sources standard',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Use',
+      accessibility: 'Accessibility',
+    },
+    sr: {
+      legalTitle: 'Standardi',
+      ecReports: 'Izveštaji EK',
+      ombudsperson: 'Ombudsman',
+      sources: 'Standard izvora',
+      privacy: 'Politika privatnosti',
+      terms: 'Uslovi korišćenja',
+      accessibility: 'Pristupačnost',
+    },
+  }[lang] || {};
   const resourceItems = [
-    { label: 'Raportet EC', url: 'https://neighbourhood-enlargement.ec.europa.eu/enlargement-policy/strategy-and-reports_en' },
+    { label: footerLegalCopy.ecReports || 'Raportet EC', url: 'https://neighbourhood-enlargement.ec.europa.eu/enlargement-policy/strategy-and-reports_en' },
     { label: 'SAA', url: 'https://mei-ks.net/sq/marreveshja-e-stabilizim-asociimit-msa' },
     { label: 'TI-CPI', url: 'https://www.transparency.org/en/countries/kosovo' },
     { label: 'OSBE / OSCE', url: 'https://www.osce.org/mission-in-kosovo' },
-    { label: 'Avokati i Popullit', url: 'https://www.oik-ks.org/' },
-    { label: 'Standardi i burimeve', href: '#/burimet' },
-    { label: 'Privacy Policy', href: '#/privatesia' },
-    { label: 'Terms', href: '#/kushtet' },
-    { label: 'Accessibility', href: '#/aksesueshmeria' },
+    { label: footerLegalCopy.ombudsperson || 'Avokati i Popullit', url: 'https://www.oik-ks.org/' },
+  ];
+  const legalItems = [
+    { label: footerLegalCopy.sources || 'Standardi i burimeve', href: '#/burimet' },
+    { label: footerLegalCopy.privacy || 'Politika e privatësisë', href: '#/privatesia' },
+    { label: footerLegalCopy.terms || 'Kushtet e përdorimit', href: '#/kushtet' },
+    { label: footerLegalCopy.accessibility || 'Aksesueshmëria', href: '#/aksesueshmeria' },
   ];
 
   return (
     <footer style={{ padding: '58px 0 0', borderTop: '1px solid rgba(242,239,232,0.12)', background: '#071421', color: 'var(--paper)', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 58, alignItems: 'start' }} className="foot-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 0.8fr 1fr 1fr 1.05fr', gap: 44, alignItems: 'start' }} className="foot-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
               <Logo />
@@ -1922,6 +1953,7 @@ function Footer({ lang, t }) {
           </div>
           <FootCol title={t.footer.cols.temat} items={topicItems} />
           <FootCol title={t.footer.cols.burimet} items={resourceItems} />
+          <FootCol title={footerLegalCopy.legalTitle || 'Standardet'} items={legalItems} />
           <div>
             <FooterTitle>{t.footer.cols.rreth}</FooterTitle>
             <p style={{ fontSize: 14, color: 'rgba(242,239,232,0.62)', lineHeight: 1.75, margin: 0 }}>{t.footer.about}</p>
@@ -4465,6 +4497,76 @@ function localizedValue(item, field, lang) {
   return item[field + '_' + lang] || item[field + '_sq'] || item[field] || '';
 }
 
+function MaterialSourceBadge({ label }) {
+  if (!label) return null;
+  return (
+    <span className="mono" style={{
+      display: 'inline-flex',
+      width: 'fit-content',
+      border: '1px solid rgba(163, 91, 74, 0.35)',
+      background: 'rgba(163, 91, 74, 0.08)',
+      color: 'var(--rust)',
+      padding: '6px 8px',
+      fontSize: 9,
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      lineHeight: 1.1,
+    }}>
+      {label}
+    </span>
+  );
+}
+
+function LawCitizenBrief({ item, lang }) {
+  if (!item) return null;
+  const copy = {
+    sq: {
+      regulates: 'Çka rregullon?',
+      affects: 'Kë e prek?',
+      citizen: 'Çka duhet të dijë qytetari?',
+      complaint: 'Ku ankohem?',
+      fallbackAffects: 'Qytetarët, institucionet, bizneset ose palët që hyjnë në procedura të lidhura me këtë akt.',
+      fallbackCitizen: 'Kontrollo versionin e konsoliduar, afatet, dokumentet e kërkuara dhe institucionin kompetent para se të veprosh.',
+      fallbackComplaint: 'Fillimisht te institucioni përgjegjës; pastaj përmes ankesës administrative, gjykatës kompetente ose Avokatit të Popullit kur preken të drejtat.',
+    },
+    en: {
+      regulates: 'What does it regulate?',
+      affects: 'Who is affected?',
+      citizen: 'What should citizens know?',
+      complaint: 'Where can I complain?',
+      fallbackAffects: 'Citizens, institutions, businesses, or parties involved in procedures connected to this act.',
+      fallbackCitizen: 'Check the consolidated version, deadlines, required documents, and competent institution before taking action.',
+      fallbackComplaint: 'Start with the responsible institution; then use an administrative appeal, the competent court, or the Ombudsperson when rights are affected.',
+    },
+    sr: {
+      regulates: 'Šta reguliše?',
+      affects: 'Koga pogađa?',
+      citizen: 'Šta građanin treba da zna?',
+      complaint: 'Gde mogu da se žalim?',
+      fallbackAffects: 'Građane, institucije, biznise ili strane u postupcima povezanim sa ovim aktom.',
+      fallbackCitizen: 'Proveri konsolidovanu verziju, rokove, potrebne dokumente i nadležnu instituciju pre postupanja.',
+      fallbackComplaint: 'Prvo kod odgovorne institucije; zatim kroz administrativnu žalbu, nadležni sud ili Ombudsmana kada su pogođena prava.',
+    },
+  }[lang] || {};
+  const rows = [
+    [copy.regulates, localizedValue(item, 'regulates', lang) || localizedValue(item, 'summary', lang) || item.status],
+    [copy.affects, localizedValue(item, 'affects', lang) || copy.fallbackAffects],
+    [copy.citizen, localizedValue(item, 'citizen_note', lang) || copy.fallbackCitizen],
+    [copy.complaint, localizedValue(item, 'complaint', lang) || copy.fallbackComplaint],
+  ];
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)', marginTop: 28 }} className="law-citizen-brief">
+      {rows.map(([label, body]) => (
+        <div key={label} style={{ background: 'var(--paper-2)', padding: 18 }}>
+          <div className="mono" style={{ fontSize: 9, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>{label}</div>
+          <p style={{ margin: 0, color: 'var(--ink-2)', fontSize: 13.5, lineHeight: 1.55 }}>{body}</p>
+        </div>
+      ))}
+      <style>{`@media (max-width: 680px) { .law-citizen-brief { grid-template-columns: 1fr !important; } }`}</style>
+    </div>
+  );
+}
+
 function PageActionCards({ items }) {
   if (!items.length) return null;
   const normalizeHref = (href) => {
@@ -4474,7 +4576,7 @@ function PageActionCards({ items }) {
     return href || '#';
   };
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 28 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, margin: '28px 0 34px' }}>
       {items.map((item, i) => (
         <a key={`${item.href || item.anchor || i}-${i}`} href={normalizeHref(item.href || item.anchor)} style={{
           display: 'inline-flex',
@@ -4722,8 +4824,8 @@ function RuleOfLawMaterials({ lang }) {
                             {item.summary_sq}
                           </p>
                         )}
-                        <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.08em', marginTop: 10, textTransform: 'uppercase' }}>
-                          {item.source_label || item.material_type || item.status}
+                        <div style={{ marginTop: 12 }}>
+                          <MaterialSourceBadge label={item.source_label || item.material_type || item.status} />
                         </div>
                         {item.status && (
                           <div style={{ marginTop: 8, fontSize: 11.5, lineHeight: 1.45, color: 'var(--ink-3)' }}>{item.status}</div>
@@ -4761,6 +4863,7 @@ function MaterialGrid({ items, lang }) {
           <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>
             {localizedValue(item, 'summary', lang) || item.status}
           </p>
+          <MaterialSourceBadge label={item.source_label || item.material_type || item.status} />
           {item.source_url && (
             <a href={item.source_url} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-flex', marginTop: 14, fontSize: 10, color: 'var(--ink)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
               Burimi zyrtar →
@@ -4779,7 +4882,12 @@ function useRuleOfLawContent() {
   };
 }
 
-function MaterialsPageHero({ eyebrow, title, sub, stat, statLabel }) {
+function MaterialsPageHero({ eyebrow, title, sub, stat, statLabel, lang = 'sq', backHref = '#/sundimi', backLabel }) {
+  const defaultBackLabel = {
+    sq: 'Kthehu te Sundimi i ligjit',
+    en: 'Back to Rule of Law',
+    sr: 'Nazad na vladavinu prava',
+  }[lang] || 'Kthehu te Sundimi i ligjit';
   return (
     <section style={{ padding: '118px 0 74px', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container materials-page-hero" style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.55fr', gap: 56, alignItems: 'end' }}>
@@ -4787,7 +4895,7 @@ function MaterialsPageHero({ eyebrow, title, sub, stat, statLabel }) {
           <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>{eyebrow}</div>
           <h1 className="serif" style={{ fontSize: 'clamp(46px, 7vw, 92px)', lineHeight: 0.95, color: 'var(--ink)', maxWidth: 980 }}>{title}</h1>
           {sub && <p style={{ marginTop: 22, fontSize: 18, lineHeight: 1.65, color: 'var(--ink-2)', maxWidth: 720 }}>{sub}</p>}
-          <a href="#/sundimi" className="mono" style={{ display: 'inline-flex', marginTop: 30, color: 'var(--ink)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase' }}>← Kthehu te Sundimi i ligjit</a>
+          <a href={backHref} className="mono" style={{ display: 'inline-flex', marginTop: 30, color: 'var(--ink)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase' }}>← {backLabel || defaultBackLabel}</a>
         </div>
         <div style={{ border: '1px solid var(--line)', background: 'var(--paper-2)', padding: 28 }}>
           <div className="serif" style={{ fontSize: 74, color: 'var(--rust)', lineHeight: 0.88 }}>{stat}</div>
@@ -4927,6 +5035,7 @@ function ConstitutionPage({ lang }) {
         sub="Historiku, 20 nenet kryesore dhe lista e plotë e neneve me kërkim dhe burime."
         stat={allArticles.length || 162}
         statLabel="nene kushtetuese"
+        lang={lang}
       />
       <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
         <div className="container">
@@ -5051,6 +5160,7 @@ function FundamentalLawsPage({ lang }) {
         sub="Këtu janë aktet themelore që lidhen me gjykatat, procedurat, administratën, doganat, trafikun dhe të drejtat e qytetarit."
         stat={fundamentals.length || 0}
         statLabel="akte në listë"
+        lang={lang}
       />
       {!fundamentals.length ? <LoadingMaterials /> : (
         <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
@@ -5081,6 +5191,10 @@ function FundamentalLawsPage({ lang }) {
               </div>
               <h2 className="serif" style={{ fontSize: 'clamp(34px, 4vw, 58px)', lineHeight: 1.02, color: 'var(--ink)' }}>{localizedValue(selected, 'title', lang)}</h2>
               <p style={{ marginTop: 22, fontSize: 17, lineHeight: 1.65, color: 'var(--ink-2)' }}>{localizedValue(selected, 'summary', lang) || selected?.status}</p>
+              <div style={{ marginTop: 16 }}>
+                <MaterialSourceBadge label={selected?.source_label || selected?.material_type || 'Gazeta Zyrtare'} />
+              </div>
+              <LawCitizenBrief item={selected} lang={lang} />
               <div style={{ marginTop: 32, borderTop: '1px solid var(--line)', paddingTop: 22 }}>
                 <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 8 }}>Statusi</div>
                 <p style={{ margin: 0, color: 'var(--ink-2)', lineHeight: 1.55 }}>{selected?.status}</p>
@@ -5131,6 +5245,7 @@ function MaterialsCatalogPage({ lang }) {
         sub="Ligje, raporte, udhëzues, dokumente ndërkombëtare, kontakte praktike, glosarë dhe infografika të ndara sipas kategorive."
         stat={catalog.length || 313}
         statLabel="materiale"
+        lang={lang}
       />
       {!catalog.length ? <LoadingMaterials /> : (
         <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
@@ -5159,7 +5274,9 @@ function MaterialsCatalogPage({ lang }) {
                       <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 20, color: 'var(--ink)' }}>
                         <div style={{ fontSize: 16, lineHeight: 1.35, fontWeight: 650 }}>{item.title}</div>
                         <div className="mono" style={{ fontSize: 9, color: 'var(--rust)', letterSpacing: '0.08em', marginTop: 12, textTransform: 'uppercase' }}>{item.material_type}</div>
-                        <div style={{ marginTop: 9, fontSize: 12, lineHeight: 1.45, color: 'var(--ink-3)' }}>{item.source_label}</div>
+                        <div style={{ marginTop: 10 }}>
+                          <MaterialSourceBadge label={item.source_label} />
+                        </div>
                       </a>
                     ))}
                   </div>
@@ -5229,11 +5346,22 @@ function EUIntegrationImpactSections({ lang }) {
   const clusters = useCmsArray('eu_acquis_clusters', EU_ACQUIS_CLUSTERS);
   const recommendations = useCmsArray('ec_recommendations', EC_RECOMMENDATIONS);
   const actions = useCmsArray('citizen_actions', CITIZEN_ACTIONS);
+  const navCopy = {
+    sq: { objectives: 'Objektivat e integrimit', rule: 'Sundimi i ligjit', laws: 'Ligjet themelore', catalog: 'Ligjet tjera' },
+    en: { objectives: 'Integration objectives', rule: 'Rule of law', laws: 'Fundamental laws', catalog: 'Other laws' },
+    sr: { objectives: 'Ciljevi integracije', rule: 'Vladavina prava', laws: 'Osnovni zakoni', catalog: 'Ostali zakoni' },
+  }[lang] || {};
   return (
     <>
       <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
         <div className="container">
           <SectionHead eyebrow="Roadmap i anëtarësimit" title="Ku është Kosova tash dhe çka vjen më pas" sub="Ky roadmap e ndan procesin politik dhe teknik në hapa të lexueshëm për qytetarë dhe prezantim institucional." num="05" />
+          <PageActionCards items={[
+            { label: navCopy.objectives || 'Objektivat e integrimit', href: '#/objektivat', variant: 'dark' },
+            { label: navCopy.rule || 'Sundimi i ligjit', href: '#/sundimi' },
+            { label: navCopy.laws || 'Ligjet themelore', href: '#/ligjet-themelore' },
+            { label: navCopy.catalog || 'Ligjet tjera', href: '#/katalogu-materialeve' },
+          ]} />
           <div className="eu-roadmap-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
             {roadmap.map(item => (
               <article key={item.step} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 260 }}>
@@ -5369,11 +5497,167 @@ const LEGAL_PAGE_COPY = {
   },
 };
 
-function LegalStandardPage({ type }) {
-  const copy = LEGAL_PAGE_COPY[type] || LEGAL_PAGE_COPY.privatesia;
+const LEGAL_PAGE_COPY_I18N = {
+  privatesia: {
+    sq: {
+      eyebrow: 'Politika e privatësisë',
+      title: 'Politika e Privatësisë',
+      sub: 'Standard evropian për transparencë, minimizim të të dhënave dhe përdorim të përgjegjshëm të AI-së.',
+      back: 'Kthehu në fillim',
+      sections: [
+        ['Çfarë mbledhim', 'Platforma mund të përdorë email për kyçje në admin, mesazhe chat-i, dokumente të ngarkuara dhe statistika teknike të domosdoshme për funksionim.'],
+        ['Pse i përdorim', 'Të dhënat përdoren për autentikim, menaxhim përmbajtjeje, përgjigje të chatbot-it, siguri, auditim dhe përmirësim të shërbimit.'],
+        ['Parimet GDPR', 'Minimizim, kufizim qëllimi, saktësi, ruajtje e kufizuar, siguri, transparencë dhe e drejtë për qasje, korrigjim ose fshirje kur aplikohet.'],
+        ['AI dhe dokumentet', 'Përgjigjet e AI duhet të citohen me burime. Për çështje ligjore konkrete përdoruesi udhëzohet të konsultojë jurist të licencuar.'],
+      ],
+    },
+    en: {
+      eyebrow: 'Privacy Policy',
+      title: 'Privacy Policy',
+      sub: 'European-standard transparency for data minimisation and responsible use of AI.',
+      back: 'Back to home',
+      sections: [
+        ['What we collect', 'The platform may use admin login email addresses, chat messages, uploaded documents, and technical statistics required for reliable operation.'],
+        ['Why we use it', 'Data is used for authentication, content management, chatbot answers, security, audit trails, and service improvement.'],
+        ['GDPR principles', 'We follow minimisation, purpose limitation, accuracy, limited retention, security, transparency, and access, correction or deletion rights where applicable.'],
+        ['AI and documents', 'AI answers should cite sources. For specific legal matters, users are directed to consult a licensed lawyer.'],
+      ],
+    },
+    sr: {
+      eyebrow: 'Politika privatnosti',
+      title: 'Politika privatnosti',
+      sub: 'Evropski standard transparentnosti za minimalnu obradu podataka i odgovornu upotrebu veštačke inteligencije.',
+      back: 'Nazad na početnu',
+      sections: [
+        ['Šta prikupljamo', 'Platforma može koristiti email adrese za admin prijavu, poruke iz chata, učitane dokumente i tehničke statistike neophodne za rad.'],
+        ['Zašto ih koristimo', 'Podaci se koriste za autentifikaciju, upravljanje sadržajem, odgovore chatbota, bezbednost, reviziju i unapređenje usluge.'],
+        ['GDPR principi', 'Pratimo minimizaciju, ograničenje svrhe, tačnost, ograničeno čuvanje, bezbednost, transparentnost i prava pristupa, ispravke ili brisanja kada se primenjuju.'],
+        ['AI i dokumenti', 'Odgovori veštačke inteligencije treba da navode izvore. Za konkretna pravna pitanja korisnik se upućuje na licenciranog pravnika.'],
+      ],
+    },
+  },
+  kushtet: {
+    sq: {
+      eyebrow: 'Kushtet e përdorimit',
+      title: 'Kushtet e Përdorimit',
+      sub: 'Platforma është informative dhe edukative; nuk zëvendëson këshillën juridike profesionale.',
+      back: 'Kthehu në fillim',
+      sections: [
+        ['Përdorimi i drejtë', 'Përdoruesi nuk duhet të ngarkojë përmbajtje të paligjshme, të dhëna të panevojshme personale ose materiale që shkelin të drejta të palëve të treta.'],
+        ['Saktësia', 'Ekipi përdor burime zyrtare kur është e mundur, por përdoruesi duhet të verifikojë vendime ligjore në Gazetën Zyrtare ose institucionin kompetent.'],
+        ['Kufizimi', 'euguide-ks nuk është institucion publik dhe nuk jep vendime administrative, opinione ligjore detyruese ose përfaqësim juridik.'],
+        ['Licenca', 'Materialet publike synohen për edukim, citim dhe përdorim qytetar me atribuim të burimit.'],
+      ],
+    },
+    en: {
+      eyebrow: 'Terms of Use',
+      title: 'Terms of Use',
+      sub: 'The platform is informational and educational; it does not replace professional legal advice.',
+      back: 'Back to home',
+      sections: [
+        ['Fair use', 'Users must not upload unlawful content, unnecessary personal data, or materials that infringe third-party rights.'],
+        ['Accuracy', 'The team uses official sources where possible, but users should verify legal decisions in the Official Gazette or with the competent institution.'],
+        ['Limitation', 'euguide-ks is not a public institution and does not issue administrative decisions, binding legal opinions, or legal representation.'],
+        ['Licence', 'Public materials are intended for education, citation, and civic use with attribution to the source.'],
+      ],
+    },
+    sr: {
+      eyebrow: 'Uslovi korišćenja',
+      title: 'Uslovi korišćenja',
+      sub: 'Platforma je informativna i edukativna; ne zamenjuje profesionalni pravni savet.',
+      back: 'Nazad na početnu',
+      sections: [
+        ['Pravilna upotreba', 'Korisnik ne sme učitavati nezakonit sadržaj, nepotrebne lične podatke ili materijale koji krše prava trećih lica.'],
+        ['Tačnost', 'Tim koristi zvanične izvore kada je moguće, ali korisnik treba da proveri pravne odluke u Službenom listu ili kod nadležne institucije.'],
+        ['Ograničenje', 'euguide-ks nije javna institucija i ne izdaje administrativne odluke, obavezujuća pravna mišljenja ili pravno zastupanje.'],
+        ['Licenca', 'Javni materijali namenjeni su edukaciji, citiranju i građanskoj upotrebi uz navođenje izvora.'],
+      ],
+    },
+  },
+  aksesueshmeria: {
+    sq: {
+      eyebrow: 'Aksesueshmëria',
+      title: 'Deklarata e Aksesueshmërisë',
+      sub: 'Synimi është përputhje praktike me WCAG 2.2 AA dhe me parimet evropiane të aksesit dixhital.',
+      back: 'Kthehu në fillim',
+      sections: [
+        ['Struktura', 'Faqet përdorin tituj të qartë, kontrast të lartë, layout responsiv dhe navigim me linke të kuptueshme.'],
+        ['Kërkimi dhe leximi', 'Faqet me shumë materiale kanë search bar, lista të ndara dhe tekst të shkurtër për skanim të shpejtë.'],
+        ['Përmirësime të ardhshme', 'Duhet shtuar audit i plotë keyboard-only, aria labels për të gjitha ikonat dhe testim me screen readers.'],
+        ['Raportim problemi', 'Përdoruesit mund të raportojnë pengesa aksesueshmërie te ekipi i platformës.'],
+      ],
+    },
+    en: {
+      eyebrow: 'Accessibility',
+      title: 'Accessibility Statement',
+      sub: 'The goal is practical alignment with WCAG 2.2 AA and European digital accessibility principles.',
+      back: 'Back to home',
+      sections: [
+        ['Structure', 'Pages use clear headings, strong contrast, responsive layout, and understandable navigation links.'],
+        ['Search and reading', 'Material-heavy pages include search bars, separated lists, and concise text for fast scanning.'],
+        ['Future improvements', 'A full keyboard-only audit, ARIA labels for all icons, and screen reader testing should be added.'],
+        ['Report an issue', 'Users can report accessibility barriers to the platform team.'],
+      ],
+    },
+    sr: {
+      eyebrow: 'Pristupačnost',
+      title: 'Izjava o pristupačnosti',
+      sub: 'Cilj je praktično usklađivanje sa WCAG 2.2 AA i evropskim principima digitalne pristupačnosti.',
+      back: 'Nazad na početnu',
+      sections: [
+        ['Struktura', 'Stranice koriste jasne naslove, jak kontrast, responzivan raspored i razumljive navigacione linkove.'],
+        ['Pretraga i čitanje', 'Stranice sa mnogo materijala imaju pretragu, odvojene liste i kratak tekst za brzo skeniranje.'],
+        ['Buduća poboljšanja', 'Treba dodati potpunu proveru rada samo tastaturom, ARIA oznake za sve ikone i testiranje čitačima ekrana.'],
+        ['Prijava problema', 'Korisnici mogu prijaviti prepreke pristupačnosti timu platforme.'],
+      ],
+    },
+  },
+  burimet: {
+    sq: {
+      eyebrow: 'Standardi i burimeve',
+      title: 'Standardi i Burimeve dhe Citimeve',
+      sub: 'Çdo e dhënë e rëndësishme duhet të jetë e lidhur me burim zyrtar ose raport të njohur ndërkombëtar.',
+      back: 'Kthehu në fillim',
+      sections: [
+        ['Burime primare', 'Gazeta Zyrtare, Kuvendi, Qeveria, ministritë, Komisioni Evropian, EUR-Lex dhe institucionet e pavarura.'],
+        ['Burime sekondare', 'SIGMA/OECD, Transparency International, Freedom House, BIRN/KDI dhe raporte të organizatave me metodologji publike.'],
+        ['Rregulli i citimit', 'Çdo chart, objektiv ose material ligjor duhet të ketë titull, datë ose vit, institucion, link dhe shënim për statusin.'],
+        ['Kujdes ligjor', 'Kur ligji ka amendamente, përdoret akti i konsoliduar ose shënohet qartë statusi dhe data e kontrollit.'],
+      ],
+    },
+    en: {
+      eyebrow: 'Sources standard',
+      title: 'Sources and Citation Standard',
+      sub: 'Every important claim should be tied to an official source or a recognised international report.',
+      back: 'Back to home',
+      sections: [
+        ['Primary sources', 'Official Gazette, Assembly, Government, ministries, European Commission, EUR-Lex, and independent institutions.'],
+        ['Secondary sources', 'SIGMA/OECD, Transparency International, Freedom House, BIRN/KDI, and organisations with public methodologies.'],
+        ['Citation rule', 'Each chart, objective, or legal material should include title, date or year, institution, link, and a status note.'],
+        ['Legal caution', 'When a law has amendments, use the consolidated act or clearly state status and review date.'],
+      ],
+    },
+    sr: {
+      eyebrow: 'Standard izvora',
+      title: 'Standard izvora i citiranja',
+      sub: 'Svaka važna tvrdnja treba da bude povezana sa zvaničnim izvorom ili priznatim međunarodnim izveštajem.',
+      back: 'Nazad na početnu',
+      sections: [
+        ['Primarni izvori', 'Službeni list, Skupština, Vlada, ministarstva, Evropska komisija, EUR-Lex i nezavisne institucije.'],
+        ['Sekundarni izvori', 'SIGMA/OECD, Transparency International, Freedom House, BIRN/KDI i organizacije sa javnom metodologijom.'],
+        ['Pravilo citiranja', 'Svaki grafikon, cilj ili pravni materijal treba da ima naslov, datum ili godinu, instituciju, link i napomenu o statusu.'],
+        ['Pravni oprez', 'Kada zakon ima izmene, koristi se konsolidovani akt ili se jasno navode status i datum provere.'],
+      ],
+    },
+  },
+};
+
+function LegalStandardPage({ type, lang = 'sq' }) {
+  const group = LEGAL_PAGE_COPY_I18N[type] || LEGAL_PAGE_COPY_I18N.privatesia;
+  const copy = group[lang] || group.sq;
   return (
     <>
-      <MaterialsPageHero eyebrow={copy.eyebrow} title={copy.title} sub={copy.sub} stat="EU" statLabel="standard" />
+      <MaterialsPageHero eyebrow={copy.eyebrow} title={copy.title} sub={copy.sub} stat="EU" statLabel="standard" lang={lang} backHref="#/" backLabel={copy.back} />
       <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="legal-grid">
@@ -6010,7 +6294,7 @@ function App() {
   } else if (route === 'katalogu-materialeve') {
     page = <MaterialsCatalogPage lang={lang} />;
   } else if (['privatesia', 'kushtet', 'aksesueshmeria', 'burimet'].includes(route)) {
-    page = <LegalStandardPage type={route} />;
+    page = <LegalStandardPage type={route} lang={lang} />;
   } else if (route === 'faq') {
     page = <FAQPage lang={lang} t={t} onChat={() => setChatOpen(true)} />;
   } else if (route === 'infografika') {
