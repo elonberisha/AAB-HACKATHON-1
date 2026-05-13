@@ -397,6 +397,30 @@ footer {
     max-height: calc(100dvh - 20px - env(safe-area-inset-bottom)) !important;
     border-radius: 0 !important;
     z-index: 90 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+    touch-action: auto !important;
+  }
+
+  .chat-main {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .chat-header,
+  .chat-input-row,
+  .chat-auth-row {
+    flex-shrink: 0 !important;
+  }
+
+  .chat-messages {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
   }
 
   .chat-drawer > div:first-child {
@@ -482,8 +506,8 @@ footer {
 
   .chat-drawer {
     inset: 8px 8px max(8px, env(safe-area-inset-bottom)) 8px !important;
-    height: auto !important;
-    max-height: none !important;
+    height: calc(100dvh - 16px - env(safe-area-inset-bottom)) !important;
+    max-height: calc(100dvh - 16px - env(safe-area-inset-bottom)) !important;
   }
 
   .chat-fab {

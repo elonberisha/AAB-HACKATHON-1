@@ -36,7 +36,7 @@ const STRINGS = {
       title_b: 'drejt Bashkimit Evropian',
       title_c: ', e shpjeguar thjesht.',
       sub: 'Reforma në administratë, sundimi i ligjit dhe lufta kundër korrupsionit janë tri shtyllat që qeverisin këtë proces. Këtu i gjen të ndara, të matura dhe të lidhura me jetën e përditshme.',
-      cta1: 'Fillo nga këtu', cta2: 'Pyet asistentin',
+      cta1: 'Fillo nga këtu', cta2: 'Pyet EU Agent',
       meta_a: 'Aplikim për anëtarësim', meta_b: '14 dhjetor 2022',
       meta_c: 'Statusi i kandidatit', meta_d: 'Në pritje',
       days_since: 'Ditë qysh nga aplikimi',
@@ -49,8 +49,8 @@ const STRINGS = {
     objectives: { eyebrow: 'Objektivat', title: 'Çfarë duhet të plotësojë Kosova', sub: 'Kushtet konkrete të marra nga raportet e Komisionit Evropian dhe SAA. Filtroni sipas statusit ose klasterit.' },
     faq: { eyebrow: 'Pyetje të shpeshta', title: 'Përgjigje të shkurtra, pa zhargon institucional.', all: 'Të gjitha', no_match: 'Nuk u gjet asnjë pyetje në këtë kategori.' },
     info: { eyebrow: 'Infografika', title: 'Të shpjeguara në një faqe.' },
-    cta: { title_a: 'Pyet', title_b: ', dhe asistenti përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.', sub: 'I trajnuar mbi raportet e Komisionit Evropian, ligjet vendore dhe analizat e shoqërisë civile. I përdorshëm me tekst ose me zë.', card_top: 'ASISTENT · SQ/EN/SR', card_action: 'Shkruaj pyetjen', card_hint: '↩ enter për të dërguar' },
-    chat: { title: 'Asistent', sub: 'Pyet diçka për reformat ose BE-në', greeting: 'Përshëndetje. Mund të të ndihmoj me reformën në administratë, sundimin e ligjit, luftën kundër korrupsionit dhe procesin e BE-së. Çfarë do të dije?', placeholder: 'Shkruaj pyetjen tënde…', send: 'Dërgo', sample: ['Çfarë është SAA?', 'Si raportohet korrupsioni?', 'Cilat janë kushtet për anëtarësim?'], auth: 'Vazhdo me Google për të ruajtur historinë' },
+    cta: { title_a: 'Pyet', title_b: ', dhe EU Agent përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.', sub: 'I trajnuar mbi raportet e Komisionit Evropian, ligjet vendore dhe analizat e shoqërisë civile. I përdorshëm me tekst ose me zë.', card_top: 'EU AGENT · SQ/EN/SR', card_action: 'Shkruaj pyetjen', card_hint: '↩ enter për të dërguar' },
+    chat: { title: 'EU Agent', sub: 'Pyet diçka për reformat ose BE-në', greeting: 'Përshëndetje. Mund të të ndihmoj me reformën në administratë, sundimin e ligjit, luftën kundër korrupsionit dhe procesin e BE-së. Çfarë do të dije?', placeholder: 'Shkruaj pyetjen tënde…', send: 'Dërgo', sample: ['Çfarë është SAA?', 'Si raportohet korrupsioni?', 'Cilat janë kushtet për anëtarësim?'], auth: 'Vazhdo me Google për të ruajtur historinë' },
     footer: { tagline: 'Platformë informative dhe edukative për vizualizimin, analizën dhe kuptimin e procesit të integrimit europian të Kosovës.', about: 'euguide-ks është një iniciativë edukative e zhvilluar për të rritur qasjen në të dhëna dhe për të nxitur transparencën në procesin e integrimit europian përmes teknologjisë dhe të dhënave të hapura.', funded: 'Projekti u financua nga:', cols: { temat: 'Temat', burimet: 'Burimet', rreth: 'Rreth projektit' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
     kosova: {
       eyebrow: 'Rreth Kosovës',
@@ -95,7 +95,7 @@ const STRINGS = {
       title_b: 'to the European Union',
       title_c: ', explained simply.',
       sub: 'Public administration reform, rule of law and the fight against corruption are the three pillars that govern this process. Here they are separated, measured and tied back to everyday life.',
-      cta1: 'Start here', cta2: 'Ask the assistant',
+      cta1: 'Start here', cta2: 'Ask EU Agent',
       meta_a: 'Membership application', meta_b: '14 December 2022',
       meta_c: 'Candidate status', meta_d: 'Pending',
       days_since: 'Days since the application',
@@ -108,8 +108,8 @@ const STRINGS = {
     objectives: { eyebrow: 'Objectives', title: 'What Kosovo needs to deliver', sub: 'Concrete conditions taken from EC reports and the SAA. Filter by status or cluster.' },
     faq: { eyebrow: 'FAQ', title: 'Short answers, no institutional jargon.', all: 'All', no_match: 'No questions found in this category.' },
     info: { eyebrow: 'Infographics', title: 'Explained on a single page.' },
-    cta: { title_a: 'Ask', title_b: ', and the assistant answers in Albanian, English or Serbian — with reference to the source document.', sub: 'Trained on EC reports, domestic laws and civil-society analysis. Works with text or voice.', card_top: 'ASSISTANT · SQ/EN/SR', card_action: 'Type your question', card_hint: '↩ enter to send' },
-    chat: { title: 'Assistant', sub: 'Ask anything about reforms or the EU', greeting: 'Hello. I can help with public administration reform, rule of law, anti-corruption and the EU process. What would you like to know?', placeholder: 'Type your question…', send: 'Send', sample: ['What is the SAA?', 'How do I report corruption?', 'What are the membership conditions?'], auth: 'Continue with Google to save history' },
+    cta: { title_a: 'Ask', title_b: ', and EU Agent answers in Albanian, English or Serbian — with reference to the source document.', sub: 'Trained on EC reports, domestic laws and civil-society analysis. Works with text or voice.', card_top: 'EU AGENT · SQ/EN/SR', card_action: 'Type your question', card_hint: '↩ enter to send' },
+    chat: { title: 'EU Agent', sub: 'Ask anything about reforms or the EU', greeting: 'Hello. I can help with public administration reform, rule of law, anti-corruption and the EU process. What would you like to know?', placeholder: 'Type your question…', send: 'Send', sample: ['What is the SAA?', 'How do I report corruption?', 'What are the membership conditions?'], auth: 'Continue with Google to save history' },
     footer: { tagline: 'An informative and educational platform for visualising, analysing and understanding Kosovo’s European integration process.', about: 'euguide-ks is an educational initiative developed to increase access to data and encourage transparency in the European integration process through technology and open data.', funded: 'Project funded by:', cols: { temat: 'Topics', burimet: 'Sources', rreth: 'About project' }, copy: '© 2026 · MIT-licensed open data · Hackathon Edition', built: 'euguide-ks.info · built for Kosovo · Hackathon May 2026' },
     kosova: {
       eyebrow: 'About Kosovo',
@@ -154,7 +154,7 @@ const STRINGS = {
       title_b: 'ka Evropskoj uniji',
       title_c: ', jednostavno objašnjen.',
       sub: 'Reforma javne uprave, vladavina prava i borba protiv korupcije tri su stuba ovog procesa. Ovde su razdvojeni, mereni i povezani sa svakodnevnim životom.',
-      cta1: 'Počni odavde', cta2: 'Pitaj asistenta',
+      cta1: 'Počni odavde', cta2: 'Pitaj EU Agent',
       meta_a: 'Aplikacija za članstvo', meta_b: '14. decembar 2022',
       meta_c: 'Status kandidata', meta_d: 'U toku',
       days_since: 'Dana od aplikacije',
@@ -167,8 +167,8 @@ const STRINGS = {
     objectives: { eyebrow: 'Ciljevi', title: 'Šta Kosovo treba da ispuni', sub: 'Konkretni uslovi iz izveštaja EK i SSP. Filtrirajte po statusu ili klasteru.' },
     faq: { eyebrow: 'Česta pitanja', title: 'Kratki odgovori, bez institucionalnog žargona.', all: 'Sve', no_match: 'Nema pitanja u ovoj kategoriji.' },
     info: { eyebrow: 'Infografike', title: 'Sve na jednoj stranici.' },
-    cta: { title_a: 'Pitaj', title_b: ', a asistent odgovara na albanskom, engleskom ili srpskom — sa referencom na izvor.', sub: 'Obučen na izveštajima EK, domaćim zakonima i analizama civilnog društva. Radi sa tekstom ili glasom.', card_top: 'ASISTENT · SQ/EN/SR', card_action: 'Upiši pitanje', card_hint: '↩ enter za slanje' },
-    chat: { title: 'Asistent', sub: 'Pitaj bilo šta o reformama ili EU', greeting: 'Zdravo. Mogu vam pomoći sa reformom uprave, vladavinom prava, antikorupcijom i procesom EU. Šta želite da znate?', placeholder: 'Upišite pitanje…', send: 'Pošalji', sample: ['Šta je SSP?', 'Kako se prijavljuje korupcija?', 'Koji su uslovi za članstvo?'], auth: 'Nastavi sa Google nalogom da sačuvaš istoriju' },
+    cta: { title_a: 'Pitaj', title_b: ', a EU Agent odgovara na albanskom, engleskom ili srpskom — sa referencom na izvor.', sub: 'Obučen na izveštajima EK, domaćim zakonima i analizama civilnog društva. Radi sa tekstom ili glasom.', card_top: 'EU AGENT · SQ/EN/SR', card_action: 'Upiši pitanje', card_hint: '↩ enter za slanje' },
+    chat: { title: 'EU Agent', sub: 'Pitaj bilo šta o reformama ili EU', greeting: 'Zdravo. Mogu vam pomoći sa reformom uprave, vladavinom prava, antikorupcijom i procesom EU. Šta želite da znate?', placeholder: 'Upišite pitanje…', send: 'Pošalji', sample: ['Šta je SSP?', 'Kako se prijavljuje korupcija?', 'Koji su uslovi za članstvo?'], auth: 'Nastavi sa Google nalogom da sačuvaš istoriju' },
     footer: { tagline: 'Informativna i edukativna platforma za vizualizaciju, analizu i razumevanje procesa evropskih integracija Kosova.', about: 'euguide-ks je edukativna inicijativa razvijena radi povećanja pristupa podacima i podsticanja transparentnosti u procesu evropskih integracija kroz tehnologiju i otvorene podatke.', funded: 'Projekat je finansiran od:', cols: { temat: 'Teme', burimet: 'Izvori', rreth: 'O projektu' }, copy: '© 2026 · MIT licencirani otvoreni podaci · Hackathon Edition', built: 'euguide-ks.info · napravljeno za Kosovo · Hackathon Maj 2026' },
     kosova: {
       eyebrow: 'O Kosovu',
@@ -1582,7 +1582,7 @@ function Navbar({ lang, setLang, t, route, onChat }) {
           >
             <span>
               <span className="mono" style={{ display: 'block', fontSize: 10, color: 'var(--rust)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-                Assistant
+                EU Agent
               </span>
               <span className="serif" style={{ display: 'block', fontSize: 24, lineHeight: 1.05, marginTop: 4 }}>
                 {t.chat.title}
@@ -1773,7 +1773,7 @@ function CTABand({ lang, onChat }) {
       <div className="container cta-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 64, alignItems: 'center' }}>
         <div>
           <h2 className="serif" style={{ fontSize: 'clamp(36px, 5vw, 64px)', lineHeight: 1.02, color: 'var(--ink)', maxWidth: 700 }}>
-            <span style={{ fontStyle: 'italic', color: 'var(--blue)' }}>Pyet</span>, dhe asistenti përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.
+            <span style={{ fontStyle: 'italic', color: 'var(--blue)' }}>Pyet</span>, dhe EU Agent përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.
           </h2>
           <p style={{ fontSize: 17, color: 'var(--ink-2)', marginTop: 24, maxWidth: 560 }}>
             I trajnuar mbi raportet e Komisionit Evropian, ligjet vendore dhe analizat e shoqërisë civile. I përdorshëm me tekst ose me zë.
@@ -1787,7 +1787,7 @@ function CTABand({ lang, onChat }) {
             textAlign: 'left',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em' }}>ASISTENT · SQ/EN/SR</span>
+              <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em' }}>EU AGENT · SQ/EN/SR</span>
               <span style={{ display: 'inline-flex', width: 28, height: 28, alignItems: 'center', justifyContent: 'center', border: '1px solid var(--paper)', borderRadius: '50%' }}>
                 <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 10 L10 2 M10 2 H4 M10 2 V8" stroke="currentColor" strokeWidth="1.2" /></svg>
               </span>
@@ -2186,6 +2186,23 @@ function ChatWidget({ lang, t, open, setOpen }) {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [msgs, typing, open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyTouchAction = document.body.style.touchAction;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.touchAction = previousBodyTouchAction;
+    };
+  }, [open]);
+
   const appendAssistantDelta = (delta) => {
     setMsgs(m => {
       const next = [...m];
@@ -2564,9 +2581,9 @@ function ChatWidget({ lang, t, open, setOpen }) {
         )}
 
         {/* ---- Main Chat Area ---- */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0 }}>
+        <div className="chat-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0, minHeight: 0 }}>
           {/* Header */}
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--ink)', color: 'var(--paper)', gap: 8 }}>
+          <div className="chat-header" style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--ink)', color: 'var(--paper)', gap: 8, flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
               {/* Sidebar toggle (only for logged-in users) */}
               {user && (
@@ -2595,7 +2612,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="chat-messages" ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {msgs.map((m, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                 <div style={{
@@ -3085,12 +3102,6 @@ function TopicPage({ topicKey, lang, t, onChat }) {
   const blurb = topic['blurb_' + lang] || topic.blurb_sq;
   return (
     <>
-      <PageHeader
-        kicker={t.nav[topicKey]}
-        title={<span style={{ whiteSpace: 'pre-line' }}>{title}</span>}
-        sub={blurb}
-        accent={topic.accent}
-      />
       <TopicSection topic={topic} lang={lang} idx={0} />
       {/* Show context-relevant detail per topic */}
       {topicKey === 'be' && <RegionChart lang={lang} t={t} />}
@@ -3147,7 +3158,6 @@ function NextTopicNav({ current, lang, t }) {
 function ObjectivesPage({ lang, t }) {
   return (
     <>
-      <PageHeader kicker={t.nav.objektivat} title={t.objectives.title} sub={t.objectives.sub} />
       <Objectives lang={lang} t={t} />
       <ObjectiveContext lang={lang} />
     </>
@@ -3157,7 +3167,6 @@ function ObjectivesPage({ lang, t }) {
 function FAQPage({ lang, t, onChat }) {
   return (
     <>
-      <PageHeader kicker={t.nav.faq} title={t.faq.title} sub={lang === 'sq' ? 'Përgjigjet janë të shkurtra dhe me referencë te dokumenti origjinal.' : lang === 'en' ? 'Answers are short and reference the source document.' : 'Odgovori su kratki sa referencom na izvor.'} />
       <FAQ lang={lang} t={t} />
       <FAQGuide lang={lang} onChat={onChat} />
     </>
@@ -3167,7 +3176,6 @@ function FAQPage({ lang, t, onChat }) {
 function InfoPage({ lang, t }) {
   return (
     <>
-      <PageHeader kicker={lang === 'sq' ? 'Infografika' : lang === 'en' ? 'Infographics' : 'Infografike'} title={lang === 'sq' ? 'Çdo gjë në një faqe.' : lang === 'en' ? 'Everything on a single page.' : 'Sve na jednoj stranici.'} />
       <Infographics lang={lang} t={t} />
       <InfographicsGuide lang={lang} />
     </>
@@ -3578,11 +3586,11 @@ function FAQGuide({ lang, onChat }) {
             {lang === 'sq' ? 'Pyetjet janë hyrje, jo fundi i kërkimit.' : lang === 'en' ? 'Questions are an entry point, not the end of inquiry.' : 'Pitanja su ulaz, ne kraj istraživanja.'}
           </h2>
           <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', maxWidth: 640, marginTop: 18 }}>
-            {lang === 'sq' ? 'Nëse përgjigjja është e shkurtër, përdore si orientim: hap temën përkatëse, shiko objektivat dhe pyet asistentin për shembuj konkretë.' : lang === 'en' ? 'If an answer is short, use it as orientation: open the related topic, check the objectives and ask the assistant for concrete examples.' : 'Ako je odgovor kratak, koristi ga kao orijentaciju: otvori povezanu temu, pogledaj ciljeve i pitaj asistenta za konkretne primere.'}
+            {lang === 'sq' ? 'Nëse përgjigjja është e shkurtër, përdore si orientim: hap temën përkatëse, shiko objektivat dhe pyet EU Agent për shembuj konkretë.' : lang === 'en' ? 'If an answer is short, use it as orientation: open the related topic, check the objectives and ask EU Agent for concrete examples.' : 'Ako je odgovor kratak, koristi ga kao orijentaciju: otvori povezanu temu, pogledaj ciljeve i pitaj EU Agent za konkretne primere.'}
           </p>
         </div>
         <button onClick={onChat} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '24px 28px', textAlign: 'left' }}>
-          <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em' }}>ASSISTANT</span>
+          <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em' }}>EU AGENT</span>
           <span className="serif" style={{ display: 'block', fontSize: 34, marginTop: 20 }}>{lang === 'sq' ? 'Pyet për një rast' : lang === 'en' ? 'Ask about a case' : 'Pitaj za slučaj'}</span>
         </button>
       </div>
