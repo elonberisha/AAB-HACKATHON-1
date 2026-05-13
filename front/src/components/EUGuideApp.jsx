@@ -1720,8 +1720,8 @@ function Hero({ lang, t, onChat }) {
             <div style={{ marginBottom: 24 }}>
               <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em', marginBottom: 6 }}>DITË QË NGA APLIKIMI</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                <span className="serif" style={{ fontSize: 72, lineHeight: 0.9, color: 'var(--ink)' }}>{days.toLocaleString('sq-AL')}</span>
-                <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>{(now / 1000) % 2 < 1 ? '▍' : ' '}</span>
+                <span className="serif" style={{ fontSize: 72, lineHeight: 0.9, color: 'var(--ink)' }}>{days}</span>
+                <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)', animation: 'blink 1s step-end infinite' }}>▍</span>
               </div>
             </div>
 
@@ -3629,6 +3629,7 @@ function App() {
       <ChatWidget lang={lang} t={t} open={chatOpen} setOpen={setChatOpen} />
       <style>{`
         @keyframes bounce { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-3px); opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         html { scroll-behavior: auto; }
         main { animation: fadeIn 280ms ease both; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
