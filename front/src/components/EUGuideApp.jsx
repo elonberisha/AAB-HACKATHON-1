@@ -3417,9 +3417,115 @@ function BEObjectivesEntry({ lang }) {
 }
 
 function RuleOfLawMaterials({ lang }) {
-  const copy = useCmsObject('rule_of_law_materials_copy', {});
-  const actions = useCmsArray('rule_of_law_actions', []);
-  const materials = useCmsArray('legal_materials', []);
+  const fallbackCopy = {
+    eyebrow_sq: 'Materiale ligjore',
+    eyebrow_en: 'Legal materials',
+    eyebrow_sr: 'Pravni materijali',
+    title_sq: 'Kushtetuta dhe ligjet themelore për sundimin e ligjit.',
+    title_en: 'The Constitution and fundamental laws for the rule of law.',
+    title_sr: 'Ustav i osnovni zakoni za vladavinu prava.',
+    sub_sq: 'Këtu janë aktet bazë që qytetarët duhet t’i kenë afër kur lexojnë për gjykata, procedura, administratë, dogana dhe trafik.',
+    sub_en: 'These are the core acts citizens should have nearby when reading about courts, procedure, administration, customs and traffic.',
+    sub_sr: 'Ovo su osnovni akti koje građani treba da imaju pri ruci kada citaju o sudovima, postupku, administraciji, carini i saobracaju.',
+    constitution_title_sq: 'Kushtetuta e Republikës së Kosovës',
+    constitution_title_en: 'Constitution of the Republic of Kosovo',
+    constitution_title_sr: 'Ustav Republike Kosovo',
+    fundamental_title_sq: 'Ligjet themelore',
+    fundamental_title_en: 'Fundamental laws',
+    fundamental_title_sr: 'Osnovni zakoni',
+    catalog_title_sq: 'Katalogu i plotë i materialeve',
+    catalog_title_en: 'Full materials catalog',
+    catalog_title_sr: 'Puni katalog materijala',
+  };
+  const fallbackActions = [
+    { label_sq: 'Kushtetuta e Republikës së Kosovës', label_en: 'Constitution of Kosovo', label_sr: 'Ustav Kosova', href: '#kushtetuta', variant: 'dark' },
+    { label_sq: 'Ligjet themelore', label_en: 'Fundamental laws', label_sr: 'Osnovni zakoni', href: '#ligjet-themelore', variant: 'light' },
+  ];
+  const fallbackMaterials = [
+    {
+      group: 'constitution',
+      law_number: 'K-09042008',
+      status: 'Në fuqi; me amendamente 2012, 2013, 2015, 2016, 2020',
+      title_sq: 'Kushtetuta e Republikës së Kosovës',
+      title_en: 'Constitution of the Republic of Kosovo',
+      title_sr: 'Ustav Republike Kosovo',
+      summary_sq: 'Akti themelor i shtetit: të drejtat dhe liritë themelore, organizimi institucional, ndarja e pushteteve dhe amendamentet kushtetuese.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=3702',
+    },
+    {
+      group: 'fundamental',
+      law_number: '06/L-074',
+      status: 'Në fuqi si akt i konsoliduar',
+      title_sq: 'Kodi Penal i Republikës së Kosovës',
+      title_en: 'Criminal Code of the Republic of Kosovo',
+      title_sr: 'Krivicni zakonik Republike Kosovo',
+      summary_sq: 'Përcakton veprat penale, përgjegjësinë penale, sanksionet, korrupsionin, krimin e organizuar dhe veprat kundër detyrës zyrtare.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=116031',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-032',
+      status: 'Në fuqi; ndryshuar/plotësuar nga 08/L-187',
+      title_sq: 'Kodi i Procedurës Penale',
+      title_en: 'Criminal Procedure Code',
+      title_sr: 'Zakonik o krivicnom postupku',
+      summary_sq: 'Rregullon hetimin, ndjekjen penale, të drejtat e palëve, provat, masat procedurale, gjykimin dhe mjetet juridike.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=61759',
+    },
+    {
+      group: 'fundamental',
+      law_number: 'Projektkod',
+      status: 'Projekt; të mos paraqitet si ligj në fuqi pa verifikim në Gazetën Zyrtare',
+      title_sq: 'Kodi Civil i Republikës së Kosovës',
+      title_en: 'Civil Code of the Republic of Kosovo',
+      title_sr: 'Gradjanski zakonik Republike Kosovo',
+      summary_sq: 'Projektkod për kodifikimin e së drejtës civile: pjesa e përgjithshme, detyrimet, prona, familja dhe trashëgimia.',
+      source_url: 'https://md.rks-gov.net/wp-content/uploads/2024/06/A1CCB78F-9020-41D5-826E-14D67A90F369.pdf',
+    },
+    {
+      group: 'fundamental',
+      law_number: '03/L-006',
+      status: 'Në fuqi si Ligji për Procedurën Kontestimore',
+      title_sq: 'Procedura civile / Ligji për Procedurën Kontestimore',
+      title_en: 'Civil procedure / Law on Contested Procedure',
+      title_sr: 'Gradjanski postupak / Zakon o parnicnom postupku',
+      summary_sq: 'Rregullon paditë, palët, afatet, seancat, provat, vendimet, ankesat dhe gjykimin civil kontestimor.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=2583',
+    },
+    {
+      group: 'fundamental',
+      law_number: '05/L-031',
+      status: 'Në fuqi',
+      title_sq: 'Ligji për Procedurën e Përgjithshme Administrative',
+      title_en: 'Law on General Administrative Procedure',
+      title_sr: 'Zakon o opstem upravnom postupku',
+      summary_sq: 'Rregullon procedurat administrative, afatet, njoftimin, vendimin dhe ankesën ndaj administratës publike.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=12559&langid=1',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-247',
+      status: 'Në fuqi; shfuqizon Kodin 03/L-109',
+      title_sq: 'Kodi Doganor dhe i Akcizave',
+      title_en: 'Customs and Excise Code',
+      title_sr: 'Carinski i akcizni zakonik',
+      summary_sq: 'Rregullon procedurat doganore, akcizat, obligimet e importit/eksportit, kontrollet dhe kundërvajtjet.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=89203',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-186',
+      status: 'Në fuqi; shfuqizon 05/L-088 dhe 06/L-069',
+      title_sq: 'Ligji për Rregullat e Trafikut Rrugor / Kodi Rrugor',
+      title_en: 'Law on Road Traffic Rules',
+      title_sr: 'Zakon o pravilima drumskog saobracaja',
+      summary_sq: 'Rregullon qarkullimin rrugor, sigurinë, shenjat, pajisjet, përgjegjësitë dhe kundërvajtjet në trafik.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=87975',
+    },
+  ];
+  const copy = useCmsObject('rule_of_law_materials_copy', fallbackCopy);
+  const actions = useCmsArray('rule_of_law_actions', fallbackActions);
+  const materials = useCmsArray('legal_materials', fallbackMaterials);
   const catalog = useCmsArray('materials_catalog', []);
   if (!materials.length && !catalog.length) return null;
 
@@ -3543,6 +3649,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {topicKey === 'be' && <RegionChart lang={lang} t={t} />}
       {topicKey === 'be' && <Clusters lang={lang} t={t} />}
       {topicKey === 'korrupsioni' && <CPIChart lang={lang} t={t} />}
+      {topicKey === 'sundimi' && <RuleOfLawMaterials lang={lang} />}
       {(topicKey === 'reforma' || topicKey === 'sundimi') && (
         <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
           <div className="container">
@@ -3564,7 +3671,6 @@ function TopicPage({ topicKey, lang, t, onChat }) {
           </div>
         </section>
       )}
-      {topicKey === 'sundimi' && <RuleOfLawMaterials lang={lang} />}
       <DeepReadingSection topicKey={topicKey} lang={lang} />
       <NextTopicNav current={topicKey} lang={lang} t={t} />
     </>
