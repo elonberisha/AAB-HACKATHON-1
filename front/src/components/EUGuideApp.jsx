@@ -4773,6 +4773,82 @@ function localizedValue(item, field, lang) {
   return item[field + '_' + lang] || item[field + '_sq'] || item[field] || '';
 }
 
+function ui(lang, sq, en, sr) {
+  return lang === 'en' ? en : lang === 'sr' ? sr : sq;
+}
+
+const KNOWN_TEXT_TRANSLATIONS = {
+  'Në fuqi': { en: 'In force', sr: 'Na snazi' },
+  'Në progres': { en: 'In progress', sr: 'U toku' },
+  'Në pritje': { en: 'Pending', sr: 'Na čekanju' },
+  'E plotësuar': { en: 'Completed', sr: 'Završeno' },
+  'Hap i ardhshëm teknik': { en: 'Next technical step', sr: 'Sledeći tehnički korak' },
+  'Kusht politik': { en: 'Political condition', sr: 'Politički uslov' },
+  'Vazhdimisht': { en: 'Ongoing', sr: 'Stalno' },
+  'to_collect': { en: 'to collect', sr: 'za prikupljanje' },
+  'law_report_guide_or_dataset': { en: 'law, report, guide or dataset', sr: 'zakon, izveštaj, vodič ili skup podataka' },
+  'Aktet Themelore': { en: 'Foundational acts', sr: 'Osnovni akti' },
+  'Ligje me Ndikim Direkt te Qytetarët': { en: 'Laws with direct impact on citizens', sr: 'Zakoni sa direktnim uticajem na građane' },
+  'Arsim, Kulturë, Rini, Sport': { en: 'Education, culture, youth, sport', sr: 'Obrazovanje, kultura, omladina, sport' },
+  'Shëndetësi': { en: 'Health', sr: 'Zdravstvo' },
+  'Mjedis, Bujqësi, Pyje': { en: 'Environment, agriculture, forests', sr: 'Životna sredina, poljoprivreda, šume' },
+  'Energji, Telekomunikacion, Transport': { en: 'Energy, telecommunications, transport', sr: 'Energija, telekomunikacije, transport' },
+  'Ligje për Sundimin e Ligjit dhe Korrupsionin': { en: 'Rule of law and anti-corruption laws', sr: 'Zakoni za vladavinu prava i antikorupciju' },
+  'Ligje për Institucionet dhe Administratën': { en: 'Institutions and administration laws', sr: 'Zakoni o institucijama i administraciji' },
+  'Ligje për Ekonominë dhe Biznesin': { en: 'Economy and business laws', sr: 'Zakoni o ekonomiji i poslovanju' },
+  'Ligje për Integrimin në BE': { en: 'EU integration documents', sr: 'Dokumenti za EU integracije' },
+  'Akte Nënligjore': { en: 'Secondary legislation', sr: 'Podzakonski akti' },
+  'Procesi Legjislativ dhe Edukimi Qytetar': { en: 'Legislative process and civic education', sr: 'Zakonodavni proces i građansko obrazovanje' },
+  'Raporte Zyrtare': { en: 'Official reports', sr: 'Zvanični izveštaji' },
+  'Dokumente Shpjeguese për Qytetarët': { en: 'Citizen explainers', sr: 'Objašnjenja za građane' },
+  'Pyetje të Shpeshta (FAQ)': { en: 'Frequently asked questions (FAQ)', sr: 'Česta pitanja (FAQ)' },
+  'Të Drejtat e Njeriut dhe Dokumente Ndërkombëtare': { en: 'Human rights and international documents', sr: 'Ljudska prava i međunarodni dokumenti' },
+  'Marrëveshje Ndërkombëtare të Kosovës': { en: 'Kosovo international agreements', sr: 'Međunarodni sporazumi Kosova' },
+  'Infografika dhe Statistika': { en: 'Infographics and statistics', sr: 'Infografike i statistika' },
+  'Kontakte Praktike (numra dhe institucione)': { en: 'Practical contacts (numbers and institutions)', sr: 'Praktični kontakti (brojevi i institucije)' },
+  'Glosar / Fjalorë': { en: 'Glossary / dictionaries', sr: 'Glosar / rečnici' },
+};
+
+function translateKnownText(text, lang) {
+  if (!text || lang === 'sq') return text || '';
+  return KNOWN_TEXT_TRANSLATIONS[text]?.[lang] || text;
+}
+
+function translateLegalTitle(text, lang) {
+  if (!text || lang === 'sq') return text || '';
+  const exact = translateKnownText(text, lang);
+  if (exact !== text) return exact;
+  if (lang === 'en') {
+    return text
+      .replace(/^Ligji për /, 'Law on ')
+      .replace(/^Ligji i /, 'Law on ')
+      .replace(/^Ligje për /, 'Laws on ')
+      .replace(/^Kodi i /, 'Code of ')
+      .replace(/^Kodi /, 'Code ')
+      .replace(/^Marrëveshja për /, 'Agreement on ')
+      .replace(/^Marrëveshjet për /, 'Agreements on ')
+      .replace(/^Udhëzues /, 'Guide ')
+      .replace(/^Fjalor i /, 'Glossary of ')
+      .replace(/^Lista e /, 'List of ');
+  }
+  return text
+    .replace(/^Ligji për /, 'Zakon o ')
+    .replace(/^Ligji i /, 'Zakon o ')
+    .replace(/^Ligje për /, 'Zakoni o ')
+    .replace(/^Kodi i /, 'Zakonik o ')
+    .replace(/^Kodi /, 'Zakonik ')
+    .replace(/^Marrëveshja për /, 'Sporazum o ')
+    .replace(/^Marrëveshjet për /, 'Sporazumi o ')
+    .replace(/^Udhëzues /, 'Vodič ')
+    .replace(/^Fjalor i /, 'Rečnik ')
+    .replace(/^Lista e /, 'Lista ');
+}
+
+function localizedField(item, field, lang) {
+  if (!item) return '';
+  return item[field + '_' + lang] || item[field + '_sq'] || item[field] || '';
+}
+
 function MaterialSourceBadge({ label }) {
   if (!label) return null;
   return (
@@ -5088,23 +5164,23 @@ function RuleOfLawMaterials({ lang }) {
               {Object.entries(categories).map(([category, items]) => (
                 <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
                   <summary style={{ cursor: 'pointer', padding: '13px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, listStyle: 'none' }}>
-                    <span className="serif" style={{ fontSize: 22, lineHeight: 1.08, color: 'var(--ink)' }}>{category}</span>
+                    <span className="serif" style={{ fontSize: 22, lineHeight: 1.08, color: 'var(--ink)' }}>{translateKnownText(category, lang)}</span>
                     <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
                   </summary>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }} className="materials-catalog-grid">
                     {items.map((item, i) => (
                       <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 18, color: 'var(--ink)' }}>
-                        <div style={{ fontSize: 15, lineHeight: 1.35, fontWeight: 650 }}>{item.title}</div>
-                        {item.summary_sq && (
+                        <div style={{ fontSize: 15, lineHeight: 1.35, fontWeight: 650 }}>{localizedField(item, 'title', lang) || translateLegalTitle(item.title, lang)}</div>
+                        {(localizedField(item, 'summary', lang) || item.summary_sq) && (
                           <p style={{ margin: '8px 0 0', fontSize: 12.5, lineHeight: 1.45, color: 'var(--ink-2)' }}>
-                            {item.summary_sq}
+                            {localizedField(item, 'summary', lang) || item.summary_sq}
                           </p>
                         )}
                         <div style={{ marginTop: 12 }}>
-                          <MaterialSourceBadge label={item.source_label || item.material_type || item.status} />
+                          <MaterialSourceBadge label={translateKnownText(item.source_label || item.material_type || item.status, lang)} />
                         </div>
                         {item.status && (
-                          <div style={{ marginTop: 8, fontSize: 11.5, lineHeight: 1.45, color: 'var(--ink-3)' }}>{item.status}</div>
+                          <div style={{ marginTop: 8, fontSize: 11.5, lineHeight: 1.45, color: 'var(--ink-3)' }}>{translateKnownText(localizedField(item, 'status', lang) || item.status, lang)}</div>
                         )}
                       </a>
                     ))}
@@ -5131,18 +5207,18 @@ function MaterialGrid({ items, lang }) {
       {items.map((item, i) => (
         <article key={`${item.title_sq || item.title}-${i}`} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210, gridColumn: hasOrphan && i === items.length - 1 ? '1 / -1' : undefined }}>
           <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
-            {item.law_number || item.status}
+            {item.law_number || translateKnownText(localizedField(item, 'status', lang) || item.status, lang)}
           </div>
           <h4 className="serif" style={{ fontSize: 28, lineHeight: 1.08, color: 'var(--ink)', margin: 0 }}>
-            {localizedValue(item, 'title', lang)}
+            {localizedField(item, 'title', lang) || translateLegalTitle(item.title, lang)}
           </h4>
           <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>
-            {localizedValue(item, 'summary', lang) || item.status}
+            {localizedField(item, 'summary', lang) || translateKnownText(localizedField(item, 'status', lang) || item.status, lang)}
           </p>
-          <MaterialSourceBadge label={item.source_label || item.material_type || item.status} />
+          <MaterialSourceBadge label={translateKnownText(item.source_label || item.material_type || item.status, lang)} />
           {item.source_url && (
             <a href={item.source_url} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-flex', marginTop: 14, fontSize: 10, color: 'var(--ink)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              Burimi zyrtar →
+              {ui(lang, 'Burimi zyrtar', 'Official source', 'Zvanični izvor')} →
             </a>
           )}
         </article>
@@ -6180,7 +6256,8 @@ const LEGAL_PAGE_COPY_FULL = {
 };
 
 function LegalStandardPage({ type, lang = 'sq' }) {
-  const group = LEGAL_PAGE_COPY_FULL[type] || LEGAL_PAGE_COPY_FULL.privatesia;
+  const fallbackGroup = LEGAL_PAGE_COPY_FULL[type] || LEGAL_PAGE_COPY_FULL.privatesia;
+  const group = useCmsObject(`legal_page_${type}`, fallbackGroup);
   const copy = group[lang] || group.sq;
   return (
     <>
