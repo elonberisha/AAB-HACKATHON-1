@@ -1,8 +1,9 @@
 ﻿'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { chatStream, getSession } from '@/lib/ai';
 import { supabasePublic as supabase } from '@/lib/supabase';
+import VoiceOverlay from './VoiceOverlay';
 
 
 // ---- data.js ----
@@ -1452,14 +1453,20 @@ function useRoute() {
     const h = location.hash.replace(/^#\/?/, '');
     return h || 'home';
   };
-  const [route, setRoute] = useState(parse);
+  // Always start with 'home' for SSR hydration, then sync in useEffect
+  const [route, setRoute] = useState('home');
   useEffect(() => {
+    setRoute(parse());
     const onHash = () => {
       setRoute(parse());
       scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
     };
     addEventListener('hashchange', onHash);
-    return () => removeEventListener('hashchange', onHash);
+    addEventListener('popstate', onHash);
+    return () => {
+      removeEventListener('hashchange', onHash);
+      removeEventListener('popstate', onHash);
+    };
   }, []);
   return [route, (r) => {
     if (typeof window !== 'undefined') location.hash = '#/' + (r === 'home' ? '' : r);
@@ -1853,6 +1860,124 @@ function ChatWidget({ lang, t, open, setOpen }) {
   const [user, setUser] = useState(null);
   const scrollRef = useRef(null);
 
+  // Vapi voice state
+  const [voiceActive, setVoiceActive] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState('idle'); // idle | connecting | listening | speaking
+  const [volumeLevel, setVolumeLevel] = useState(0);
+  const vapiRef = useRef(null);
+
+  // Initialize Vapi lazily
+  const getVapi = useCallback(async () => {
+    if (vapiRef.current) return vapiRef.current;
+    const { default: Vapi } = await import('@vapi-ai/web');
+    const token = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
+    if (!token) {
+      console.warn('NEXT_PUBLIC_VAPI_PUBLIC_KEY not set');
+      return null;
+    }
+    const vapi = new Vapi(token);
+
+    vapi.on('call-start', () => {
+      setVoiceStatus('listening');
+    });
+    vapi.on('call-end', () => {
+      setVoiceStatus('idle');
+      setVoiceActive(false);
+      setVolumeLevel(0);
+    });
+    vapi.on('speech-start', () => {
+      setVoiceStatus('speaking');
+    });
+    vapi.on('speech-end', () => {
+      setVoiceStatus('listening');
+    });
+    vapi.on('volume-level', (level) => {
+      setVolumeLevel(level);
+    });
+    vapi.on('error', (err) => {
+      console.error('Vapi error:', err);
+      setVoiceStatus('idle');
+      setVoiceActive(false);
+      setVolumeLevel(0);
+    });
+    // When assistant finishes speaking, add transcript to chat
+    vapi.on('message', (msg) => {
+      if (msg.type === 'transcript' && msg.transcriptType === 'final') {
+        if (msg.role === 'user') {
+          setMsgs(m => [...m, { role: 'user', text: msg.transcript }]);
+        } else if (msg.role === 'assistant') {
+          setMsgs(m => [...m, { role: 'assistant', text: msg.transcript }]);
+        }
+      }
+    });
+
+    vapiRef.current = vapi;
+    return vapi;
+  }, []);
+
+  const startVoice = useCallback(async () => {
+    setVoiceActive(true);
+    setVoiceStatus('connecting');
+    try {
+      const vapi = await getVapi();
+      if (!vapi) {
+        alert('Vapi nuk eshte konfiguruar. Vendos NEXT_PUBLIC_VAPI_PUBLIC_KEY.');
+        setVoiceActive(false);
+        setVoiceStatus('idle');
+        return;
+      }
+      const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
+      if (assistantId) {
+        await vapi.start(assistantId, {
+          metadata: { sessionId: getSession(), language: lang },
+        });
+      } else {
+        // Fallback: use custom LLM config (server URL)
+        const aiUrl = process.env.NEXT_PUBLIC_AI_URL || '';
+        await vapi.start({
+          model: {
+            provider: 'custom-llm',
+            url: `${aiUrl}/api/vapi/chat/completions`,
+            model: 'gpt-4o-mini',
+          },
+          voice: {
+            provider: '11labs',
+            voiceId: 'EXAVITQu4vr4xnSDxMaL', // Sarah
+          },
+          firstMessage: lang === 'en'
+            ? 'Hello! I can help you with EU integration questions for Kosovo.'
+            : lang === 'sr'
+              ? 'Zdravo! Mogu da vam pomognem sa pitanjima o integraciji Kosova u EU.'
+              : 'Pershendetje! Mund te te ndihmoj me pyetje per integrimin e Kosoves ne BE.',
+          metadata: { sessionId: getSession(), language: lang },
+        });
+      }
+    } catch (err) {
+      console.error('Voice start error:', err);
+      setVoiceActive(false);
+      setVoiceStatus('idle');
+    }
+  }, [getVapi, lang]);
+
+  const stopVoice = useCallback(async () => {
+    try {
+      const vapi = vapiRef.current;
+      if (vapi) await vapi.stop();
+    } catch {}
+    setVoiceActive(false);
+    setVoiceStatus('idle');
+    setVolumeLevel(0);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (vapiRef.current) {
+        try { vapiRef.current.stop(); } catch {}
+      }
+    };
+  }, []);
+
   // Check auth state
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => { if (data.user) setUser(data.user); });
@@ -2057,7 +2182,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
             placeholder={t.chat.placeholder}
             style={{ flex: 1, border: '1px solid var(--line)', padding: '10px 12px', background: 'var(--paper)', fontSize: 14, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none' }} />
           <button onClick={() => send()} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '0 16px', fontSize: 13 }}>{t.chat.send}</button>
-          <button title="Voice" style={{ background: 'transparent', border: '1px solid var(--line)', padding: '0 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+          <button title="Voice" onClick={startVoice} style={{ background: 'transparent', border: '1px solid var(--line)', padding: '0 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M2 10v3" /><path d="M6 6v11" /><path d="M10 3v18" /><path d="M14 8v7" /><path d="M18 5v13" /><path d="M22 10v3" />
             </svg>
@@ -2094,6 +2219,14 @@ function ChatWidget({ lang, t, open, setOpen }) {
           )}
         </div>
       </div>
+
+      {/* Voice overlay — ChatGPT-style */}
+      <VoiceOverlay
+        active={voiceActive}
+        onClose={stopVoice}
+        status={voiceStatus}
+        volumeLevel={volumeLevel}
+      />
     </>
   );
 }
