@@ -344,7 +344,7 @@ with raw(category, title, material_type) as (
       else 'Burim zyrtar institucional'
     end as source_label,
     case
-      when material_type = 'Akt ligjor / kod' then 'https://gzk.rks-gov.net/'
+      when material_type = 'Akt ligjor / kod' then 'https://gzk.rks-gov.net/SearchIn.aspx?Index=2&s=' || replace(replace(replace(replace(replace(replace(title, ' ', '%20'), '—', '%E2%80%94'), '/', '%2F'), '(', '%28'), ')', '%29'), ',', '%2C') || '&so=1'
       when position('BE' in category) > 0 or position('Acquis' in title) > 0 or position('MSA' in title) > 0 or position('Kapitulli' in title) > 0 then 'https://enlargement.ec.europa.eu/countries/kosovo_en'
       when material_type = 'Infografikë / dataset' or position('Statistika' in title) > 0 then 'https://ask.rks-gov.net/'
       when position('Avokatit të Popullit' in title) > 0 then 'https://oik-rks.org/'
@@ -354,7 +354,7 @@ with raw(category, title, material_type) as (
       else 'https://www.rks-gov.net/'
     end as source_url,
     case
-      when material_type = 'Akt ligjor / kod' then 'Material ligjor i futur; hap burimin zyrtar dhe verifiko versionin e konsoliduar/amendamentet para citimit.'
+      when material_type = 'Akt ligjor / kod' then 'Kërkim zyrtar në Gazetën Zyrtare për këtë titull; përdor versionin e konsoliduar dhe kontrollo amendamentet para citimit.'
       when position('BE' in category) > 0 then 'Material i integrimit në BE; krahaso statusin me raportin më të fundit të Komisionit Evropian.'
       when material_type = 'Raport zyrtar' then 'Raport/dataset i futur; verifiko vitin më të fundit para publikimit final.'
       else 'Material referues i futur në CMS; kërkon kontroll final editorial para publikimit.'
