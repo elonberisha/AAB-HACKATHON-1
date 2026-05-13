@@ -4254,8 +4254,9 @@ function RuleOfLawMaterials({ lang }) {
 }
 
 function MaterialGrid({ items, lang }) {
+  const cols = items.length === 1 ? '1fr' : 'repeat(2, minmax(0, 1fr))';
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="material-grid">
+    <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="material-grid">
       {items.map((item, i) => (
         <article key={`${item.title_sq || item.title}-${i}`} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210 }}>
           <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
