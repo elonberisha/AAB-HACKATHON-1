@@ -3573,7 +3573,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Drejton koordinimin politik të reformës së administratës publike dhe mbikëqyr ARC-në për shërbimet civile.',
     role_en: 'Leads political coordination of the public administration reform and oversees the Civil Registry Agency.',
     role_sr: 'Vodi političku koordinaciju reforme javne uprave i nadgleda Agenciju za civilnu registraciju.',
-    site: 'mpb.rks-gov.net',
+    site: 'mpb.rks-gov.net', url: 'https://mpb.rks-gov.net',
   },
   {
     key: 'ashi',
@@ -3584,7 +3584,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Operon platformën eKosova, infrastrukturën shtetërore të interoperabilitetit (GG) dhe identitetin dixhital (eID).',
     role_en: 'Operates the eKosova platform, the state interoperability layer and digital identity (eID).',
     role_sr: 'Upravlja platformom eKosova, državnim slojem interoperabilnosti i digitalnim identitetom (eID).',
-    site: 'ashi.rks-gov.net',
+    site: 'ashi.rks-gov.net', url: 'https://ashi.rks-gov.net',
   },
   {
     key: 'dap',
@@ -3595,7 +3595,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Përgjegjës për koordinimin me 38 komunat dhe transferimin e shërbimeve lokale në eKosova.',
     role_en: 'Coordinates the 38 municipalities and the migration of local services to eKosova.',
     role_sr: 'Koordinira 38 opština i prelaz lokalnih usluga na eKosova.',
-    site: 'mapl.rks-gov.net',
+    site: 'mapl.rks-gov.net', url: 'https://mapl.rks-gov.net',
   },
   {
     key: 'iap',
@@ -3606,7 +3606,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Trajnimi i nëpunësve civilë dhe çertifikimi i kompetencave bazë sipas standardeve të SIGMA.',
     role_en: 'Training of civil servants and certification of core competencies along SIGMA standards.',
     role_sr: 'Obuka državnih službenika i sertifikacija osnovnih kompetencija prema SIGMA standardima.',
-    site: 'ikap.rks-gov.net',
+    site: 'ikap.rks-gov.net', url: 'https://ikap.rks-gov.net',
   },
   {
     key: 'arc',
@@ -3617,7 +3617,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Lëshon dokumente personale, mban regjistrin e gjendjes civile dhe lidhjen me eID.',
     role_en: 'Issues personal documents, maintains the civil status registry and the eID link.',
     role_sr: 'Izdaje lična dokumenta, vodi matični registar i vezu sa eID.',
-    site: 'arc.rks-gov.net',
+    site: 'arc.rks-gov.net', url: 'https://arc.rks-gov.net',
   },
   {
     key: 'omb',
@@ -3628,7 +3628,7 @@ const REFORMA_INSTITUTIONS = [
     role_sq: 'Trajton ankesat e qytetarëve kur administrata nuk përgjigjet brenda afateve ligjore.',
     role_en: 'Handles citizen complaints when the administration fails to respond within legal deadlines.',
     role_sr: 'Razmatra žalbe građana kada administracija ne odgovori u zakonskim rokovima.',
-    site: 'oik-rks.org',
+    site: 'oik-rks.org', url: 'https://oik-rks.org',
   },
 ];
 
@@ -3673,12 +3673,20 @@ function ReformaInstitutionsSection({ lang }) {
               </div>
               <h4 className="serif" style={{ fontSize: 24, lineHeight: 1.15, color: 'var(--ink)', marginBottom: 12 }}>{it['name_' + lang] || it.name_sq}</h4>
               <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ink-2)', margin: 0, flex: 1 }}>{it['role_' + lang] || it.role_sq}</p>
-              <div className="mono" style={{
-                marginTop: 18, paddingTop: 12, borderTop: '1px dashed var(--line)',
-                fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)',
-              }}>
-                {it.site}
-              </div>
+              {it.url ? (
+                <a href={it.url} target="_blank" rel="noreferrer" className="mono" style={{
+                  marginTop: 18, paddingTop: 12, borderTop: '1px dashed var(--line)',
+                  fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink)',
+                  alignSelf: 'flex-start', borderBottom: '1px solid var(--ink-3)', paddingBottom: 1,
+                }}>
+                  ↗ {it.site}
+                </a>
+              ) : (
+                <div className="mono" style={{
+                  marginTop: 18, paddingTop: 12, borderTop: '1px dashed var(--line)',
+                  fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)',
+                }}>{it.site}</div>
+              )}
             </article>
           ))}
         </div>
@@ -3704,8 +3712,8 @@ const REFORMA_SOURCES = [
     cat_en: 'European Commission',
     cat_sr: 'Evropska komisija',
     items: [
-      { t: 'Kosovo 2024 Report', sub: 'SWD(2024) 690 final · 30 tetor 2024 — kapitulli "Public administration reform".', url: 'neighbourhood-enlargement.ec.europa.eu' },
-      { t: 'Communication on EU Enlargement Policy', sub: 'COM(2024) 690 final — udhëzimet politike për vendet kandidate.', url: 'ec.europa.eu' },
+      { t: 'Kosovo 2024 Report', sub: 'SWD(2024) 690 final · 30 tetor 2024 — kapitulli "Public administration reform".', url: 'neighbourhood-enlargement.ec.europa.eu', href: 'https://neighbourhood-enlargement.ec.europa.eu/document/download/4eb01baa-aa49-414c-a4ec-90cefcfa5c5b_en' },
+      { t: 'Communication on EU Enlargement Policy', sub: 'COM(2024) 690 final — udhëzimet politike për vendet kandidate.', url: 'ec.europa.eu', href: 'https://ec.europa.eu/commission/presscorner/detail/en/ip_24_5546' },
     ],
   },
   {
@@ -3713,8 +3721,8 @@ const REFORMA_SOURCES = [
     cat_en: 'OECD / SIGMA',
     cat_sr: 'OECD / SIGMA',
     items: [
-      { t: 'Monitoring Report: Kosovo (SIGMA, 2023)', sub: 'Vlerësim kundrejt Parimeve të Administratës Publike — 6 fusha politike.', url: 'sigmaweb.org' },
-      { t: 'Principles of Public Administration', sub: 'Standardi referencë i përdorur nga BE-ja për vlerësimin e administratës.', url: 'sigmaweb.org/principles' },
+      { t: 'Monitoring Report: Kosovo (SIGMA, 2023)', sub: 'Vlerësim kundrejt Parimeve të Administratës Publike — 6 fusha politike.', url: 'sigmaweb.org', href: 'https://www.sigmaweb.org/publications/monitoring-reports.htm' },
+      { t: 'Principles of Public Administration', sub: 'Standardi referencë i përdorur nga BE-ja për vlerësimin e administratës.', url: 'sigmaweb.org/principles', href: 'https://www.sigmaweb.org/publications/principles-public-administration.htm' },
     ],
   },
   {
@@ -3722,9 +3730,9 @@ const REFORMA_SOURCES = [
     cat_en: 'Government of Kosovo',
     cat_sr: 'Vlada Kosova',
     items: [
-      { t: 'Strategjia për Modernizimin e Administratës Publike 2022–2027', sub: 'Plan veprimi shumëvjeçar i miratuar nga Qeveria · objektiva të matshme.', url: 'mpb.rks-gov.net' },
-      { t: 'Ligji Nr. 06/L-114 për Zyrtarët Publikë', sub: 'Bazë ligjore për rekrutimin me meritë dhe pavarësinë e shërbimit civil.', url: 'gzk.rks-gov.net' },
-      { t: 'Ligji Nr. 08/L-196 për Pagat në Sektorin Publik', sub: 'Sistem i ri i pagave i miratuar · në fazë zbatimi.', url: 'gzk.rks-gov.net' },
+      { t: 'Strategjia për Modernizimin e Administratës Publike 2022–2027', sub: 'Plan veprimi shumëvjeçar i miratuar nga Qeveria · objektiva të matshme.', url: 'mpb.rks-gov.net', href: 'https://mpb.rks-gov.net' },
+      { t: 'Ligji Nr. 06/L-114 për Zyrtarët Publikë', sub: 'Bazë ligjore për rekrutimin me meritë dhe pavarësinë e shërbimit civil.', url: 'gzk.rks-gov.net', href: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=18555' },
+      { t: 'Ligji Nr. 08/L-196 për Pagat në Sektorin Publik', sub: 'Sistem i ri i pagave i miratuar · në fazë zbatimi.', url: 'gzk.rks-gov.net', href: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=82733' },
     ],
   },
   {
@@ -3732,9 +3740,9 @@ const REFORMA_SOURCES = [
     cat_en: 'Platforms & civil society',
     cat_sr: 'Platforme i civilno društvo',
     items: [
-      { t: 'eKosova', sub: 'Platforma qeveritare e shërbimeve elektronike — pikë qendrore për qytetarë e biznese.', url: 'ekosova.rks-gov.net' },
-      { t: 'PAR Monitor (GAP / KDI / Lëvizja FOL)', sub: 'Monitor i pavarur i reformës nga organizatat e shoqërisë civile.', url: 'institutigap.org' },
-      { t: 'Worldwide Governance Indicators', sub: 'Banka Botërore — tregues krahasues të efektivitetit qeveritar.', url: 'worldbank.org/wgi' },
+      { t: 'eKosova', sub: 'Platforma qeveritare e shërbimeve elektronike — pikë qendrore për qytetarë e biznese.', url: 'ekosova.rks-gov.net', href: 'https://ekosova.rks-gov.net' },
+      { t: 'PAR Monitor (GAP / KDI / Lëvizja FOL)', sub: 'Monitor i pavarur i reformës nga organizatat e shoqërisë civile.', url: 'institutigap.org', href: 'https://www.institutigap.org' },
+      { t: 'Worldwide Governance Indicators', sub: 'Banka Botërore — tregues krahasues të efektivitetit qeveritar.', url: 'worldbank.org/wgi', href: 'https://info.worldbank.org/governance/wgi/' },
     ],
   },
 ];
@@ -3783,7 +3791,7 @@ function ReformaSourcesSection({ lang }) {
                     <div>
                       <div className="serif" style={{ fontSize: 20, lineHeight: 1.2, color: 'var(--paper)' }}>{it.t}</div>
                       <div style={{ fontSize: 14, color: 'rgba(242,239,232,0.65)', lineHeight: 1.55, marginTop: 6 }}>{it.sub}</div>
-                      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--gold)', marginTop: 8 }}>↗ {it.url}</div>
+                      <a href={it.href || `https://${it.url}`} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.12em', color: 'var(--gold)', marginTop: 10, borderBottom: '1px solid rgba(199,173,112,0.4)', paddingBottom: 1 }}>↗ {it.url}</a>
                     </div>
                   </li>
                 ))}
@@ -3911,7 +3919,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Parandalim, monitorim i deklarimit të pasurisë, konflikt interesi dhe pranim i kallëzimeve.',
     role_en: 'Prevention, asset-declaration monitoring, conflict of interest and complaint intake.',
     role_sr: 'Prevencija, praćenje prijave imovine, sukob interesa i prijem prijava.',
-    contact: 'akk-ks.org · 038 511 467',
+    site: 'akk-ks.org', url: 'https://akk-ks.org', phone: '038 511 467',
     anon_sq: 'Pranon kallëzime anonime',
     anon_en: 'Accepts anonymous complaints',
     anon_sr: 'Prima anonimne prijave',
@@ -3924,7 +3932,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Hetim i korrupsionit në nivel të lartë, krimit të organizuar dhe pastrimit të parave.',
     role_en: 'High-level corruption, organised crime and money-laundering investigations.',
     role_sr: 'Istrage korupcije na visokom nivou, organizovanog kriminala i pranja novca.',
-    contact: 'prokuroria-rks.org',
+    site: 'prokuroria-rks.org', url: 'https://prokuroria-rks.org',
     anon_sq: 'Identifikimi opsional',
     anon_en: 'Identification optional',
     anon_sr: 'Identifikacija opciona',
@@ -3937,7 +3945,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Hetim i krimit ekonomik, ryshfetit dhe abuzimeve me detyrën zyrtare në bashkëpunim me Prokurorinë.',
     role_en: 'Economic crime, bribery and abuse-of-office investigations, alongside Prosecution.',
     role_sr: 'Istrage ekonomskog kriminala, mita i zloupotrebe službene dužnosti, uz Tužilaštvo.',
-    contact: 'kosovopolice.com · 192 · 0800 80 800',
+    site: 'kosovopolice.com', url: 'https://www.kosovopolice.com', phone: '192 · 0800 80 800',
     anon_sq: 'Linjë e gjelbër anonime',
     anon_en: 'Anonymous tip line',
     anon_sr: 'Anonimna linija prijave',
@@ -3950,7 +3958,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Mbron qytetarët nga keqpërdorimi i pushtetit ose mosveprimi i administratës publike.',
     role_en: 'Protects citizens from abuse of power or administrative inaction.',
     role_sr: 'Štiti građane od zloupotrebe vlasti ili neaktivnosti uprave.',
-    contact: 'oik-rks.org · 038 223 782',
+    site: 'oik-rks.org', url: 'https://oik-rks.org', phone: '038 223 782',
     anon_sq: 'Identifikimi nuk është i detyrueshëm',
     anon_en: 'Identification not required',
     anon_sr: 'Identifikacija nije obavezna',
@@ -3963,7 +3971,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Qendra për këshillim juridik falas të sigurt nga shoqëria civile; orientim para raportimit zyrtar.',
     role_en: 'Civil-society safe legal-advice centre; orientation before formal reporting.',
     role_sr: 'Centar za bezbedan pravni savet civilnog društva; orijentacija pre zvanične prijave.',
-    contact: 'kdi-kosova.org',
+    site: 'kdi-kosova.org', url: 'https://kdi-kosova.org',
     anon_sq: 'Konsultim plotësisht anonim',
     anon_en: 'Fully anonymous consultation',
     anon_sr: 'Potpuno anonimna konsultacija',
@@ -3976,7 +3984,7 @@ const KORRUPSION_CHANNELS = [
     role_sq: 'Ligji Nr. 06/L-085 garanton anonimat, mbrojtje juridike e profesionale dhe ndalim të hakmarrjes.',
     role_en: 'Law No. 06/L-085 guarantees anonymity, legal and professional protection, and a ban on retaliation.',
     role_sr: 'Zakon br. 06/L-085 garantuje anonimnost, pravnu i profesionalnu zaštitu i zabranu odmazde.',
-    contact: 'gzk.rks-gov.net · Ligji Nr. 06/L-085',
+    site: 'gzk.rks-gov.net · Ligji Nr. 06/L-085', url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=18757',
     anon_sq: 'Mbron çdo punonjës që raporton në mirëbesim',
     anon_en: 'Covers any employee reporting in good faith',
     anon_sr: 'Obuhvata svakog zaposlenog koji prijavljuje u dobroj veri',
@@ -4019,8 +4027,9 @@ function KorrupsionChannelsSection({ lang }) {
               </div>
               <h4 className="serif" style={{ fontSize: 24, lineHeight: 1.15, color: 'var(--ink)', marginBottom: 12 }}>{it['name_' + lang] || it.name_sq}</h4>
               <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ink-2)', margin: 0, flex: 1 }}>{it['role_' + lang] || it.role_sq}</p>
-              <div className="mono" style={{ marginTop: 16, paddingTop: 12, borderTop: '1px dashed var(--line)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
-                {it.contact}
+              <div className="mono" style={{ marginTop: 16, paddingTop: 12, borderTop: '1px dashed var(--line)', fontSize: 10, letterSpacing: '0.1em', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <a href={it.url} target="_blank" rel="noreferrer" style={{ color: 'var(--ink)', borderBottom: '1px solid var(--ink-3)', paddingBottom: 1, alignSelf: 'flex-start' }}>↗ {it.site}</a>
+                {it.phone && <span style={{ color: 'var(--ink-3)' }}>{it.phone}</span>}
               </div>
               <div className="mono" style={{ marginTop: 8, fontSize: 10, letterSpacing: '0.04em', color: 'var(--rust)' }}>
                 ✓ {it['anon_' + lang] || it.anon_sq}
