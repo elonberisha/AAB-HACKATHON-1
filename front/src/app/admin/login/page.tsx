@@ -6,20 +6,17 @@ import { useRouter } from 'next/navigation'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
-  const [step, setStep] = useState<'email' | 'code'>('email')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
   const router = useRouter()
 
-  // Handle magic link callback - detect auth token in URL and redirect
+  // Handle magic link callback + check if already logged in
   useEffect(() => {
-    // Check if already logged in
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) router.push('/admin')
     })
 
-    // Listen for auth state changes (magic link returns with token)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         router.push('/admin')
@@ -28,7 +25,7 @@ export default function AdminLoginPage() {
     return () => subscription.unsubscribe()
   }, [router])
 
-  async function sendCode(e: React.FormEvent) {
+  async function sendLink(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -49,38 +46,7 @@ export default function AdminLoginPage() {
       return
     }
 
-    setStep('code')
-    setLoading(false)
-  }
-
-  async function verifyCode(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    const { error: err1 } = await supabase.auth.verifyOtp({
-      email,
-      token: code,
-      type: 'email',
-    })
-
-    if (!err1) {
-      router.push('/admin')
-      return
-    }
-
-    const { error: err2 } = await supabase.auth.verifyOtp({
-      email,
-      token: code,
-      type: 'magiclink',
-    })
-
-    if (!err2) {
-      router.push('/admin')
-      return
-    }
-
-    setError('Kodi i gabuar ose i skaduar. Provo perseri.')
+    setSent(true)
     setLoading(false)
   }
 
@@ -134,102 +100,99 @@ export default function AdminLoginPage() {
           </div>
 
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-white">
-                {step === 'email' ? 'Kyqu ne admin panel' : 'Vendos kodin'}
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                {step === 'email'
-                  ? 'Vendos emailin per te marre kodin e hyrjes'
-                  : <>Kodi u dergua te <span className="text-blue-400 font-medium">{email}</span></>
-                }
-              </p>
-            </div>
+            {!sent ? (
+              <>
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-white">Kyqu ne admin panel</h2>
+                  <p className="text-sm text-slate-400 mt-1">
+                    Vendos emailin dhe do te marresh nje link hyrjeje
+                  </p>
+                </div>
 
-            {step === 'email' ? (
-              <form onSubmit={sendCode} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Email adresa</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    placeholder="admin@email.com"
-                  />
-                </div>
-                {error && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
-                    <p className="text-red-400 text-sm">{error}</p>
+                <form onSubmit={sendLink} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Email adresa</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      placeholder="admin@email.com"
+                    />
                   </div>
-                )}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      Duke derguar...
-                    </>
-                  ) : (
-                    <>
-                      Dergo kodin
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  {error && (
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                      <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                       </svg>
-                    </>
+                      <p className="text-red-400 text-sm">{error}</p>
+                    </div>
                   )}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Duke derguar...
+                      </>
+                    ) : (
+                      <>
+                        Dergo linkun e hyrjes
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </>
             ) : (
-              <form onSubmit={verifyCode} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1.5">Kodi i verifikimit</label>
-                  <input
-                    type="text"
-                    value={code}
-                    onChange={e => setCode(e.target.value)}
-                    required
-                    maxLength={8}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-center text-2xl tracking-[0.3em] font-mono placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    placeholder="00000000"
-                    autoFocus
-                  />
+              <div className="text-center py-4">
+                {/* Email sent icon */}
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 mb-5">
+                  <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
                 </div>
-                {error && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
-                    <p className="text-red-400 text-sm">{error}</p>
+
+                <h2 className="text-xl font-semibold text-white mb-2">Kontrollo emailin</h2>
+                <p className="text-sm text-slate-400 mb-1">
+                  Linku i hyrjes u dergua te
+                </p>
+                <p className="text-blue-400 font-medium text-sm mb-6">{email}</p>
+
+                <div className="bg-slate-700/30 rounded-xl p-4 mb-6 text-left">
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-blue-400 text-xs">1</span>
+                    </div>
+                    <p className="text-sm text-slate-300">Hap emailin nga <span className="text-white font-medium">euguide-ks</span></p>
                   </div>
-                )}
+                  <div className="flex items-start gap-3 mt-3">
+                    <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-blue-400 text-xs">2</span>
+                    </div>
+                    <p className="text-sm text-slate-300">Kliko butonin <span className="text-white font-medium">&quot;Hyr ne Admin Panel&quot;</span></p>
+                  </div>
+                  <div className="flex items-start gap-3 mt-3">
+                    <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-blue-400 text-xs">3</span>
+                    </div>
+                    <p className="text-sm text-slate-300">Do te hysh automatikisht ne panel</p>
+                  </div>
+                </div>
+
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={() => { setSent(false); setError('') }}
+                  className="text-sm text-slate-500 hover:text-slate-300 transition"
                 >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      Duke verifikuar...
-                    </>
-                  ) : 'Hyr ne panel'}
+                  Dergo perseri ose ndrysho email
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setStep('email'); setCode(''); setError('') }}
-                  className="w-full py-2 text-sm text-slate-500 hover:text-slate-300 transition"
-                >
-                  Ndrysho email
-                </button>
-              </form>
+              </div>
             )}
           </div>
 
