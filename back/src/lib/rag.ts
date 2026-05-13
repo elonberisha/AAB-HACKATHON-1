@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 export async function searchDocuments(
   query: string,
   matchCount = 5,
-  similarityThreshold = 0.7
+  similarityThreshold = 0.5
 ): Promise<string> {
   const embeddingRes = await openai.embeddings.create({
     model: 'text-embedding-3-small',

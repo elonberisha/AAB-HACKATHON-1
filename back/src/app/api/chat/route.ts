@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
 
   const hasLocalContext = context.length > 0
 
+  console.log(`[chat] path=${hasLocalContext ? 'RAG' : 'WEB_SEARCH'} | msg="${message.slice(0, 60)}"`)
+
   let fullReply = ''
   const encoder = new TextEncoder()
 
