@@ -923,7 +923,7 @@ function RegionChart({ lang, t }) {
   const data = useCmsArray('region', REGION);
   const max = 100;
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64 }} className="region-grid">
           <div>
@@ -1128,7 +1128,7 @@ function Clusters({ lang, t }) {
   };
 
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
         <SectionHead eyebrow={t.cluster.eyebrow} title={t.cluster.title} sub={t.cluster.sub} num="03" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }} className="cluster-grid">
@@ -3486,7 +3486,7 @@ function ReformaServicesSection({ lang }) {
     stat1: '', stat2: '', stat3: '',
   };
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
         <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="02" />
 
@@ -3653,7 +3653,7 @@ function ReformaInstitutionsSection({ lang }) {
   }[lang] || null;
   const c = copy || { eyebrow: 'Harta institucionale', title: 'Kush e drejton reformën në praktikë', sub: '' };
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
         <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="03" />
         <div className="reforma-inst-grid" style={{
@@ -3662,7 +3662,7 @@ function ReformaInstitutionsSection({ lang }) {
         }}>
           {data.map((it, i) => (
             <article key={it.key} style={{
-              background: 'var(--paper)', padding: '28px 26px', minHeight: 240,
+              background: 'var(--paper-2)', padding: '28px 26px', minHeight: 240,
               display: 'flex', flexDirection: 'column',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
