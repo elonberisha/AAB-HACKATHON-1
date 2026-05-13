@@ -340,6 +340,13 @@ const REGION = [
   { code: 'XK', name_sq: 'Kosova', name_en: 'Kosovo', name_sr: 'Kosovo', status: 'pending', chapters: 0, progress: 8 },
 ];
 
+const HOME_STATS = [
+  { top: '1247', suffix: '', label_sq: 'ditë qysh nga aplikimi për anëtarësim', label_en: 'days since membership application', label_sr: 'dana od aplikacije', accent: 'var(--ink)' },
+  { top: '41', suffix: '/100', label_sq: 'CPI 2025, +8 në 10 vjet', label_en: 'CPI 2025, +8 in 10 years', label_sr: 'CPI 2025, +8 za 10 godina', accent: 'var(--rust)' },
+  { top: '6', suffix: '/12', label_sq: 'klasterë të hapur në negociata (objektiv)', label_en: 'open negotiation clusters (target)', label_sr: 'otvorenih klastera (cilj)', accent: 'var(--blue)' },
+  { top: '0', suffix: '', label_sq: 'anëtarësime në BE që nga 2013', label_en: 'EU memberships since 2013', label_sr: 'EU pristupanja od 2013', accent: 'var(--gold)' },
+];
+
 const CPI = [
   { year: 2015, score: 33 }, { year: 2016, score: 36 }, { year: 2017, score: 39 },
   { year: 2018, score: 37 }, { year: 2019, score: 36 }, { year: 2020, score: 36 },
@@ -3034,6 +3041,7 @@ function PreviewBlock({ eyebrow, title, sub, num, to, ctaLabel, children }) {
 function HomePage({ lang, t, onChat }) {
   // Mini regional bars (top 4)
   const top = useCmsArray('region', REGION);
+  const homeStats = useCmsArray('home_stats', HOME_STATS);
   // Mini objectives preview
   const objectives = useCmsArray('objectives', OBJECTIVES);
   const faqData = useCmsArray('faq', FAQ_DATA);
@@ -3085,10 +3093,9 @@ function HomePage({ lang, t, onChat }) {
       <section style={{ padding: '80px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, border: '1px solid var(--line)' }} className="stats-strip">
-            <BigStat top="1247" label_sq="ditë qysh nga aplikimi për anëtarësim" label_en="days since membership application" label_sr="dana od aplikacije" lang={lang} accent="var(--ink)" />
-            <BigStat top="41" suffix="/100" label_sq="CPI 2025, +8 në 10 vjet" label_en="CPI 2025, +8 in 10 years" label_sr="CPI 2025, +8 za 10 godina" lang={lang} accent="var(--rust)" border />
-            <BigStat top="6" suffix="/12" label_sq="klasterë të hapur në negociata (objektiv)" label_en="open negotiation clusters (target)" label_sr="otvorenih klastera (cilj)" lang={lang} accent="var(--blue)" border />
-            <BigStat top="0" label_sq="anëtarësime në BE që nga 2013" label_en="EU memberships since 2013" label_sr="EU pristupanja od 2013" lang={lang} accent="var(--gold)" border />
+            {homeStats.map((stat, i) => (
+              <BigStat key={i} {...stat} lang={lang} border={i > 0} />
+            ))}
           </div>
         </div>
       </section>
