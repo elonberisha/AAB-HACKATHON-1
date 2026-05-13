@@ -66,7 +66,7 @@ export default function TestPage() {
   async function handleGoogleLogin() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: `${window.location.origin}/test` },
     })
   }
 
