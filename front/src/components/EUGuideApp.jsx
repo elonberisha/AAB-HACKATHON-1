@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { Fragment, useEffect, useRef, useState, useCallback } from 'react';
 import { chatStream, getSession } from '@/lib/ai';
 import { supabasePublic as supabase } from '@/lib/supabase';
 import VoiceOverlay from './VoiceOverlay';
@@ -1851,6 +1851,121 @@ function Navbar({ lang, setLang, t, route, onChat }) {
         }
       `}</style>
     </header>
+  );
+}
+
+function getBreadcrumbItems(route, t, lang) {
+  const copy = {
+    sq: {
+      home: 'HOME',
+      standards: 'Standardet',
+      objectives: 'Objektivat e integrimit',
+      constitution: 'Kushtetuta',
+      fundamental: 'Ligjet themelore',
+      catalog: 'Ligjet tjera',
+      infographics: 'Infografika',
+      privacy: 'Politika e privatësisë',
+      terms: 'Kushtet e përdorimit',
+      accessibility: 'Aksesueshmëria',
+      sources: 'Standardi i burimeve',
+    },
+    en: {
+      home: 'HOME',
+      standards: 'Standards',
+      objectives: 'Integration objectives',
+      constitution: 'Constitution',
+      fundamental: 'Fundamental laws',
+      catalog: 'Other laws',
+      infographics: 'Infographics',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Use',
+      accessibility: 'Accessibility',
+      sources: 'Sources standard',
+    },
+    sr: {
+      home: 'POČETNA',
+      standards: 'Standardi',
+      objectives: 'Ciljevi integracije',
+      constitution: 'Ustav',
+      fundamental: 'Osnovni zakoni',
+      catalog: 'Ostali zakoni',
+      infographics: 'Infografike',
+      privacy: 'Politika privatnosti',
+      terms: 'Uslovi korišćenja',
+      accessibility: 'Pristupačnost',
+      sources: 'Standard izvora',
+    },
+  }[lang] || {};
+
+  const topicLabels = {
+    reforma: t.nav.reforma,
+    sundimi: t.nav.sundimi,
+    korrupsioni: t.nav.korrupsioni,
+    be: t.nav.be,
+    faq: t.nav.faq,
+    kosova: t.nav.kosova,
+  };
+  const root = { label: copy.home || t.crumb_home || 'HOME', href: '#/' };
+  const routes = {
+    reforma: [root, { label: topicLabels.reforma, href: '#/reforma' }],
+    sundimi: [root, { label: topicLabels.sundimi, href: '#/sundimi' }],
+    korrupsioni: [root, { label: topicLabels.korrupsioni, href: '#/korrupsioni' }],
+    be: [root, { label: topicLabels.be, href: '#/be' }],
+    faq: [root, { label: topicLabels.faq, href: '#/faq' }],
+    kosova: [root, { label: topicLabels.kosova, href: '#/kosova' }],
+    infografika: [root, { label: copy.infographics || 'Infografika', href: '#/infografika' }],
+    objektivat: [root, { label: topicLabels.be, href: '#/be' }, { label: copy.objectives || t.nav.objektivat, href: '#/objektivat' }],
+    kushtetuta: [root, { label: topicLabels.sundimi, href: '#/sundimi' }, { label: copy.constitution || 'Kushtetuta', href: '#/kushtetuta' }],
+    'ligjet-themelore': [root, { label: topicLabels.sundimi, href: '#/sundimi' }, { label: copy.fundamental || 'Ligjet themelore', href: '#/ligjet-themelore' }],
+    'katalogu-materialeve': [root, { label: topicLabels.sundimi, href: '#/sundimi' }, { label: copy.catalog || 'Ligjet tjera', href: '#/katalogu-materialeve' }],
+    privatesia: [root, { label: copy.standards || 'Standardet', href: '#/burimet' }, { label: copy.privacy || 'Politika e privatësisë', href: '#/privatesia' }],
+    kushtet: [root, { label: copy.standards || 'Standardet', href: '#/burimet' }, { label: copy.terms || 'Kushtet e përdorimit', href: '#/kushtet' }],
+    aksesueshmeria: [root, { label: copy.standards || 'Standardet', href: '#/burimet' }, { label: copy.accessibility || 'Aksesueshmëria', href: '#/aksesueshmeria' }],
+    burimet: [root, { label: copy.standards || 'Standardet', href: '#/burimet' }, { label: copy.sources || 'Standardi i burimeve', href: '#/burimet' }],
+  };
+  return routes[route] || [];
+}
+
+function PageBreadcrumb({ route, t, lang }) {
+  const items = getBreadcrumbItems(route, t, lang);
+  if (!items.length || route === 'home') return null;
+  return (
+    <div style={{ borderBottom: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <nav className="container page-breadcrumb mono" aria-label="Breadcrumb" style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        minHeight: 42,
+        padding: '0 32px',
+        overflowX: 'auto',
+        whiteSpace: 'nowrap',
+        fontSize: 10,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: 'var(--ink-3)',
+      }}>
+        {items.map((item, i) => {
+          const last = i === items.length - 1;
+          return (
+            <Fragment key={`${item.href}-${i}`}>
+              {i > 0 && <span style={{ color: 'var(--rust)', opacity: 0.75 }}>→</span>}
+              <a href={item.href} aria-current={last ? 'page' : undefined} style={{
+                color: last ? 'var(--ink)' : 'var(--ink-3)',
+                pointerEvents: last ? 'none' : 'auto',
+                fontWeight: last ? 700 : 500,
+              }}>
+                {item.label}
+              </a>
+            </Fragment>
+          );
+        })}
+      </nav>
+      <style>{`
+        @media (max-width: 620px) {
+          .page-breadcrumb { padding: 0 20px !important; min-height: 38px !important; font-size: 9px !important; }
+        }
+      `}</style>
+    </div>
   );
 }
 
@@ -6463,6 +6578,7 @@ function App() {
     <CmsContext.Provider value={cms}>
       <div className="euguide-zoom">
       <Navbar lang={lang} setLang={setLang} t={t} route={route} onChat={() => setChatOpen(true)} />
+        <PageBreadcrumb route={route} t={t} lang={lang} />
         <main key={route}>{page}</main>
         <Footer lang={lang} t={t} />
       </div>
