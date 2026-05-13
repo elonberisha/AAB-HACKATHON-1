@@ -4131,10 +4131,16 @@ function localizedValue(item, field, lang) {
 
 function PageActionCards({ items }) {
   if (!items.length) return null;
+  const normalizeHref = (href) => {
+    if (href === '#kushtetuta') return '#/kushtetuta';
+    if (href === '#ligjet-themelore') return '#/ligjet-themelore';
+    if (href === '#katalogu-materialeve') return '#/katalogu-materialeve';
+    return href || '#';
+  };
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 28 }}>
       {items.map((item, i) => (
-        <a key={`${item.href || item.anchor || i}-${i}`} href={item.href || item.anchor || '#'} style={{
+        <a key={`${item.href || item.anchor || i}-${i}`} href={normalizeHref(item.href || item.anchor)} style={{
           display: 'inline-flex',
           alignItems: 'center',
           gap: 12,
@@ -4225,8 +4231,9 @@ function RuleOfLawMaterials({ lang }) {
     catalog_title_sr: 'Puni katalog materijala',
   };
   const fallbackActions = [
-    { label_sq: 'Kushtetuta e Republikës së Kosovës', label_en: 'Constitution of Kosovo', label_sr: 'Ustav Kosova', href: '#kushtetuta', variant: 'dark' },
-    { label_sq: 'Ligjet themelore', label_en: 'Fundamental laws', label_sr: 'Osnovni zakoni', href: '#ligjet-themelore', variant: 'light' },
+    { label_sq: 'Kushtetuta e Republikës së Kosovës', label_en: 'Constitution of Kosovo', label_sr: 'Ustav Kosova', href: '#/kushtetuta', variant: 'dark' },
+    { label_sq: 'Ligjet themelore', label_en: 'Fundamental laws', label_sr: 'Osnovni zakoni', href: '#/ligjet-themelore', variant: 'light' },
+    { label_sq: 'Katalogu i materialeve', label_en: 'Materials catalog', label_sr: 'Katalog materijala', href: '#/katalogu-materialeve', variant: 'light' },
   ];
   const fallbackMaterials = [
     {
@@ -4426,6 +4433,274 @@ function MaterialGrid({ items, lang }) {
         </article>
       ))}
     </div>
+  );
+}
+
+function useRuleOfLawContent() {
+  return {
+    materials: useCmsArray('legal_materials', []),
+    catalog: useCmsArray('materials_catalog', []),
+  };
+}
+
+function MaterialsPageHero({ eyebrow, title, sub, stat, statLabel }) {
+  return (
+    <section style={{ padding: '118px 0 74px', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container materials-page-hero" style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.55fr', gap: 56, alignItems: 'end' }}>
+        <div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>{eyebrow}</div>
+          <h1 className="serif" style={{ fontSize: 'clamp(46px, 7vw, 92px)', lineHeight: 0.95, color: 'var(--ink)', maxWidth: 980 }}>{title}</h1>
+          {sub && <p style={{ marginTop: 22, fontSize: 18, lineHeight: 1.65, color: 'var(--ink-2)', maxWidth: 720 }}>{sub}</p>}
+          <a href="#/sundimi" className="mono" style={{ display: 'inline-flex', marginTop: 30, color: 'var(--ink)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase' }}>← Kthehu te Sundimi i ligjit</a>
+        </div>
+        <div style={{ border: '1px solid var(--line)', background: 'var(--paper-2)', padding: 28 }}>
+          <div className="serif" style={{ fontSize: 74, color: 'var(--rust)', lineHeight: 0.88 }}>{stat}</div>
+          <div className="mono" style={{ marginTop: 14, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{statLabel}</div>
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 860px) { .materials-page-hero { grid-template-columns: 1fr !important; gap: 30px !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+function LoadingMaterials() {
+  return (
+    <section style={{ padding: '80px 0 120px', background: 'var(--paper)' }}>
+      <div className="container">
+        <div style={{ border: '1px solid var(--line)', padding: 28, color: 'var(--ink-2)' }}>Materialet po ngarkohen nga databaza...</div>
+      </div>
+    </section>
+  );
+}
+
+function MaterialSearchBar({ value, onChange, placeholder, count, compact = false }) {
+  return (
+    <div className="material-search" style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      gap: compact ? 10 : 14,
+      marginBottom: compact ? 0 : 28,
+    }}>
+      <label style={{ position: 'relative', display: 'block' }}>
+        <span className="mono" style={{
+          position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
+          fontSize: 13, color: 'var(--rust)', lineHeight: 1,
+        }}>⌕</span>
+        <input
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{
+            width: '100%',
+            border: '1px solid var(--line)',
+            background: 'var(--paper-2)',
+            color: 'var(--ink)',
+            padding: compact ? '13px 14px 13px 42px' : '16px 18px 16px 46px',
+            fontSize: compact ? 13 : 15,
+            outline: 'none',
+          }}
+        />
+      </label>
+      <div className="mono" style={{
+        border: '1px solid var(--line)',
+        background: 'var(--paper)',
+        padding: compact ? '13px 12px' : '16px 18px',
+        fontSize: compact ? 9 : 11,
+        letterSpacing: '0.12em',
+        color: 'var(--ink-3)',
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap',
+      }}>
+        {count} rezultate
+      </div>
+      <style>{`
+        @media (max-width: 640px) { .material-search { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </div>
+  );
+}
+
+function ConstitutionPage({ lang }) {
+  const { materials } = useRuleOfLawContent();
+  const constitution = materials.filter(item => item.group === 'constitution');
+  const [query, setQuery] = useState('');
+  const needle = query.trim().toLowerCase();
+  const visible = constitution.filter(item => {
+    const text = `${localizedValue(item, 'title', lang)} ${localizedValue(item, 'summary', lang)} ${item.status || ''}`.toLowerCase();
+    return !needle || text.includes(needle);
+  });
+  return (
+    <>
+      <MaterialsPageHero
+        eyebrow="Akt themelor"
+        title="Kushtetuta e Republikës së Kosovës"
+        sub="Faqe e veçantë për aktin bazë të shtetit: organizimi institucional, ndarja e pushteteve, të drejtat themelore dhe amendamentet kushtetuese."
+        stat={constitution.length || 1}
+        statLabel="akt kushtetues"
+      />
+      {constitution.length ? (
+        <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
+          <div className="container">
+            <MaterialSearchBar
+              value={query}
+              onChange={setQuery}
+              placeholder="Kërko në Kushtetutë..."
+              count={visible.length}
+            />
+            <MaterialGrid items={visible} lang={lang} />
+          </div>
+        </section>
+      ) : <LoadingMaterials />}
+    </>
+  );
+}
+
+function FundamentalLawsPage({ lang }) {
+  const { materials } = useRuleOfLawContent();
+  const fundamentals = materials.filter(item => item.group && item.group !== 'constitution');
+  const [query, setQuery] = useState('');
+  const [active, setActive] = useState(0);
+  const needle = query.trim().toLowerCase();
+  const visible = fundamentals.filter(item => {
+    const text = `${localizedValue(item, 'title', lang)} ${localizedValue(item, 'summary', lang)} ${item.status || ''} ${item.law_number || ''}`.toLowerCase();
+    return !needle || text.includes(needle);
+  });
+  const selected = visible[active] || visible[0];
+  return (
+    <>
+      <MaterialsPageHero
+        eyebrow="Ligjet themelore"
+        title="Kodet dhe ligjet bazë që mbajnë sundimin e ligjit"
+        sub="Këtu janë aktet themelore që lidhen me gjykatat, procedurat, administratën, doganat, trafikun dhe të drejtat e qytetarit."
+        stat={fundamentals.length || 0}
+        statLabel="akte në listë"
+      />
+      {!fundamentals.length ? <LoadingMaterials /> : (
+        <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
+          <div className="container laws-page-grid" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.25fr', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+            <div style={{ background: 'var(--paper-2)' }}>
+              <div style={{ padding: 18, borderBottom: '1px solid var(--line)' }}>
+                <MaterialSearchBar
+                  value={query}
+                  onChange={(value) => { setQuery(value); setActive(0); }}
+                  placeholder="Kërko ligj, kod, procedurë..."
+                  count={visible.length}
+                  compact
+                />
+              </div>
+              {visible.map((item, i) => (
+                <button key={`${item.title_sq || item.title}-${i}`} type="button" onClick={() => setActive(i)} style={{
+                  width: '100%', textAlign: 'left', padding: '18px 20px', border: 'none', borderBottom: '1px solid var(--line)',
+                  background: i === active ? 'var(--ink)' : 'var(--paper-2)', color: i === active ? 'var(--paper)' : 'var(--ink)', cursor: 'pointer',
+                }}>
+                  <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: i === active ? 'var(--gold)' : 'var(--rust)', marginBottom: 8 }}>{item.law_number || String(i + 1).padStart(2, '0')}</div>
+                  <div className="serif" style={{ fontSize: 23, lineHeight: 1.1 }}>{localizedValue(item, 'title', lang)}</div>
+                </button>
+              ))}
+            </div>
+            {selected ? <article style={{ background: 'var(--paper)', padding: '38px 36px', minHeight: 480 }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 16 }}>
+                {selected?.law_number || 'Material ligjor'}
+              </div>
+              <h2 className="serif" style={{ fontSize: 'clamp(34px, 4vw, 58px)', lineHeight: 1.02, color: 'var(--ink)' }}>{localizedValue(selected, 'title', lang)}</h2>
+              <p style={{ marginTop: 22, fontSize: 17, lineHeight: 1.65, color: 'var(--ink-2)' }}>{localizedValue(selected, 'summary', lang) || selected?.status}</p>
+              <div style={{ marginTop: 32, borderTop: '1px solid var(--line)', paddingTop: 22 }}>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 8 }}>Statusi</div>
+                <p style={{ margin: 0, color: 'var(--ink-2)', lineHeight: 1.55 }}>{selected?.status}</p>
+              </div>
+              {selected?.source_url && (
+                <a href={selected.source_url} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-flex', marginTop: 28, color: 'var(--ink)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                  Hap burimin zyrtar →
+                </a>
+              )}
+            </article> : (
+              <article style={{ background: 'var(--paper)', padding: '38px 36px', minHeight: 300, color: 'var(--ink-2)' }}>
+                Nuk u gjet asnjë ligj me këtë kërkim.
+              </article>
+            )}
+          </div>
+        </section>
+      )}
+      <style>{`
+        @media (max-width: 900px) { .laws-page-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </>
+  );
+}
+
+function MaterialsCatalogPage({ lang }) {
+  const { catalog } = useRuleOfLawContent();
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('all');
+  const categories = Array.from(new Set(catalog.map(item => item.category || 'Materiale')));
+  const needle = query.trim().toLowerCase();
+  const filtered = catalog.filter(item => {
+    const inCategory = category === 'all' || (item.category || 'Materiale') === category;
+    const text = `${item.title || ''} ${item.material_type || ''} ${item.source_label || ''}`.toLowerCase();
+    return inCategory && (!needle || text.includes(needle));
+  });
+  const grouped = filtered.reduce((acc, item) => {
+    const key = item.category || 'Materiale';
+    acc[key] = acc[key] || [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <>
+      <MaterialsPageHero
+        eyebrow="Katalogu i materialeve"
+        title="Të gjitha materialet e nxjerra për juristët, në një vend"
+        sub="Ligje, raporte, udhëzues, dokumente ndërkombëtare, kontakte praktike, glosarë dhe infografika të ndara sipas kategorive."
+        stat={catalog.length || 313}
+        statLabel="materiale"
+      />
+      {!catalog.length ? <LoadingMaterials /> : (
+        <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
+          <div className="container">
+            <div className="catalog-tools" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 18, marginBottom: 28 }}>
+              <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Kërko material, ligj, raport..." style={{ border: '1px solid var(--line)', background: 'var(--paper-2)', padding: '16px 18px', fontSize: 15, color: 'var(--ink)' }} />
+              <div className="mono" style={{ border: '1px solid var(--line)', padding: '16px 18px', fontSize: 11, letterSpacing: '0.12em', color: 'var(--ink-3)', textTransform: 'uppercase' }}>{filtered.length} rezultate</div>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 34 }}>
+              {['all', ...categories].map(cat => (
+                <button key={cat} type="button" onClick={() => setCategory(cat)} className="mono" style={{
+                  border: '1px solid var(--line)', background: category === cat ? 'var(--ink)' : 'var(--paper-2)',
+                  color: category === cat ? 'var(--paper)' : 'var(--ink)', padding: '10px 12px', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
+                }}>{cat === 'all' ? 'Të gjitha' : cat}</button>
+              ))}
+            </div>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {Object.entries(grouped).map(([cat, items], groupIndex) => (
+                <details key={cat} open={groupIndex === 0} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                  <summary style={{ cursor: 'pointer', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', gap: 18, listStyle: 'none' }}>
+                    <span className="serif" style={{ fontSize: 25, color: 'var(--ink)' }}>{cat}</span>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
+                  </summary>
+                  <div className="materials-catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }}>
+                    {items.map((item, i) => (
+                      <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 20, color: 'var(--ink)' }}>
+                        <div style={{ fontSize: 16, lineHeight: 1.35, fontWeight: 650 }}>{item.title}</div>
+                        <div className="mono" style={{ fontSize: 9, color: 'var(--rust)', letterSpacing: '0.08em', marginTop: 12, textTransform: 'uppercase' }}>{item.material_type}</div>
+                        <div style={{ marginTop: 9, fontSize: 12, lineHeight: 1.45, color: 'var(--ink-3)' }}>{item.source_label}</div>
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+          <style>{`
+            @media (max-width: 760px) {
+              .catalog-tools { grid-template-columns: 1fr !important; }
+              .materials-catalog-grid { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </section>
+      )}
+    </>
   );
 }
 
@@ -5036,6 +5311,12 @@ function App() {
     page = <TopicPage topicKey={route} lang={lang} t={t} onChat={() => setChatOpen(true)} />;
   } else if (route === 'objektivat') {
     page = <ObjectivesPage lang={lang} t={t} />;
+  } else if (route === 'kushtetuta') {
+    page = <ConstitutionPage lang={lang} />;
+  } else if (route === 'ligjet-themelore') {
+    page = <FundamentalLawsPage lang={lang} />;
+  } else if (route === 'katalogu-materialeve') {
+    page = <MaterialsCatalogPage lang={lang} />;
   } else if (route === 'faq') {
     page = <FAQPage lang={lang} t={t} onChat={() => setChatOpen(true)} />;
   } else if (route === 'infografika') {
