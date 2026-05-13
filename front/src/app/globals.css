@@ -160,6 +160,25 @@ footer {
     font-size: 15px;
   }
 
+  .site-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 70 !important;
+    transform: translateY(0);
+  }
+
+  html[data-chat-open="true"] .site-header {
+    transform: translateY(-110%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .euguide-zoom main {
+    padding-top: 112px;
+  }
+
   .container {
     width: 100%;
     max-width: none;
@@ -263,6 +282,7 @@ footer {
   .mobile-menu {
     max-height: calc(100vh - 84px);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .hero-tag-row {
@@ -438,13 +458,15 @@ footer {
 
   .chat-input-row input {
     min-width: 0;
-    font-size: 13px !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
   }
 
   .chat-input-row button {
     padding-left: 12px !important;
     padding-right: 12px !important;
     min-height: 40px;
+    font-size: 13px !important;
   }
 
   .chat-auth-row {
@@ -508,6 +530,10 @@ footer {
     inset: 8px 8px max(8px, env(safe-area-inset-bottom)) 8px !important;
     height: calc(100dvh - 16px - env(safe-area-inset-bottom)) !important;
     max-height: calc(100dvh - 16px - env(safe-area-inset-bottom)) !important;
+  }
+
+  .euguide-zoom main {
+    padding-top: 104px;
   }
 
   .chat-fab {

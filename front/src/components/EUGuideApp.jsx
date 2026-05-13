@@ -1586,7 +1586,7 @@ function Navbar({ lang, setLang, t, route, onChat }) {
   ];
 
   return (
-    <header style={{
+    <header className="site-header" style={{
       position: 'sticky', top: 0, zIndex: 50,
       background: scrolled ? 'rgba(242,239,232,0.92)' : 'var(--paper)',
       backdropFilter: scrolled ? 'blur(8px)' : 'none',
@@ -2281,15 +2281,22 @@ function ChatWidget({ lang, t, open, setOpen }) {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
     const previousBodyTouchAction = document.body.style.touchAction;
+    const previousChatOpen = document.documentElement.dataset.chatOpen;
 
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
+    document.documentElement.dataset.chatOpen = 'true';
 
     return () => {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       document.body.style.touchAction = previousBodyTouchAction;
+      if (previousChatOpen === undefined) {
+        delete document.documentElement.dataset.chatOpen;
+      } else {
+        document.documentElement.dataset.chatOpen = previousChatOpen;
+      }
     };
   }, [open]);
 
