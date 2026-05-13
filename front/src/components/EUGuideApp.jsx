@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { chatStream, getSession } from '@/lib/ai';
@@ -326,7 +326,7 @@ const TOPICS = [
     blurb_en: 'How to recognise corruption, who investigates it and where to report anonymously — concrete steps.',
     blurb_sr: 'Kako prepoznati korupciju, ko je istražuje i gde je anonimno prijaviti — konkretni koraci.',
     accent: 'var(--gold)', accent_soft: 'var(--gold-soft)',
-    metric: '43/100',
+    metric: '41/100',
     metric_label_sq: 'CPI 2025', metric_label_en: 'CPI 2025', metric_label_sr: 'CPI 2025',
   },
   {
@@ -363,7 +363,7 @@ const CPI = [
   { year: 2015, score: 33 }, { year: 2016, score: 36 }, { year: 2017, score: 39 },
   { year: 2018, score: 37 }, { year: 2019, score: 36 }, { year: 2020, score: 36 },
   { year: 2021, score: 39 }, { year: 2022, score: 41 }, { year: 2023, score: 41 },
-  { year: 2024, score: 40 }, { year: 2025, score: 43 },
+  { year: 2024, score: 40 }, { year: 2025, score: 41 },
 ];
 
 const REFORM = [
@@ -595,42 +595,6 @@ const FAQ_DATA = [
     a_sq: 'eKosova është platforma qeveritare ku qytetari kryen shërbime administrative online: certifikata, deklarime tatimore, regjistrim biznesi, kërkesa për dokumente. E administron Agjencia e Shoqërisë së Informacionit. Identifikimi bëhet me numër personal + verifikim me SMS ose me eID.',
     a_en: 'eKosova is the government platform where citizens carry out administrative services online: certificates, tax filings, business registration, document requests. It is run by the Information Society Agency. Identification is done with a personal number + SMS verification or eID.',
     a_sr: 'eKosova je vladina platforma na kojoj građani obavljaju administrativne usluge online: sertifikati, poreske prijave, registracija biznisa, zahtevi za dokumente. Administrira je Agencija za informaciono društvo. Identifikacija se vrši ličnim brojem + SMS verifikacijom ili eID-om.'
-  },
-  {
-    cat: 'sundimi',
-    q_sq: 'Çfarë mund të bëj nëse një institucion nuk më përgjigjet?',
-    q_en: 'What can I do if an institution does not answer?',
-    q_sr: 'Šta mogu da uradim ako institucija ne odgovori?',
-    a_sq: 'Ruaje numrin e protokollit, kërko përgjigje me shkrim dhe pastaj përdor ankesën administrative. Nëse rasti lidhet me shkelje të të drejtave, mund t’i drejtohesh Avokatit të Popullit ose të kërkosh ndihmë juridike.',
-    a_en: 'Keep the protocol number, request a written answer and then use the administrative appeal path. If the case concerns rights violations, you can contact the Ombudsperson or request legal aid.',
-    a_sr: 'Sačuvajte broj protokola, zatražite pisani odgovor i zatim koristite administrativnu žalbu. Ako se slučaj odnosi na kršenje prava, možete se obratiti Ombudsmanu ili tražiti pravnu pomoć.'
-  },
-  {
-    cat: 'korrupsioni',
-    q_sq: 'Çfarë prove duhet të ruaj para se të raportoj korrupsion?',
-    q_en: 'What evidence should I keep before reporting corruption?',
-    q_sr: 'Koje dokaze treba da sačuvam pre prijave korupcije?',
-    a_sq: 'Ruaj datën, vendin, emrin e institucionit, dokumentet, mesazhet, faturat, fotografitë dhe përshkrimin e qartë të asaj që u kërkua. Mos krijo prova të rreme dhe mos e rreziko sigurinë tënde.',
-    a_en: 'Keep the date, place, institution name, documents, messages, receipts, photos and a clear description of what was requested. Do not create false evidence and do not risk your safety.',
-    a_sr: 'Sačuvajte datum, mesto, naziv institucije, dokumente, poruke, račune, fotografije i jasan opis onoga što je traženo. Ne stvarajte lažne dokaze i ne ugrožavajte svoju bezbednost.'
-  },
-  {
-    cat: 'be',
-    q_sq: 'A është Kosova kandidat për BE?',
-    q_en: 'Is Kosovo an EU candidate country?',
-    q_sr: 'Da li je Kosovo kandidat za EU?',
-    a_sq: 'Kosova ka perspektivë evropiane dhe konsiderohet kandidat potencial. Aplikimi është dorëzuar më 14 dhjetor 2022, por statusi kandidat kërkon opinion të Komisionit dhe vendim unanim të Këshillit të BE-së.',
-    a_en: 'Kosovo has a European perspective and is considered a potential candidate. It submitted its application on 14 December 2022, but candidate status requires a Commission opinion and a unanimous EU Council decision.',
-    a_sr: 'Kosovo ima evropsku perspektivu i smatra se potencijalnim kandidatom. Aplikacija je podneta 14. decembra 2022, ali status kandidata zahteva mišljenje Komisije i jednoglasnu odluku Saveta EU.'
-  },
-  {
-    cat: 'be',
-    q_sq: 'Pse njohja nga shtetet e BE-së ndikon në proces?',
-    q_en: 'Why does recognition by EU member states affect the process?',
-    q_sr: 'Zašto priznanje od država EU utiče na proces?',
-    a_sq: 'Vendimet kryesore në procesin e zgjerimit merren nga shtetet anëtare. Kur disa shtete nuk e njohin Kosovën, konsensusi politik bëhet më i vështirë, edhe nëse reformat teknike ecin përpara.',
-    a_en: 'Key enlargement decisions are taken by member states. When some states do not recognise Kosovo, political consensus becomes harder, even if technical reforms move forward.',
-    a_sr: 'Ključne odluke u procesu proširenja donose države članice. Kada neke države ne priznaju Kosovo, politički konsenzus je teži, čak i ako tehničke reforme napreduju.'
   },
 ];
 
@@ -990,7 +954,7 @@ function RegionChart({ lang, t }) {
                   }} className="region-row">
                     <span className="mono" style={{ fontSize: 18, color: 'var(--ink)', fontWeight: 500 }}>{c.code}</span>
                     <span className="serif" style={{ fontSize: 22, color: 'var(--ink)' }}>
-                      {c['name_' + lang] || c.name_sq || c.name}
+                      {c.name}
                       {isKosova && <span style={{ marginLeft: 6, fontSize: 11, color: 'var(--rust)', verticalAlign: 'super' }} className="mono">★</span>}
                     </span>
                     <div style={{ height: 18, background: 'var(--paper-3)', position: 'relative', overflow: 'hidden' }}>
@@ -1104,8 +1068,8 @@ function CPIChart({ lang, t }) {
           </div>
           <div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <Stat big="43" suffix="/100" label_sq="CPI 2025" label_en="CPI 2025" label_sr="CPI 2025" delta="+10" lang={lang} note_sq="vs 2015" note_en="vs 2015" note_sr="vs 2015" />
-              <Stat big="76" suffix="" label_sq="vendi në renditjen globale" label_en="global ranking" label_sr="globalni rang" delta="↑" lang={lang} note_sq="182 shtete të vlerësuara" note_en="182 countries assessed" note_sr="182 zemlje u rangu" />
+              <Stat big="41" suffix="/100" label_sq="CPI 2025" label_en="CPI 2025" label_sr="CPI 2025" delta="+8" lang={lang} note_sq="vs 2015" note_en="vs 2015" note_sr="vs 2015" />
+              <Stat big="83" suffix="" label_sq="vendi në renditjen globale" label_en="global ranking" label_sr="globalni rang" delta="↑" lang={lang} note_sq="180 shtete të vlerësuara" note_en="180 countries assessed" note_sr="180 zemalja u rangu" />
               <Stat big="6.2" suffix="%" label_sq="bizneset që raportojnë ryshfet" label_en="businesses reporting bribery" label_sr="biznisi koji prijavljuju mito" delta="−" lang={lang} note_sq="World Bank, 2024" note_en="World Bank, 2024" note_sr="World Bank, 2024" />
             </div>
           </div>
@@ -1156,10 +1120,10 @@ function Clusters({ lang, t }) {
 
   const arcPath = (a0, a1, r, ir) => {
     const large = a1 - a0 > Math.PI ? 1 : 0;
-    const x0 = stableNum(CX + r * Math.cos(a0)), y0 = stableNum(CY + r * Math.sin(a0));
-    const x1 = stableNum(CX + r * Math.cos(a1)), y1 = stableNum(CY + r * Math.sin(a1));
-    const x2 = stableNum(CX + ir * Math.cos(a1)), y2 = stableNum(CY + ir * Math.sin(a1));
-    const x3 = stableNum(CX + ir * Math.cos(a0)), y3 = stableNum(CY + ir * Math.sin(a0));
+    const x0 = CX + r * Math.cos(a0), y0 = CY + r * Math.sin(a0);
+    const x1 = CX + r * Math.cos(a1), y1 = CY + r * Math.sin(a1);
+    const x2 = CX + ir * Math.cos(a1), y2 = CY + ir * Math.sin(a1);
+    const x3 = CX + ir * Math.cos(a0), y3 = CY + ir * Math.sin(a0);
     return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${ir} ${ir} 0 ${large} 0 ${x3} ${y3} Z`;
   };
 
@@ -1405,7 +1369,7 @@ function Infographics({ lang, t }) {
           </a>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="info-grid">
-          {items.map((it, i) => <InfoCard key={i} it={it} idx={i} lang={lang} />)}
+          {items.map((it, i) => <InfoCard key={i} it={it} idx={i} />)}
         </div>
       </div>
       <style>{`
@@ -1416,15 +1380,15 @@ function Infographics({ lang, t }) {
   );
 };
 
-function InfoCard({ it, idx, lang }) {
+function InfoCard({ it, idx }) {
   return (
     <div style={{ background: 'var(--paper)', padding: 20, minHeight: 280, display: 'flex', flexDirection: 'column' }}>
       <div style={{ height: 160, background: 'var(--paper-2)', border: '1px solid var(--line)', position: 'relative', overflow: 'hidden', marginBottom: 16 }}>
         <InfoSketch shape={it.shape} />
         <span className="mono" style={{ position: 'absolute', top: 8, left: 10, fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>FIG. {String(idx + 1).padStart(2, '0')}</span>
       </div>
-      <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>{it['tag_' + lang] || it.tag_sq || it.tag}</span>
-      <h4 className="serif" style={{ fontSize: 22, lineHeight: 1.15, color: 'var(--ink)' }}>{it['title_' + lang] || it.title_sq || it.title}</h4>
+      <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>{it.tag}</span>
+      <h4 className="serif" style={{ fontSize: 22, lineHeight: 1.15, color: 'var(--ink)' }}>{it.title_sq}</h4>
     </div>
   );
 }
@@ -1448,7 +1412,7 @@ function InfoSketch({ shape }) {
     <svg viewBox="0 0 200 120" style={wrap}>
       {[0,1,2,3,4,5].map(i => {
         const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-        return <circle key={i} cx={stableNum(100 + 30 * Math.cos(a))} cy={stableNum(60 + 30 * Math.sin(a))} r="14" fill="none" stroke="var(--ink-2)" />;
+        return <circle key={i} cx={100 + 30 * Math.cos(a)} cy={60 + 30 * Math.sin(a)} r="14" fill="none" stroke="var(--ink-2)" />;
       })}
       <circle cx="100" cy="60" r="6" fill="var(--ink)" />
     </svg>
@@ -1526,18 +1490,16 @@ function FAQ({ lang, t }) {
         <div className="faq-list">
           {list.map((f, i) => {
             const isOpen = open === i;
-            const q = f['q_' + lang] || f.q_sq || f.question;
-            const a = f['a_' + lang] || f.a_sq || f.answer;
             return (
               <div key={i} style={{ borderTop: '1px solid var(--line)' }}>
                 <button onClick={() => setOpen(isOpen ? -1 : i)}
                   style={{ width: '100%', background: 'transparent', border: 'none', padding: '22px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, textAlign: 'left' }}>
-                  <span className="serif" style={{ fontSize: 24, lineHeight: 1.2, color: 'var(--ink)' }}>{q}</span>
+                  <span className="serif" style={{ fontSize: 24, lineHeight: 1.2, color: 'var(--ink)' }}>{f.q_sq}</span>
                   <span style={{ fontSize: 24, color: 'var(--ink-2)', transform: isOpen ? 'rotate(45deg)' : 'rotate(0)', transition: 'transform 200ms', flexShrink: 0, lineHeight: 1 }}>+</span>
                 </button>
                 {isOpen && (
                   <div style={{ paddingBottom: 28, paddingRight: 60 }}>
-                    <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, margin: 0 }}>{a}</p>
+                    <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.6, margin: 0 }}>{f.a_sq}</p>
                   </div>
                 )}
               </div>
@@ -1570,10 +1532,10 @@ function FAQ({ lang, t }) {
 function useRoute() {
   const parse = () => {
     if (typeof window === 'undefined') return 'home';
-    const path = location.pathname.replace(/^\/+/, '').split('/')[0];
-    if (path) return path;
     const h = location.hash.replace(/^#\/?/, '');
-    return h || 'home';
+    if (h) return h;
+    const path = location.pathname.replace(/^\/+/, '').split('/')[0];
+    return path || 'home';
   };
   // Always start with 'home' for SSR hydration, then sync in useEffect
   const [route, setRoute] = useState('home');
@@ -1613,7 +1575,6 @@ function Navbar({ lang, setLang, t, route, onChat }) {
     { key: 'sundimi', href: '#/sundimi' },
     { key: 'korrupsioni', href: '#/korrupsioni' },
     { key: 'be', href: '#/be' },
-    { key: 'objektivat', href: '#/objektivat' },
     { key: 'faq', href: '#/faq' },
   ];
 
@@ -3004,137 +2965,6 @@ const TOPIC_DEEP_CONTENT = {
   },
 };
 
-const TOPIC_ACTION_CONTENT = {
-  reforma: {
-    sq: {
-      eyebrow: 'Çfarë mund të shtohet',
-      title: 'Nga ideja te shërbimi që qytetari e ndien',
-      intro: 'Faqja bëhet më e dobishme kur çdo reformë lidhet me një veprim të matshëm: kush e bën, deri kur, dhe si e kupton qytetari që ka ndryshuar diçka.',
-      cards: [
-        { k: '01', h: 'Shërbimet më të kërkuara', p: 'Letërnjoftim, certifikata, tatime, regjistrim biznesi dhe leje ndërtimi me afate të krahasueshme para/pas dixhitalizimit.' },
-        { k: '02', h: 'Institucioni përgjegjës', p: 'Për çdo shërbim të tregohet pronari institucional, kanali online, afati maksimal dhe ku bëhet ankesa.' },
-        { k: '03', h: 'Matje reale', p: 'Numri i shërbimeve online, koha mesatare e përgjigjes, shkalla e refuzimeve dhe kënaqshmëria e qytetarëve.' },
-      ],
-    },
-    en: {
-      eyebrow: 'What to add',
-      title: 'From reform language to services citizens can feel',
-      intro: 'The page becomes more useful when every reform is connected to a measurable action: who owns it, by when, and how citizens know something changed.',
-      cards: [
-        { k: '01', h: 'Most-used services', p: 'ID cards, certificates, taxes, business registration and construction permits with comparable before/after deadlines.' },
-        { k: '02', h: 'Responsible institution', p: 'Each service should show the institutional owner, online channel, maximum deadline and appeal path.' },
-        { k: '03', h: 'Real measurement', p: 'Online-service count, average response time, rejection rate and citizen satisfaction.' },
-      ],
-    },
-    sr: {
-      eyebrow: 'Šta dodati',
-      title: 'Od reformskog jezika do usluga koje građanin oseća',
-      intro: 'Stranica je korisnija kada je svaka reforma povezana sa merljivom radnjom: ko je odgovoran, do kada, i kako građanin zna da se nešto promenilo.',
-      cards: [
-        { k: '01', h: 'Najtraženije usluge', p: 'Lične karte, izvodi, porezi, registracija biznisa i građevinske dozvole sa uporedivim rokovima pre/posle digitalizacije.' },
-        { k: '02', h: 'Odgovorna institucija', p: 'Za svaku uslugu prikazati instituciju, online kanal, maksimalni rok i put žalbe.' },
-        { k: '03', h: 'Stvarno merenje', p: 'Broj online usluga, prosečno vreme odgovora, stopa odbijanja i zadovoljstvo građana.' },
-      ],
-    },
-  },
-  sundimi: {
-    sq: {
-      eyebrow: 'Udhëzues praktik',
-      title: 'Sundimi i ligjit duhet të shpjegohet si rrugë qytetari',
-      intro: 'Përmbajtja duhet ta ndihmojë përdoruesin të kuptojë ku shkon një rast, cilat janë afatet dhe çfarë të drejtash ka kur institucioni nuk përgjigjet.',
-      cards: [
-        { k: '01', h: 'Harta e institucioneve', p: 'Policia mbledh informacion, prokuroria heton, gjykata vendos, Avokati i Popullit trajton shkelje nga administrata.' },
-        { k: '02', h: 'Afatet dhe ankesat', p: 'Shto afate tipike për ankesë administrative, padi, kërkesë urgjente dhe qasje në dokumente publike.' },
-        { k: '03', h: 'Ndihma juridike', p: 'Një bllok i veçantë për ndihmë juridike falas, kriteret bazë dhe dokumentet që duhen për aplikim.' },
-      ],
-    },
-    en: {
-      eyebrow: 'Practical guide',
-      title: 'Rule of law should read as a citizen pathway',
-      intro: 'Content should help users understand where a case goes, what deadlines apply and what rights they have when an institution does not answer.',
-      cards: [
-        { k: '01', h: 'Institution map', p: 'Police collect information, prosecution investigates, courts decide, the Ombudsperson handles administrative rights violations.' },
-        { k: '02', h: 'Deadlines and appeals', p: 'Add typical deadlines for administrative appeals, lawsuits, urgent requests and access to public documents.' },
-        { k: '03', h: 'Legal aid', p: 'A dedicated block for free legal aid, basic eligibility and documents needed to apply.' },
-      ],
-    },
-    sr: {
-      eyebrow: 'Praktični vodič',
-      title: 'Vladavina prava treba da izgleda kao put građanina',
-      intro: 'Sadržaj treba da pomogne korisniku da razume gde ide predmet, koji rokovi važe i koja prava ima kada institucija ne odgovori.',
-      cards: [
-        { k: '01', h: 'Mapa institucija', p: 'Policija prikuplja informacije, tužilaštvo istražuje, sud odlučuje, Ombudsman rešava povrede prava od administracije.' },
-        { k: '02', h: 'Rokovi i žalbe', p: 'Dodati tipične rokove za administrativnu žalbu, tužbu, hitni zahtev i pristup javnim dokumentima.' },
-        { k: '03', h: 'Pravna pomoć', p: 'Poseban blok za besplatnu pravnu pomoć, osnovne kriterijume i dokumente potrebne za prijavu.' },
-      ],
-    },
-  },
-  korrupsioni: {
-    sq: {
-      eyebrow: 'Nga dyshimi te raportimi',
-      title: 'Faqja duhet ta kthejë frikën në procedurë të qartë',
-      intro: 'Përdoruesi duhet të dijë çfarë quhet korrupsion, cilat prova ruhen, ku raportohet dhe çfarë mbrojtjeje ekziston për sinjalizuesit.',
-      cards: [
-        { k: '01', h: 'Checklist provash', p: 'Datë, vend, emër institucioni, dokumente, foto, mesazhe, dëshmitarë dhe çfarë u kërkua apo u premtua.' },
-        { k: '02', h: 'Kanale raportimi', p: 'Agjencia kundër Korrupsionit, Prokuroria Speciale, Policia, Avokati i Popullit dhe ALAC/KDI për këshillim të sigurt.' },
-        { k: '03', h: 'Red flags', p: 'Kontratë pa konkurrencë, konflikt interesi, tender me specifika të ngushta, punësim familjar dhe pasuri e pajustifikuar.' },
-      ],
-    },
-    en: {
-      eyebrow: 'From suspicion to reporting',
-      title: 'The page should turn fear into a clear procedure',
-      intro: 'Users should know what counts as corruption, what evidence to keep, where to report and what protection exists for whistleblowers.',
-      cards: [
-        { k: '01', h: 'Evidence checklist', p: 'Date, place, institution name, documents, photos, messages, witnesses and what was requested or promised.' },
-        { k: '02', h: 'Reporting channels', p: 'Anti-Corruption Agency, Special Prosecution, Police, Ombudsperson and ALAC/KDI for safe advice.' },
-        { k: '03', h: 'Red flags', p: 'No-competition contracts, conflict of interest, narrow tender specs, family hiring and unexplained wealth.' },
-      ],
-    },
-    sr: {
-      eyebrow: 'Od sumnje do prijave',
-      title: 'Stranica treba da pretvori strah u jasnu proceduru',
-      intro: 'Korisnik treba da zna šta je korupcija, koje dokaze čuva, gde prijavljuje i kakva zaštita postoji za zviždače.',
-      cards: [
-        { k: '01', h: 'Lista dokaza', p: 'Datum, mesto, naziv institucije, dokumenti, fotografije, poruke, svedoci i šta je traženo ili obećano.' },
-        { k: '02', h: 'Kanali prijave', p: 'Antikorupcijska agencija, Specijalno tužilaštvo, Policija, Ombudsman i ALAC/KDI za bezbedan savet.' },
-        { k: '03', h: 'Signali rizika', p: 'Ugovor bez konkurencije, sukob interesa, uske tenderske specifikacije, porodično zapošljavanje i neobjašnjiva imovina.' },
-      ],
-    },
-  },
-  be: {
-    sq: {
-      eyebrow: 'Rruga e anëtarësimit',
-      title: 'Procesi i BE-së ka nevojë për një hartë më të lexueshme',
-      intro: 'Faqja duhet të ndajë qartë statusin aktual, hapin tjetër, vendimin politik dhe punën teknike që Kosova duhet ta bëjë brenda vendit.',
-      cards: [
-        { k: '01', h: 'Statusi aktual', p: 'Kosova është potencial candidate; aplikimi është dorëzuar, por pritet opinioni i Komisionit dhe vendimi i Këshillit.' },
-        { k: '02', h: '5 mosnjohjet në BE', p: 'Sqarim i shkurtër pse Spanja, Greqia, Qipro, Rumania dhe Sllovakia ndikojnë në konsensusin e Këshillit.' },
-        { k: '03', h: 'Çfarë janë klasterët', p: 'Për secilin klaster: kapitujt, shembuj reformash dhe çfarë përfiton qytetari kur ai kapitull mbyllet.' },
-      ],
-    },
-    en: {
-      eyebrow: 'Membership path',
-      title: 'The EU process needs a more readable map',
-      intro: 'The page should clearly separate the current status, next step, political decision and technical work Kosovo must do domestically.',
-      cards: [
-        { k: '01', h: 'Current status', p: 'Kosovo is a potential candidate; the application was submitted, but the Commission opinion and Council decision are pending.' },
-        { k: '02', h: '5 EU non-recognisers', p: 'A short explanation of why Spain, Greece, Cyprus, Romania and Slovakia affect Council consensus.' },
-        { k: '03', h: 'What clusters are', p: 'For every cluster: chapters, example reforms and what citizens gain when that chapter closes.' },
-      ],
-    },
-    sr: {
-      eyebrow: 'Put članstva',
-      title: 'Proces EU treba čitljiviju mapu',
-      intro: 'Stranica treba jasno da razdvoji trenutni status, sledeći korak, političku odluku i tehnički posao koji Kosovo mora uraditi kod kuće.',
-      cards: [
-        { k: '01', h: 'Trenutni status', p: 'Kosovo je potencijalni kandidat; aplikacija je predata, ali se čekaju mišljenje Komisije i odluka Saveta.' },
-        { k: '02', h: '5 nepriznanja u EU', p: 'Kratko objašnjenje zašto Španija, Grčka, Kipar, Rumunija i Slovačka utiču na konsenzus Saveta.' },
-        { k: '03', h: 'Šta su klasteri', p: 'Za svaki klaster: poglavlja, primeri reformi i šta građani dobijaju kada se poglavlje zatvori.' },
-      ],
-    },
-  },
-};
-
 function DeepReadingSection({ topicKey, lang }) {
   const cmsTopicDeepContent = useCmsObject('topic_deep_content', TOPIC_DEEP_CONTENT);
   const blocks = cmsTopicDeepContent[topicKey]?.[lang] || cmsTopicDeepContent[topicKey]?.sq || TOPIC_DEEP_CONTENT[topicKey]?.[lang] || TOPIC_DEEP_CONTENT[topicKey]?.sq || [];
@@ -3159,37 +2989,6 @@ function DeepReadingSection({ topicKey, lang }) {
       </div>
       <style>{`
         @media (max-width: 900px) { .deep-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
-    </section>
-  );
-}
-
-function TopicActionSection({ topicKey, lang }) {
-  const copy = TOPIC_ACTION_CONTENT[topicKey]?.[lang] || TOPIC_ACTION_CONTENT[topicKey]?.sq;
-  if (!copy) return null;
-  return (
-    <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
-      <div className="container topic-action-grid" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.4fr', gap: 60, alignItems: 'start' }}>
-        <div>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>{copy.eyebrow}</div>
-          <h2 className="serif" style={{ fontSize: 'clamp(34px, 4.7vw, 58px)', lineHeight: 1.04, color: 'var(--ink)' }}>{copy.title}</h2>
-          <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', marginTop: 20, maxWidth: 520 }}>{copy.intro}</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="topic-action-cards">
-          {copy.cards.map(card => (
-            <article key={card.k} style={{ background: 'var(--paper-2)', padding: '26px 24px', minHeight: 260 }}>
-              <span className="serif" style={{ fontSize: 42, color: 'var(--blue)', lineHeight: 0.9 }}>{card.k}</span>
-              <h3 className="serif" style={{ fontSize: 27, lineHeight: 1.08, marginTop: 22, color: 'var(--ink)' }}>{card.h}</h3>
-              <p style={{ fontSize: 14.5, lineHeight: 1.62, color: 'var(--ink-2)', marginTop: 14 }}>{card.p}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-      <style>{`
-        @media (max-width: 980px) {
-          .topic-action-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
-          .topic-action-cards { grid-template-columns: 1fr !important; }
-        }
       `}</style>
     </section>
   );
@@ -4184,6 +3983,301 @@ function PageHeader({ kicker, title, sub, accent = 'var(--ink)' }) {
   );
 }
 
+function localizedValue(item, field, lang) {
+  if (!item) return '';
+  return item[field + '_' + lang] || item[field + '_sq'] || item[field] || '';
+}
+
+function PageActionCards({ items }) {
+  if (!items.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 28 }}>
+      {items.map((item, i) => (
+        <a key={`${item.href || item.anchor || i}-${i}`} href={item.href || item.anchor || '#'} style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 12,
+          border: '1px solid var(--ink)',
+          background: item.variant === 'dark' ? 'var(--ink)' : 'var(--paper)',
+          color: item.variant === 'dark' ? 'var(--paper)' : 'var(--ink)',
+          padding: '14px 18px',
+          fontSize: 12,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+        }} className="mono">
+          {item.label}
+          <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function BEObjectivesEntry({ lang }) {
+  const fallback = [{
+    eyebrow_sq: 'Kushtet për integrimin në BE',
+    eyebrow_en: 'Membership objectives',
+    eyebrow_sr: 'Ciljevi clanstva',
+    title_sq: 'Shiko listën e objektivave, kapitujve dhe burimeve zyrtare.',
+    title_en: 'See the list of objectives, chapters and official sources.',
+    title_sr: 'Pogledaj listu ciljeva, poglavlja i zvanicnih izvora.',
+    body_sq: 'Të gjitha kushtet dhe objektivat e integrimit janë mbledhur në një pamje të veçantë.',
+    body_en: 'All integration conditions and objectives are collected in one dedicated view.',
+    body_sr: 'Svi uslovi i ciljevi integracija nalaze se u posebnom prikazu.',
+    cta_sq: 'Objektivat e integrimit',
+    cta_en: 'Integration objectives',
+    cta_sr: 'Ciljevi integracija',
+    href: '#/objektivat',
+    variant: 'dark',
+  }];
+  const entries = useCmsArray('be_actions', fallback);
+  if (!entries.length) return null;
+  return (
+    <section style={{ padding: '22px 0 44px', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 28, alignItems: 'center', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', padding: '24px 0' }} className="be-objectives-grid">
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8 }}>
+              {localizedValue(entries[0], 'eyebrow', lang)}
+            </div>
+            <h2 className="serif" style={{ fontSize: 'clamp(24px, 3vw, 34px)', lineHeight: 1.08, color: 'var(--ink)', margin: 0 }}>
+              {localizedValue(entries[0], 'title', lang)}
+            </h2>
+            <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.55, margin: '10px 0 0', maxWidth: 680 }}>
+              {localizedValue(entries[0], 'body', lang)}
+            </p>
+          </div>
+          <PageActionCards items={entries.map(item => ({
+            label: localizedValue(item, 'cta', lang),
+            href: item.href || '#/objektivat',
+            variant: item.variant || 'dark',
+          }))} />
+        </div>
+      </div>
+      <style>{`
+        .be-objectives-grid > div:last-child { margin-top: 0 !important; }
+        @media (max-width: 900px) { .be-objectives-grid { grid-template-columns: 1fr !important; gap: 18px !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+function RuleOfLawMaterials({ lang }) {
+  const fallbackCopy = {
+    eyebrow_sq: 'Materiale ligjore',
+    eyebrow_en: 'Legal materials',
+    eyebrow_sr: 'Pravni materijali',
+    title_sq: 'Kushtetuta dhe ligjet themelore për sundimin e ligjit.',
+    title_en: 'The Constitution and fundamental laws for the rule of law.',
+    title_sr: 'Ustav i osnovni zakoni za vladavinu prava.',
+    sub_sq: 'Këtu janë aktet bazë që qytetarët duhet t’i kenë afër kur lexojnë për gjykata, procedura, administratë, dogana dhe trafik.',
+    sub_en: 'These are the core acts citizens should have nearby when reading about courts, procedure, administration, customs and traffic.',
+    sub_sr: 'Ovo su osnovni akti koje građani treba da imaju pri ruci kada citaju o sudovima, postupku, administraciji, carini i saobracaju.',
+    constitution_title_sq: 'Kushtetuta e Republikës së Kosovës',
+    constitution_title_en: 'Constitution of the Republic of Kosovo',
+    constitution_title_sr: 'Ustav Republike Kosovo',
+    fundamental_title_sq: 'Ligjet themelore',
+    fundamental_title_en: 'Fundamental laws',
+    fundamental_title_sr: 'Osnovni zakoni',
+    catalog_title_sq: 'Katalogu i plotë i materialeve',
+    catalog_title_en: 'Full materials catalog',
+    catalog_title_sr: 'Puni katalog materijala',
+  };
+  const fallbackActions = [
+    { label_sq: 'Kushtetuta e Republikës së Kosovës', label_en: 'Constitution of Kosovo', label_sr: 'Ustav Kosova', href: '#kushtetuta', variant: 'dark' },
+    { label_sq: 'Ligjet themelore', label_en: 'Fundamental laws', label_sr: 'Osnovni zakoni', href: '#ligjet-themelore', variant: 'light' },
+  ];
+  const fallbackMaterials = [
+    {
+      group: 'constitution',
+      law_number: 'K-09042008',
+      status: 'Në fuqi; me amendamente 2012, 2013, 2015, 2016, 2020',
+      title_sq: 'Kushtetuta e Republikës së Kosovës',
+      title_en: 'Constitution of the Republic of Kosovo',
+      title_sr: 'Ustav Republike Kosovo',
+      summary_sq: 'Akti themelor i shtetit: të drejtat dhe liritë themelore, organizimi institucional, ndarja e pushteteve dhe amendamentet kushtetuese.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=3702',
+    },
+    {
+      group: 'fundamental',
+      law_number: '06/L-074',
+      status: 'Në fuqi si akt i konsoliduar',
+      title_sq: 'Kodi Penal i Republikës së Kosovës',
+      title_en: 'Criminal Code of the Republic of Kosovo',
+      title_sr: 'Krivicni zakonik Republike Kosovo',
+      summary_sq: 'Përcakton veprat penale, përgjegjësinë penale, sanksionet, korrupsionin, krimin e organizuar dhe veprat kundër detyrës zyrtare.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=116031',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-032',
+      status: 'Në fuqi; ndryshuar/plotësuar nga 08/L-187',
+      title_sq: 'Kodi i Procedurës Penale',
+      title_en: 'Criminal Procedure Code',
+      title_sr: 'Zakonik o krivicnom postupku',
+      summary_sq: 'Rregullon hetimin, ndjekjen penale, të drejtat e palëve, provat, masat procedurale, gjykimin dhe mjetet juridike.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=61759',
+    },
+    {
+      group: 'fundamental',
+      law_number: 'Projektkod',
+      status: 'Projekt; të mos paraqitet si ligj në fuqi pa verifikim në Gazetën Zyrtare',
+      title_sq: 'Kodi Civil i Republikës së Kosovës',
+      title_en: 'Civil Code of the Republic of Kosovo',
+      title_sr: 'Gradjanski zakonik Republike Kosovo',
+      summary_sq: 'Projektkod për kodifikimin e së drejtës civile: pjesa e përgjithshme, detyrimet, prona, familja dhe trashëgimia.',
+      source_url: 'https://md.rks-gov.net/wp-content/uploads/2024/06/A1CCB78F-9020-41D5-826E-14D67A90F369.pdf',
+    },
+    {
+      group: 'fundamental',
+      law_number: '03/L-006',
+      status: 'Në fuqi si Ligji për Procedurën Kontestimore',
+      title_sq: 'Procedura civile / Ligji për Procedurën Kontestimore',
+      title_en: 'Civil procedure / Law on Contested Procedure',
+      title_sr: 'Gradjanski postupak / Zakon o parnicnom postupku',
+      summary_sq: 'Rregullon paditë, palët, afatet, seancat, provat, vendimet, ankesat dhe gjykimin civil kontestimor.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=2583',
+    },
+    {
+      group: 'fundamental',
+      law_number: '05/L-031',
+      status: 'Në fuqi',
+      title_sq: 'Ligji për Procedurën e Përgjithshme Administrative',
+      title_en: 'Law on General Administrative Procedure',
+      title_sr: 'Zakon o opstem upravnom postupku',
+      summary_sq: 'Rregullon procedurat administrative, afatet, njoftimin, vendimin dhe ankesën ndaj administratës publike.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=12559&langid=1',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-247',
+      status: 'Në fuqi; shfuqizon Kodin 03/L-109',
+      title_sq: 'Kodi Doganor dhe i Akcizave',
+      title_en: 'Customs and Excise Code',
+      title_sr: 'Carinski i akcizni zakonik',
+      summary_sq: 'Rregullon procedurat doganore, akcizat, obligimet e importit/eksportit, kontrollet dhe kundërvajtjet.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=89203',
+    },
+    {
+      group: 'fundamental',
+      law_number: '08/L-186',
+      status: 'Në fuqi; shfuqizon 05/L-088 dhe 06/L-069',
+      title_sq: 'Ligji për Rregullat e Trafikut Rrugor / Kodi Rrugor',
+      title_en: 'Law on Road Traffic Rules',
+      title_sr: 'Zakon o pravilima drumskog saobracaja',
+      summary_sq: 'Rregullon qarkullimin rrugor, sigurinë, shenjat, pajisjet, përgjegjësitë dhe kundërvajtjet në trafik.',
+      source_url: 'https://gzk.rks-gov.net/ActDetail.aspx?ActID=87975',
+    },
+  ];
+  const copy = useCmsObject('rule_of_law_materials_copy', fallbackCopy);
+  const actions = useCmsArray('rule_of_law_actions', fallbackActions);
+  const materials = useCmsArray('legal_materials', fallbackMaterials);
+  const catalog = useCmsArray('materials_catalog', []);
+  if (!materials.length && !catalog.length) return null;
+
+  const constitution = materials.filter(item => item.group === 'constitution');
+  const fundamentals = materials.filter(item => item.group !== 'constitution');
+  const categories = catalog.reduce((acc, item) => {
+    const key = item.category || 'Materiale';
+    acc[key] = acc[key] || [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <section id="materialet-ligjore" style={{ padding: '96px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container">
+        <SectionHead
+          eyebrow={localizedValue(copy, 'eyebrow', lang)}
+          title={localizedValue(copy, 'title', lang)}
+          sub={localizedValue(copy, 'sub', lang)}
+          num="04"
+        />
+        <PageActionCards items={actions.map(item => ({
+          label: localizedValue(item, 'label', lang),
+          href: item.href || item.anchor || '#materialet-ligjore',
+          variant: item.variant,
+        }))} />
+
+        {!!constitution.length && (
+          <div id="kushtetuta" style={{ marginTop: 56 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'constitution_title', lang)}
+            </h3>
+            <MaterialGrid items={constitution} lang={lang} />
+          </div>
+        )}
+
+        {!!fundamentals.length && (
+          <div id="ligjet-themelore" style={{ marginTop: 56 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'fundamental_title', lang)}
+            </h3>
+            <MaterialGrid items={fundamentals} lang={lang} />
+          </div>
+        )}
+
+        {!!catalog.length && (
+          <div style={{ marginTop: 64 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'catalog_title', lang)}
+            </h3>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {Object.entries(categories).map(([category, items]) => (
+                <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                  <summary style={{ cursor: 'pointer', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', gap: 18, listStyle: 'none' }}>
+                    <span className="serif" style={{ fontSize: 24, color: 'var(--ink)' }}>{category}</span>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
+                  </summary>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }} className="materials-catalog-grid">
+                    {items.map((item, i) => (
+                      <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 18, color: 'var(--ink)' }}>
+                        <div style={{ fontSize: 15, lineHeight: 1.35 }}>{item.title}</div>
+                        <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.08em', marginTop: 10, textTransform: 'uppercase' }}>
+                          {item.status || 'to_collect'}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <style>{`
+        @media (max-width: 760px) { .materials-catalog-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 760px) { .material-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+function MaterialGrid({ items, lang }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="material-grid">
+      {items.map((item, i) => (
+        <article key={`${item.title_sq || item.title}-${i}`} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210 }}>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
+            {item.law_number || item.status}
+          </div>
+          <h4 className="serif" style={{ fontSize: 28, lineHeight: 1.08, color: 'var(--ink)', margin: 0 }}>
+            {localizedValue(item, 'title', lang)}
+          </h4>
+          <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>
+            {localizedValue(item, 'summary', lang) || item.status}
+          </p>
+          {item.source_url && (
+            <a href={item.source_url} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-flex', marginTop: 14, fontSize: 10, color: 'var(--ink)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              Burimi zyrtar →
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
+  );
+}
+
 // ============================================================
 // Detail pages
 // ============================================================
@@ -4194,9 +4288,11 @@ function TopicPage({ topicKey, lang, t, onChat }) {
     <>
       <TopicSection topic={topic} lang={lang} idx={0} />
       {/* Show context-relevant detail per topic */}
+      {topicKey === 'be' && <BEObjectivesEntry lang={lang} />}
       {topicKey === 'be' && <RegionChart lang={lang} t={t} />}
       {topicKey === 'be' && <Clusters lang={lang} t={t} />}
       {topicKey === 'korrupsioni' && <CPIChart lang={lang} t={t} />}
+      {topicKey === 'sundimi' && <RuleOfLawMaterials lang={lang} />}
       {topicKey === 'be' && <AcquisProgressSection lang={lang} accent={topic.accent} />}
       {topicKey === 'reforma' && <ReformaServicesSection lang={lang} />}
       {topicKey === 'reforma' && <ReformaInstitutionsSection lang={lang} />}
