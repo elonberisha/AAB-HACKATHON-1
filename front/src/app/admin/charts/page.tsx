@@ -12,11 +12,15 @@ interface ChartSeries {
   published: boolean
 }
 
+type Row = { [key: string]: string | number | boolean | null | undefined }
+
 const empty: ChartSeries = { key: '', title: '', type: 'bar', data: [], config: {}, published: true }
+const structuredKeys = ['region', 'cpi', 'reform', 'clusters']
 
 export default function AdminChartsPage() {
   const [items, setItems] = useState<ChartSeries[]>([])
   const [editing, setEditing] = useState<ChartSeries | null>(null)
+  const [rows, setRows] = useState<Row[]>([])
   const [dataJson, setDataJson] = useState('')
   const [configJson, setConfigJson] = useState('')
   const [error, setError] = useState('')
@@ -31,8 +35,35 @@ export default function AdminChartsPage() {
   function startEdit(item: ChartSeries) {
     setError('')
     setEditing(item)
-    setDataJson(JSON.stringify(item.data ?? [], null, 2))
+    const nextRows = Array.isArray(item.data) ? item.data as Row[] : []
+    setRows(nextRows)
+    setDataJson(JSON.stringify(nextRows, null, 2))
     setConfigJson(JSON.stringify(item.config ?? {}, null, 2))
+  }
+
+  function updateRow(index: number, field: string, value: string | number) {
+    const next = rows.map((row, i) => i === index ? { ...row, [field]: value } : row)
+    setRows(next)
+    setDataJson(JSON.stringify(next, null, 2))
+  }
+
+  function addRow() {
+    const key = editing?.key
+    const row =
+      key === 'region' ? { code: '', name_sq: '', name_en: '', name_sr: '', status: 'candidate', chapters: 0, progress: 0 } :
+        key === 'cpi' ? { year: new Date().getFullYear(), score: 0 } :
+          key === 'reform' ? { key: '', label_sq: '', label_en: '', label_sr: '', value: 0 } :
+            key === 'clusters' ? { code: rows.length + 1, name_sq: '', name_en: '', name_sr: '', color: 'var(--blue)', chapters: 0, weight: 0 } :
+              {}
+    const next = [...rows, row]
+    setRows(next)
+    setDataJson(JSON.stringify(next, null, 2))
+  }
+
+  function deleteRow(index: number) {
+    const next = rows.filter((_, i) => i !== index)
+    setRows(next)
+    setDataJson(JSON.stringify(next, null, 2))
   }
 
   async function save() {
@@ -41,7 +72,7 @@ export default function AdminChartsPage() {
     let data: unknown
     let config: unknown
     try {
-      data = JSON.parse(dataJson)
+      data = structuredKeys.includes(editing.key) ? rows : JSON.parse(dataJson)
       config = JSON.parse(configJson)
     } catch {
       setError('Data ose config JSON nuk eshte valid.')
@@ -95,10 +126,12 @@ export default function AdminChartsPage() {
               <label className="flex items-end gap-2 pb-2"><input type="checkbox" checked={editing.published} onChange={e => setEditing({ ...editing, published: e.target.checked })} /><span className="text-sm">Publikuar</span></label>
               <div className="col-span-3"><label className="text-xs text-slate-500">Title</label><input value={editing.title ?? ''} onChange={e => setEditing({ ...editing, title: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            {structuredKeys.includes(editing.key) ? (
+              <StructuredChartRows chartKey={editing.key} rows={rows} updateRow={updateRow} deleteRow={deleteRow} addRow={addRow} />
+            ) : (
               <div><label className="text-xs text-slate-500">Data JSON</label><textarea rows={18} value={dataJson} onChange={e => setDataJson(e.target.value)} className="w-full font-mono text-xs px-3 py-2 border rounded-lg" /></div>
-              <div><label className="text-xs text-slate-500">Config JSON</label><textarea rows={18} value={configJson} onChange={e => setConfigJson(e.target.value)} className="w-full font-mono text-xs px-3 py-2 border rounded-lg" /></div>
-            </div>
+            )}
+            <div className="mt-3"><label className="text-xs text-slate-500">Config JSON</label><textarea rows={8} value={configJson} onChange={e => setConfigJson(e.target.value)} className="w-full font-mono text-xs px-3 py-2 border rounded-lg" /></div>
             {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
             <div className="flex gap-2 mt-4">
               <button onClick={save} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">Ruaj</button>
@@ -107,6 +140,56 @@ export default function AdminChartsPage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function StructuredChartRows({
+  chartKey,
+  rows,
+  updateRow,
+  deleteRow,
+  addRow,
+}: {
+  chartKey: string
+  rows: Row[]
+  updateRow: (index: number, field: string, value: string | number) => void
+  deleteRow: (index: number) => void
+  addRow: () => void
+}) {
+  const fields =
+    chartKey === 'region' ? [
+      ['code', 'text'], ['name_sq', 'text'], ['name_en', 'text'], ['name_sr', 'text'], ['status', 'text'], ['chapters', 'number'], ['progress', 'number'],
+    ] :
+      chartKey === 'cpi' ? [['year', 'number'], ['score', 'number']] :
+        chartKey === 'reform' ? [['key', 'text'], ['label_sq', 'text'], ['label_en', 'text'], ['label_sr', 'text'], ['value', 'number']] :
+          [['code', 'number'], ['name_sq', 'text'], ['name_en', 'text'], ['name_sr', 'text'], ['color', 'text'], ['chapters', 'number'], ['weight', 'number']]
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold">Data rows</h3>
+        <button onClick={addRow} className="px-3 py-1.5 bg-slate-800 text-white rounded-lg text-sm">+ Shto rresht</button>
+      </div>
+      <div className="space-y-3">
+        {rows.map((row, index) => (
+          <div key={index} className="grid grid-cols-1 lg:grid-cols-8 gap-2 border rounded-lg p-3">
+            {fields.map(([field, type]) => (
+              <label key={field} className={fields.length <= 2 ? 'lg:col-span-3' : ''}>
+                <span className="text-xs text-slate-500">{field}</span>
+                <input
+                  type={type}
+                  value={typeof row[field] === 'string' || typeof row[field] === 'number' ? row[field] : ''}
+                  onChange={e => updateRow(index, field, type === 'number' ? Number(e.target.value) : e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                />
+              </label>
+            ))}
+            <button onClick={() => deleteRow(index)} className="self-end text-red-600 text-sm">Fshi</button>
+          </div>
+        ))}
+        {rows.length === 0 && <p className="text-sm text-slate-400">Nuk ka rreshta.</p>}
+      </div>
     </div>
   )
 }

@@ -187,6 +187,7 @@ create table if not exists infographics (
   description_sq text, description_en text, description_sr text,
   image_url text not null,
   category text,
+  shape text default 'grid',
   sort_order int default 0,
   download_count int default 0,
   published boolean default true,
@@ -728,9 +729,21 @@ on conflict (key) do nothing;
 insert into page_blocks (page_slug, type, title, content, sort_order, published) values
   ('home', 'collection', 'Topic cards', '{"key":"topics","items":[]}', 10, true),
   ('home', 'chart_ref', 'Region progress chart', '{"chart_key":"region"}', 20, true),
+  ('reforma', 'collection', 'Topic detail sections', '{"key":"topic_content","value":{}}', 10, true),
+  ('reforma', 'collection', 'Topic deep reading', '{"key":"topic_deep_content","value":{}}', 20, true),
+  ('sundimi', 'collection', 'Topic detail sections', '{"key":"topic_content","value":{}}', 10, true),
+  ('sundimi', 'collection', 'Topic deep reading', '{"key":"topic_deep_content","value":{}}', 20, true),
+  ('korrupsioni', 'collection', 'Topic detail sections', '{"key":"topic_content","value":{}}', 10, true),
+  ('korrupsioni', 'collection', 'Topic deep reading', '{"key":"topic_deep_content","value":{}}', 20, true),
+  ('be', 'collection', 'Topic detail sections', '{"key":"topic_content","value":{}}', 10, true),
+  ('be', 'collection', 'Topic deep reading', '{"key":"topic_deep_content","value":{}}', 20, true),
   ('be', 'chart_ref', 'EU clusters', '{"chart_key":"clusters"}', 10, true),
   ('korrupsioni', 'chart_ref', 'CPI chart', '{"chart_key":"cpi"}', 10, true),
   ('objektivat', 'objectives_ref', 'EU objectives', '{}', 10, true),
+  ('objektivat', 'collection', 'Objective context cards', '{"key":"objective_context","items":[]}', 20, true),
   ('faq', 'faq_ref', 'FAQ', '{}', 10, true),
-  ('infografika', 'infographics_ref', 'Infographics', '{}', 10, true)
+  ('faq', 'collection', 'FAQ guide section', '{"key":"faq_guide","value":{}}', 20, true),
+  ('infografika', 'infographics_ref', 'Infographics', '{}', 10, true),
+  ('infografika', 'collection', 'Infographics method cards', '{"key":"infographics_method","items":[]}', 20, true),
+  ('kosova', 'collection', 'Kosova page copy', '{"key":"kosova_page","value":{}}', 20, true)
 on conflict do nothing;

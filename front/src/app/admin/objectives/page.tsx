@@ -84,11 +84,11 @@ export default function AdminObjectivesPage() {
                 <select value={editing.cluster} onChange={e => setEditing({ ...editing, cluster: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                   {clusters.map(c => <option key={c} value={c}>{c}</option>)}
                 </select></div>
-              {(['description_sq', 'description_en'] as const).map(f => (
+              {(['description_sq', 'description_en', 'description_sr'] as const).map(f => (
                 <div key={f} className="col-span-2"><label className="text-xs text-gray-500">{f}</label>
                   <textarea rows={3} value={editing[f]} onChange={e => setEditing({ ...editing, [f]: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
               ))}
-              {(['conditions_sq', 'conditions_en'] as const).map(f => (
+              {(['conditions_sq', 'conditions_en', 'conditions_sr'] as const).map(f => (
                 <div key={f} className="col-span-2"><label className="text-xs text-gray-500">{f}</label>
                   <textarea rows={3} value={editing[f]} onChange={e => setEditing({ ...editing, [f]: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
               ))}
@@ -98,6 +98,8 @@ export default function AdminObjectivesPage() {
                 <input value={editing.source_url} onChange={e => setEditing({ ...editing, source_url: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
               <div><label className="text-xs text-gray-500">Sort order</label>
                 <input type="number" value={editing.sort_order} onChange={e => setEditing({ ...editing, sort_order: +e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
+              <div><label className="text-xs text-gray-500">Completed at</label>
+                <input type="date" value={editing.completed_at ? editing.completed_at.slice(0, 10) : ''} onChange={e => setEditing({ ...editing, completed_at: e.target.value ? new Date(e.target.value).toISOString() : null })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2"><input type="checkbox" checked={editing.completed} onChange={e => setEditing({ ...editing, completed: e.target.checked, completed_at: e.target.checked ? new Date().toISOString() : null })} /><span className="text-sm">Plotësuar</span></label>
                 <label className="flex items-center gap-2"><input type="checkbox" checked={editing.published} onChange={e => setEditing({ ...editing, published: e.target.checked })} /><span className="text-sm">Publikuar</span></label>
