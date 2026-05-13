@@ -1557,10 +1557,10 @@ function FAQ({ lang, t }) {
 function useRoute() {
   const parse = () => {
     if (typeof window === 'undefined') return 'home';
-    const path = location.pathname.replace(/^\/+/, '').split('/')[0];
-    if (path) return path;
     const h = location.hash.replace(/^#\/?/, '');
-    return h || 'home';
+    if (h) return h;
+    const path = location.pathname.replace(/^\/+/, '').split('/')[0];
+    return path || 'home';
   };
   // Always start with 'home' for SSR hydration, then sync in useEffect
   const [route, setRoute] = useState('home');
@@ -1600,7 +1600,6 @@ function Navbar({ lang, setLang, t, route, onChat }) {
     { key: 'sundimi', href: '#/sundimi' },
     { key: 'korrupsioni', href: '#/korrupsioni' },
     { key: 'be', href: '#/be' },
-    { key: 'objektivat', href: '#/objektivat' },
     { key: 'faq', href: '#/faq' },
   ];
 
@@ -3338,6 +3337,180 @@ function PageHeader({ kicker, title, sub, accent = 'var(--ink)' }) {
   );
 }
 
+function localizedValue(item, field, lang) {
+  if (!item) return '';
+  return item[field + '_' + lang] || item[field + '_sq'] || item[field] || '';
+}
+
+function PageActionCards({ items }) {
+  if (!items.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 28 }}>
+      {items.map((item, i) => (
+        <a key={`${item.href || item.anchor || i}-${i}`} href={item.href || item.anchor || '#'} style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 12,
+          border: '1px solid var(--ink)',
+          background: item.variant === 'dark' ? 'var(--ink)' : 'var(--paper)',
+          color: item.variant === 'dark' ? 'var(--paper)' : 'var(--ink)',
+          padding: '14px 18px',
+          fontSize: 12,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+        }} className="mono">
+          {item.label}
+          <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function BEObjectivesEntry({ lang }) {
+  const entries = useCmsArray('be_actions', []);
+  if (!entries.length) return null;
+  return (
+    <section style={{ padding: '72px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+      <div className="container">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 54, alignItems: 'center' }} className="be-objectives-grid">
+          <div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>
+              {localizedValue(entries[0], 'eyebrow', lang)}
+            </div>
+            <h2 className="serif" style={{ fontSize: 'clamp(36px, 5vw, 64px)', lineHeight: 1.02, color: 'var(--ink)' }}>
+              {localizedValue(entries[0], 'title', lang)}
+            </h2>
+          </div>
+          <div>
+            <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.65, margin: 0, maxWidth: 720 }}>
+              {localizedValue(entries[0], 'body', lang)}
+            </p>
+            <PageActionCards items={entries.map(item => ({
+              label: localizedValue(item, 'cta', lang),
+              href: item.href || '#/objektivat',
+              variant: item.variant || 'dark',
+            }))} />
+          </div>
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 900px) { .be-objectives-grid { grid-template-columns: 1fr !important; gap: 28px !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+function RuleOfLawMaterials({ lang }) {
+  const copy = useCmsObject('rule_of_law_materials_copy', {});
+  const actions = useCmsArray('rule_of_law_actions', []);
+  const materials = useCmsArray('legal_materials', []);
+  const catalog = useCmsArray('materials_catalog', []);
+  if (!materials.length && !catalog.length) return null;
+
+  const constitution = materials.filter(item => item.group === 'constitution');
+  const fundamentals = materials.filter(item => item.group !== 'constitution');
+  const categories = catalog.reduce((acc, item) => {
+    const key = item.category || 'Materiale';
+    acc[key] = acc[key] || [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <section id="materialet-ligjore" style={{ padding: '96px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
+      <div className="container">
+        <SectionHead
+          eyebrow={localizedValue(copy, 'eyebrow', lang)}
+          title={localizedValue(copy, 'title', lang)}
+          sub={localizedValue(copy, 'sub', lang)}
+          num="04"
+        />
+        <PageActionCards items={actions.map(item => ({
+          label: localizedValue(item, 'label', lang),
+          href: item.href || item.anchor || '#materialet-ligjore',
+          variant: item.variant,
+        }))} />
+
+        {!!constitution.length && (
+          <div id="kushtetuta" style={{ marginTop: 56 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'constitution_title', lang)}
+            </h3>
+            <MaterialGrid items={constitution} lang={lang} />
+          </div>
+        )}
+
+        {!!fundamentals.length && (
+          <div id="ligjet-themelore" style={{ marginTop: 56 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'fundamental_title', lang)}
+            </h3>
+            <MaterialGrid items={fundamentals} lang={lang} />
+          </div>
+        )}
+
+        {!!catalog.length && (
+          <div style={{ marginTop: 64 }}>
+            <h3 className="serif" style={{ fontSize: 38, lineHeight: 1.05, color: 'var(--ink)', marginBottom: 20 }}>
+              {localizedValue(copy, 'catalog_title', lang)}
+            </h3>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {Object.entries(categories).map(([category, items]) => (
+                <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                  <summary style={{ cursor: 'pointer', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', gap: 18, listStyle: 'none' }}>
+                    <span className="serif" style={{ fontSize: 24, color: 'var(--ink)' }}>{category}</span>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
+                  </summary>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }} className="materials-catalog-grid">
+                    {items.map((item, i) => (
+                      <a key={`${item.slug || item.title}-${i}`} href={item.source_url || '#'} target={item.source_url ? '_blank' : undefined} rel="noreferrer" style={{ background: 'var(--paper)', padding: 18, color: 'var(--ink)' }}>
+                        <div style={{ fontSize: 15, lineHeight: 1.35 }}>{item.title}</div>
+                        <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.08em', marginTop: 10, textTransform: 'uppercase' }}>
+                          {item.status || 'to_collect'}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <style>{`
+        @media (max-width: 760px) { .materials-catalog-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 760px) { .material-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </section>
+  );
+}
+
+function MaterialGrid({ items, lang }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="material-grid">
+      {items.map((item, i) => (
+        <article key={`${item.title_sq || item.title}-${i}`} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210 }}>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
+            {item.law_number || item.status}
+          </div>
+          <h4 className="serif" style={{ fontSize: 28, lineHeight: 1.08, color: 'var(--ink)', margin: 0 }}>
+            {localizedValue(item, 'title', lang)}
+          </h4>
+          <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>
+            {localizedValue(item, 'summary', lang) || item.status}
+          </p>
+          {item.source_url && (
+            <a href={item.source_url} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-flex', marginTop: 14, fontSize: 10, color: 'var(--ink)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              Burimi zyrtar →
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
+  );
+}
+
 // ============================================================
 // Detail pages
 // ============================================================
@@ -3353,6 +3526,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {/* Show context-relevant detail per topic */}
       {topicKey === 'be' && <RegionChart lang={lang} t={t} />}
       {topicKey === 'be' && <Clusters lang={lang} t={t} />}
+      {topicKey === 'be' && <BEObjectivesEntry lang={lang} />}
       {topicKey === 'korrupsioni' && <CPIChart lang={lang} t={t} />}
       {(topicKey === 'reforma' || topicKey === 'sundimi') && (
         <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
@@ -3375,6 +3549,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
           </div>
         </section>
       )}
+      {topicKey === 'sundimi' && <RuleOfLawMaterials lang={lang} />}
       <DeepReadingSection topicKey={topicKey} lang={lang} />
       <NextTopicNav current={topicKey} lang={lang} t={t} />
     </>
