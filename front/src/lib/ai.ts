@@ -9,10 +9,10 @@ export function getSession() {
   return next;
 }
 
-export async function chatStream(message: string, sessionId = getSession(), language = "sq") {
+export async function chatStream(message: string, sessionId = getSession(), language = "sq", userId?: string | null) {
   return fetch(`${AI_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, sessionId, language })
+    body: JSON.stringify({ message, sessionId, language, userId: userId ?? null })
   });
 }

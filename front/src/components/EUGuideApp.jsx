@@ -2212,14 +2212,16 @@ function ChatWidget({ lang, t, open, setOpen }) {
     setInput('');
     setTyping(true);
 
-    // Auto-title session with first user message
+    // After first message: refresh sidebar after backend saves session
     if (userMsgCount === 0) {
       autoTitleSession(message, activeSessionId);
+      // Delay refresh so backend has time to save
+      setTimeout(() => { if (sidebarOpen) refreshHistory(); }, 2000);
     }
 
     try {
       const sid = activeSessionId || getSession();
-      const res = await chatStream(message, sid, lang);
+      const res = await chatStream(message, sid, lang, user?.id ?? null);
       if (!res.ok || !res.body) throw new Error('Chat stream failed');
 
       setTyping(false);
