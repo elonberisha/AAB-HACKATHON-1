@@ -2063,8 +2063,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
         </div>
 
         {/* Auth hint */}
-<<<<<<< HEAD
-        <div style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
+        <div className="chat-auth-row" style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
           {user ? (
             <>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -2091,14 +2090,6 @@ function ChatWidget({ lang, t, open, setOpen }) {
               </button>
             </>
           )}
-=======
-        <div className="chat-auth-row" style={{ padding: '8px 14px 12px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--paper-2)' }}>
-          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.chat.auth}</span>
-          <button style={{ background: 'transparent', border: '1px solid var(--ink-2)', padding: '4px 10px', fontSize: 11, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 10, height: 10, background: 'conic-gradient(from 0deg, #EA4335, #FBBC05, #34A853, #4285F4)', borderRadius: '50%' }} />
-            Google
-          </button>
->>>>>>> fdc434aba37ecce8621fa01871758a5253feb5e7
         </div>
       </div>
     </>
