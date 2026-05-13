@@ -169,6 +169,7 @@ create index if not exists articles_published_idx on articles(published, publish
 create table if not exists faq_items (
   id uuid primary key default gen_random_uuid(),
   page_id uuid references pages(id) on delete set null,
+  category text default 'be',
   question_sq text, question_en text, question_sr text,
   answer_sq text, answer_en text, answer_sr text,
   sort_order int default 0,
@@ -180,6 +181,7 @@ create table if not exists faq_items (
 
 create index if not exists faq_items_page_id_idx on faq_items(page_id);
 create index if not exists faq_items_published_idx on faq_items(published, sort_order);
+alter table faq_items add column if not exists category text default 'be';
 
 create table if not exists infographics (
   id uuid primary key default gen_random_uuid(),

@@ -6,13 +6,14 @@ import { supabase } from '@/lib/supabase'
 interface FaqItem {
   id: string
   page_id: string | null
+  category: string
   question_sq: string; question_en: string; question_sr: string
   answer_sq: string; answer_en: string; answer_sr: string
   sort_order: number
   published: boolean
 }
 
-const empty: FaqItem = { id: '', page_id: null, question_sq: '', question_en: '', question_sr: '', answer_sq: '', answer_en: '', answer_sr: '', sort_order: 0, published: true }
+const empty: FaqItem = { id: '', page_id: null, category: 'be', question_sq: '', question_en: '', question_sr: '', answer_sq: '', answer_en: '', answer_sr: '', sort_order: 0, published: true }
 
 export default function AdminFaqPage() {
   const [items, setItems] = useState<FaqItem[]>([])
@@ -57,6 +58,7 @@ export default function AdminFaqPage() {
           <div key={f.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
             <div>
               <span className="text-xs text-gray-400 mr-2">#{f.sort_order}</span>
+              <span className="text-xs text-blue-600 mr-2">{f.category}</span>
               <span className="font-medium">{f.question_sq}</span>
               {!f.published && <span className="ml-2 text-xs text-gray-400">(draft)</span>}
             </div>
@@ -87,6 +89,12 @@ export default function AdminFaqPage() {
                     <option value="">Generale</option>
                     {pages.map(p => <option key={p.id} value={p.id}>{p.slug}</option>)}
                   </select></div>
+                <div><label className="text-xs text-gray-500">Kategoria</label>
+                  <select value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                    {['be', 'reforma', 'sundimi', 'korrupsioni', 'kosova', 'ligje', 'procedura'].map(c => <option key={c} value={c}>{c}</option>)}
+                  </select></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div><label className="text-xs text-gray-500">Sort order</label>
                   <input type="number" value={editing.sort_order} onChange={e => setEditing({ ...editing, sort_order: +e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
               </div>
