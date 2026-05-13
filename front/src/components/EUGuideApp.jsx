@@ -39,6 +39,12 @@ function useCmsArray(key, fallback) {
   return Array.isArray(value) && value.length ? value : fallback;
 }
 
+function useCmsObject(key, fallback) {
+  const cms = React.useContext(CmsContext);
+  const value = cms.collections?.[key];
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback;
+}
+
 function mapObjective(row) {
   return {
     id: row.slug || row.id,
@@ -93,6 +99,8 @@ function buildCmsPayload({ settingsRows = [], blockRows = [], chartRows = [], fa
   for (const row of blockRows) {
     if (row.type === 'collection' && row.content?.key && Array.isArray(row.content?.items)) {
       collections[row.content.key] = row.content.items;
+    } else if (row.type === 'collection' && row.content?.key && row.content?.value && typeof row.content.value === 'object') {
+      collections[row.content.key] = deepMerge(collections[row.content.key] || {}, row.content.value);
     }
   }
   if (faqRows.length) collections.faq = faqRows.map(mapFaq);
@@ -2852,7 +2860,8 @@ function TopicSection({ topic, lang, idx }) {
   const title = topic['title_' + lang] || topic.title_sq;
   const blurb = topic['blurb_' + lang] || topic.blurb_sq;
 
-  const topicContent = TOPIC_CONTENT[topic.key] || {};
+  const cmsTopicContent = useCmsObject('topic_content', TOPIC_CONTENT);
+  const topicContent = cmsTopicContent[topic.key] || TOPIC_CONTENT[topic.key] || {};
   const content = topicContent[lang] || topicContent.sq || [];
 
   return (
@@ -2976,7 +2985,8 @@ const TOPIC_DEEP_CONTENT = {
 };
 
 function DeepReadingSection({ topicKey, lang }) {
-  const blocks = TOPIC_DEEP_CONTENT[topicKey]?.[lang] || TOPIC_DEEP_CONTENT[topicKey]?.sq || [];
+  const cmsTopicDeepContent = useCmsObject('topic_deep_content', TOPIC_DEEP_CONTENT);
+  const blocks = cmsTopicDeepContent[topicKey]?.[lang] || cmsTopicDeepContent[topicKey]?.sq || TOPIC_DEEP_CONTENT[topicKey]?.[lang] || TOPIC_DEEP_CONTENT[topicKey]?.sq || [];
   if (!blocks.length) return null;
   return (
     <section style={{ padding: '88px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
@@ -3317,6 +3327,7 @@ const KOSOVO_STORY = {
 
 function KosovaPage({ lang, t }) {
   const s = t.kosova;
+  const cmsKosovaCopy = useCmsObject('kosova_page', {});
   const copyByLang = {
     sq: {
       eyebrow: 'Një histori mbijetese dhe formimi',
@@ -3460,7 +3471,7 @@ function KosovaPage({ lang, t }) {
       cta: 'Započni putovanje',
     },
   };
-  const copy = copyByLang[lang] || copyByLang.sq;
+  const copy = deepMerge(copyByLang[lang] || copyByLang.sq, cmsKosovaCopy[lang]);
 
   return (
     <>
@@ -3654,27 +3665,41 @@ function KosovaPage({ lang, t }) {
 }
 
 function ObjectiveContext({ lang }) {
+  const fallback = [
+    {
+      h_sq: 'Si lexohen objektivat',
+      h_en: 'How to read objectives',
+      h_sr: 'Kako čitati ciljeve',
+      p_sq: 'Objektivat janë ura mes reformave vendore dhe kërkesave të BE-së: secili duhet të ketë status, kusht, burim dhe indikator të matshëm.',
+      p_en: 'Objectives connect domestic reforms with EU requirements: each needs a status, condition, source and measurable indicator.',
+      p_sr: 'Ciljevi povezuju domaće reforme sa zahtevima EU: svaki treba status, uslov, izvor i merljiv indikator.',
+    },
+    {
+      h_sq: 'Çfarë do të thotë progresi',
+      h_en: 'What progress means',
+      h_sr: 'Šta znači napredak',
+      p_sq: 'Progresi nuk është vetëm miratim ligji. Ai kërkon zbatim, buxhet, institucion përgjegjës dhe rezultat që qytetari mund ta ndiejë.',
+      p_en: 'Progress is not only adopting a law. It requires implementation, budget, responsible institutions and an outcome citizens can feel.',
+      p_sr: 'Napredak nije samo usvajanje zakona. Potrebni su sprovođenje, budžet, odgovorna institucija i rezultat koji građanin oseća.',
+    },
+    {
+      h_sq: 'Pse disa mbeten hapur',
+      h_en: 'Why some stay open',
+      h_sr: 'Zašto neki ostaju otvoreni',
+      p_sq: 'Disa objektiva varen nga konsensusi politik, disa nga kapaciteti administrativ dhe disa nga vendimet e shteteve anëtare të BE-së.',
+      p_en: 'Some objectives depend on political consensus, some on administrative capacity and some on decisions by EU member states.',
+      p_sr: 'Neki ciljevi zavise od političkog konsenzusa, neki od administrativnog kapaciteta, a neki od odluka država članica EU.',
+    },
+  ];
+  const cards = useCmsArray('objective_context', fallback);
   return (
     <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)' }}>
       <div className="container objective-context" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
-        {[
-          {
-            h: lang === 'sq' ? 'Si lexohen objektivat' : lang === 'en' ? 'How to read objectives' : 'Kako čitati ciljeve',
-            p: lang === 'sq' ? 'Objektivat janë ura mes reformave vendore dhe kërkesave të BE-së: secili duhet të ketë status, kusht, burim dhe indikator të matshëm.' : lang === 'en' ? 'Objectives connect domestic reforms with EU requirements: each needs a status, condition, source and measurable indicator.' : 'Ciljevi povezuju domaće reforme sa zahtevima EU: svaki treba status, uslov, izvor i merljiv indikator.'
-          },
-          {
-            h: lang === 'sq' ? 'Çfarë do të thotë progresi' : lang === 'en' ? 'What progress means' : 'Šta znači napredak',
-            p: lang === 'sq' ? 'Progresi nuk është vetëm miratim ligji. Ai kërkon zbatim, buxhet, institucion përgjegjës dhe rezultat që qytetari mund ta ndiejë.' : lang === 'en' ? 'Progress is not only adopting a law. It requires implementation, budget, responsible institutions and an outcome citizens can feel.' : 'Napredak nije samo usvajanje zakona. Potrebni su sprovođenje, budžet, odgovorna institucija i rezultat koji građanin oseća.'
-          },
-          {
-            h: lang === 'sq' ? 'Pse disa mbeten hapur' : lang === 'en' ? 'Why some stay open' : 'Zašto neki ostaju otvoreni',
-            p: lang === 'sq' ? 'Disa objektiva varen nga konsensusi politik, disa nga kapaciteti administrativ dhe disa nga vendimet e shteteve anëtare të BE-së.' : lang === 'en' ? 'Some objectives depend on political consensus, some on administrative capacity and some on decisions by EU member states.' : 'Neki ciljevi zavise od političkog konsenzusa, neki od administrativnog kapaciteta, a neki od odluka država članica EU.'
-          },
-        ].map((b, i) => (
-          <article key={b.h} style={{ background: 'var(--paper)', padding: 28, minHeight: 210 }}>
+        {cards.map((b, i) => (
+          <article key={tr(b, 'h', lang) || i} style={{ background: 'var(--paper)', padding: 28, minHeight: 210 }}>
             <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>0{i + 1}</span>
-            <h3 className="serif" style={{ fontSize: 28, lineHeight: 1.05, marginTop: 16 }}>{b.h}</h3>
-            <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>{b.p}</p>
+            <h3 className="serif" style={{ fontSize: 28, lineHeight: 1.05, marginTop: 16 }}>{tr(b, 'h', lang)}</h3>
+            <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.6, marginTop: 14 }}>{tr(b, 'p', lang)}</p>
           </article>
         ))}
       </div>
@@ -3686,21 +3711,37 @@ function ObjectiveContext({ lang }) {
 }
 
 function FAQGuide({ lang, onChat }) {
+  const guide = useCmsObject('faq_guide', {});
+  const fallback = {
+    eyebrow_sq: 'Si ta përdorësh FAQ',
+    eyebrow_en: 'How to use the FAQ',
+    eyebrow_sr: 'Kako koristiti FAQ',
+    title_sq: 'Pyetjet janë hyrje, jo fundi i kërkimit.',
+    title_en: 'Questions are an entry point, not the end of inquiry.',
+    title_sr: 'Pitanja su ulaz, ne kraj istraživanja.',
+    body_sq: 'Nëse përgjigjja është e shkurtër, përdore si orientim: hap temën përkatëse, shiko objektivat dhe pyet EU Agent për shembuj konkretë.',
+    body_en: 'If an answer is short, use it as orientation: open the related topic, check the objectives and ask EU Agent for concrete examples.',
+    body_sr: 'Ako je odgovor kratak, koristi ga kao orijentaciju: otvori povezanu temu, pogledaj ciljeve i pitaj EU Agent za konkretne primere.',
+    cta_sq: 'Pyet për një rast',
+    cta_en: 'Ask about a case',
+    cta_sr: 'Pitaj za slučaj',
+  };
+  const copy = { ...fallback, ...guide };
   return (
     <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container faq-guide" style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 48, alignItems: 'center' }}>
         <div>
-          <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.16em', textTransform: 'uppercase' }}>{lang === 'sq' ? 'Si ta përdorësh FAQ' : lang === 'en' ? 'How to use the FAQ' : 'Kako koristiti FAQ'}</div>
+          <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.16em', textTransform: 'uppercase' }}>{tr(copy, 'eyebrow', lang)}</div>
           <h2 className="serif" style={{ fontSize: 'clamp(34px, 4.8vw, 56px)', lineHeight: 1.04, marginTop: 18 }}>
-            {lang === 'sq' ? 'Pyetjet janë hyrje, jo fundi i kërkimit.' : lang === 'en' ? 'Questions are an entry point, not the end of inquiry.' : 'Pitanja su ulaz, ne kraj istraživanja.'}
+            {tr(copy, 'title', lang)}
           </h2>
           <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', maxWidth: 640, marginTop: 18 }}>
-            {lang === 'sq' ? 'Nëse përgjigjja është e shkurtër, përdore si orientim: hap temën përkatëse, shiko objektivat dhe pyet EU Agent për shembuj konkretë.' : lang === 'en' ? 'If an answer is short, use it as orientation: open the related topic, check the objectives and ask EU Agent for concrete examples.' : 'Ako je odgovor kratak, koristi ga kao orijentaciju: otvori povezanu temu, pogledaj ciljeve i pitaj EU Agent za konkretne primere.'}
+            {tr(copy, 'body', lang)}
           </p>
         </div>
         <button onClick={onChat} style={{ background: 'var(--ink)', color: 'var(--paper)', border: 'none', padding: '24px 28px', textAlign: 'left' }}>
           <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em' }}>EU AGENT</span>
-          <span className="serif" style={{ display: 'block', fontSize: 34, marginTop: 20 }}>{lang === 'sq' ? 'Pyet për një rast' : lang === 'en' ? 'Ask about a case' : 'Pitaj za slučaj'}</span>
+          <span className="serif" style={{ display: 'block', fontSize: 34, marginTop: 20 }}>{tr(copy, 'cta', lang)}</span>
         </button>
       </div>
       <style>{`
@@ -3711,6 +3752,13 @@ function FAQGuide({ lang, onChat }) {
 }
 
 function InfographicsGuide({ lang }) {
+  const fallback = [
+    { n: '01', label_sq: 'Pyetja', label_en: 'Question', label_sr: 'Pitanje' },
+    { n: '02', label_sq: 'Burimi', label_en: 'Source', label_sr: 'Izvor' },
+    { n: '03', label_sq: 'Treguesi', label_en: 'Indicator', label_sr: 'Pokazatelj' },
+    { n: '04', label_sq: 'Veprimi', label_en: 'Action', label_sr: 'Akcija' },
+  ];
+  const methodCards = useCmsArray('infographics_method', fallback);
   return (
     <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
@@ -3720,15 +3768,10 @@ function InfographicsGuide({ lang }) {
           num="08"
         />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="info-method-grid">
-          {[
-            ['01', lang === 'sq' ? 'Pyetja' : lang === 'en' ? 'Question' : 'Pitanje'],
-            ['02', lang === 'sq' ? 'Burimi' : lang === 'en' ? 'Source' : 'Izvor'],
-            ['03', lang === 'sq' ? 'Treguesi' : lang === 'en' ? 'Indicator' : 'Pokazatelj'],
-            ['04', lang === 'sq' ? 'Veprimi' : lang === 'en' ? 'Action' : 'Akcija'],
-          ].map(([n, label]) => (
-            <div key={n} style={{ background: 'var(--paper)', padding: 26 }}>
-              <span className="serif" style={{ fontSize: 46, color: 'var(--blue)' }}>{n}</span>
-              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--ink-3)', marginTop: 12 }}>{label.toUpperCase()}</div>
+          {methodCards.map(card => (
+            <div key={card.n} style={{ background: 'var(--paper)', padding: 26 }}>
+              <span className="serif" style={{ fontSize: 46, color: 'var(--blue)' }}>{card.n}</span>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--ink-3)', marginTop: 12 }}>{tr(card, 'label', lang).toUpperCase()}</div>
             </div>
           ))}
         </div>
