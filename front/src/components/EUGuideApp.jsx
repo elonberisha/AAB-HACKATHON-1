@@ -4549,14 +4549,14 @@ function RuleOfLawMaterials({ lang }) {
     fundamental_title_sq: 'Ligjet themelore',
     fundamental_title_en: 'Fundamental laws',
     fundamental_title_sr: 'Osnovni zakoni',
-    catalog_title_sq: 'Katalogu i plotë i materialeve',
-    catalog_title_en: 'Full materials catalog',
-    catalog_title_sr: 'Puni katalog materijala',
+    catalog_title_sq: 'Ligjet tjera',
+    catalog_title_en: 'Other laws',
+    catalog_title_sr: 'Ostali zakoni',
   };
   const fallbackActions = [
     { label_sq: 'Kushtetuta e Republikës së Kosovës', label_en: 'Constitution of Kosovo', label_sr: 'Ustav Kosova', href: '#/kushtetuta', variant: 'dark' },
     { label_sq: 'Ligjet themelore', label_en: 'Fundamental laws', label_sr: 'Osnovni zakoni', href: '#/ligjet-themelore', variant: 'light' },
-    { label_sq: 'Katalogu i materialeve', label_en: 'Materials catalog', label_sr: 'Katalog materijala', href: '#/katalogu-materialeve', variant: 'light' },
+    { label_sq: 'Ligjet tjera', label_en: 'Other laws', label_sr: 'Ostali zakoni', href: '#/katalogu-materialeve', variant: 'light' },
   ];
   const fallbackMaterials = [
     {
@@ -4696,9 +4696,9 @@ function RuleOfLawMaterials({ lang }) {
             <div style={{ display: 'grid', gap: 10 }}>
               {Object.entries(categories).map(([category, items]) => (
                 <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
-                  <summary style={{ cursor: 'pointer', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', gap: 18, listStyle: 'none' }}>
-                    <span className="serif" style={{ fontSize: 24, color: 'var(--ink)' }}>{category}</span>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
+                  <summary style={{ cursor: 'pointer', padding: '13px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, listStyle: 'none' }}>
+                    <span className="serif" style={{ fontSize: 22, lineHeight: 1.08, color: 'var(--ink)' }}>{category}</span>
+                    <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
                   </summary>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }} className="materials-catalog-grid">
                     {items.map((item, i) => (
@@ -4845,13 +4845,65 @@ function MaterialSearchBar({ value, onChange, placeholder, count, compact = fals
   );
 }
 
+const CONSTITUTION_OFFICIAL_URL = 'https://gzk.rks-gov.net/ActDocumentDetail.aspx?ActID=97703';
+const CONSTITUTION_ORIGINAL_URL = 'https://gzk.rks-gov.net/ActDocumentDetail.aspx?ActID=3702';
+const CONSTITUTION_ARTICLE_BASE = 'https://wikisource.org/wiki/Kushtetuta_e_Kosov%C3%ABs';
+
+function constitutionSection(slug, chapter, title, summary, articles) {
+  return { slug, chapter, title, summary, articles: articles.map(([number, topic]) => ({ number, topic, title: `Neni ${number} [${topic}]` })) };
+}
+
+const KOSOVO_CONSTITUTION_FALLBACK = {
+  intro: {
+    adopted: '9 prill 2008',
+    in_force: '15 qershor 2008',
+    body_sq: 'Kushtetuta e Republikës së Kosovës është akti më i lartë juridik i shtetit. Ajo u miratua nga Kuvendi më 9 prill 2008 dhe hyri në fuqi më 15 qershor 2008, pas shpalljes së pavarësisë. Teksti u përgatit në proces kushtetues vendor me Komisionin Kushtetues dhe me mbështetje ndërkombëtare të lidhur me zbatimin e Propozimit Gjithëpërfshirës për Zgjidhjen e Statusit të Kosovës. Kushtetuta përcakton shtetin, sovranitetin, ndarjen e pushteteve, të drejtat themelore, të drejtat e komuniteteve, institucionet, gjyqësorin, sektorin e sigurisë dhe procedurën për ndryshime kushtetuese.',
+    official_url: CONSTITUTION_OFFICIAL_URL,
+    original_url: CONSTITUTION_ORIGINAL_URL,
+  },
+  key_numbers: ['1', '2', '3', '4', '7', '16', '21', '22', '24', '31', '32', '40', '41', '45', '46', '53', '54', '55', '65', '102'],
+  sections: [
+    { slug: 'Preambula', chapter: 'Preambula', title: 'Preambula', summary: 'Hyrje normative për shtetin demokratik, paqen, barazinë, pajtimin dhe orientimin evropian.', articles: [] },
+    constitutionSection('Kapitulli_I', 'Kapitulli I', 'Dispozitat Themelore', 'Baza e shtetit, sovraniteti, barazia, simbolet, gjuhët dhe epërsia e Kushtetutës.', [['1','Përkufizimi i Shtetit'], ['2','Sovraniteti'], ['3','Barazia para Ligjit'], ['4','Forma e Qeverisjes dhe Ndarja e Pushtetit'], ['5','Gjuhët'], ['6','Simbolet'], ['7','Vlerat'], ['8','Shteti Laik'], ['9','Trashëgimia Kulturore dhe Fetare'], ['10','Ekonomia'], ['11','Valuta'], ['12','Pushteti Lokal'], ['13','Kryeqyteti'], ['14','Shtetësia'], ['15','Shtetasit jashtë Vendit'], ['16','Epërsia e Kushtetutës'], ['17','Marrëveshjet Ndërkombëtare'], ['18','Ratifikimi i Marrëveshjeve Ndërkombëtare'], ['19','Zbatimi i së Drejtës Ndërkombëtare'], ['20','Bartja e Sovranitetit']]),
+    constitutionSection('Kapitulli_II', 'Kapitulli II', 'Të Drejtat dhe Liritë Themelore', 'Katalogu kryesor i lirive dhe të drejtave të njeriut në rendin kushtetues.', [['21','Parimet e Përgjithshme'], ['22','Zbatimi i drejtpërdrejtë i Marrëveshjeve dhe Instrumenteve Ndërkombëtare'], ['23','Dinjiteti i Njeriut'], ['24','Barazia para Ligjit'], ['25','E Drejta për Jetën'], ['26','E Drejta e Integritetit Personal'], ['27','Ndalimi i Torturës, Trajtimit Mizor, Çnjerëzor ose Poshtërues'], ['28','Ndalimi i Skllavërisë dhe i Punës së Detyruar'], ['29','E Drejta e Lirisë dhe Sigurisë'], ['30','Të Drejat e të Akuzuarit'], ['31','E Drejta për Gjykim të Drejtë dhe të Paanshëm'], ['32','E Drejta për Mjete Juridike'], ['33','Parimi i Legalitetit dhe Proporcionalitetit në Rastet Penale'], ['34','E Drejta për të mos u Gjykuar dy herë për të njëjtën Vepër'], ['35','Liria e Lëvizjes'], ['36','E Drejta e Privatësisë'], ['37','E Drejta e Martesës dhe Familjes'], ['38','Liria e Besimit, e Ndërgjegjes dhe e Fesë'], ['39','Konfesionet Fetare'], ['40','Liria e Shprehjes'], ['41','E Drejta e Qasjes në Dokumente Publike'], ['42','Liria e Medieve'], ['43','Liria e Tubimit'], ['44','Liria e Asociimit'], ['45','Të Drejtat Zgjedhore dhe të Pjesëmarrjes'], ['46','Mbrojtja e Pronës'], ['47','E Drejta për Arsimin'], ['48','Liria e Artit dhe e Shkencës'], ['49','E Drejta e Punës dhe Ushtrimit të Profesionit'], ['50','Të Drejtat e Fëmijës'], ['51','Mbrojtja Shëndetësore dhe Sociale'], ['52','Përgjegjësia për Mjedisin Jetësor'], ['53','Interpretimi i Dispozitave për të Drejtat e Njeriut'], ['54','Mbrojtja Gjyqësore e të Drejtave'], ['55','Kufizimi i të Drejtave dhe Lirive Themelore'], ['56','Të Drejtat dhe Liritë Themelore gjatë Gjendjes së Jashtëzakonshme']]),
+    constitutionSection('Kapitulli_III', 'Kapitulli III', 'Të Drejtat e Komuniteteve dhe Pjesëtarëve të tyre', 'Mbrojtje kushtetuese për komunitetet, përfaqësimin dhe pjesëmarrjen e tyre.', [['57','Parimet e Përgjithshme'], ['58','Përgjegjësitë e Shtetit'], ['59','Të Drejtat e Komuniteteve dhe Pjesëtarëve të Tyre'], ['60','Këshilli Konsultativ për Komunitete'], ['61','Përfaqësimi në Punësim në Institucionet Publike'], ['62','Përfaqësimi në Organet e Pushtetit Lokal']]),
+    constitutionSection('Kapitulli_IV', 'Kapitulli IV', 'Kuvendi i Republikës së Kosovës', 'Roli, struktura, kompetencat, mandati, imuniteti dhe procedurat legjislative të Kuvendit.', [['63','Parimet e Përgjithshme'], ['64','Struktura e Kuvendit'], ['65','Kompetencat e Kuvendit'], ['66','Zgjedhja dhe Mandati'], ['67','Zgjedhja e Kryetarit dhe Nënkryetarëve'], ['68','Seancat'], ['69','Orari i Seancave dhe Kuorumi'], ['70','Mandati i Deputetëve'], ['71','Kualifikimet dhe Barazia Gjinore'], ['72','Papajtueshmëria'], ['73','Pamundësia e Kandidimit'], ['74','Ushtrimi i Funksionit'], ['75','Imuniteti'], ['76','Rregullorja e Punës'], ['77','Komisionet'], ['78','Komisioni për të Drejtat dhe Interesat e Komuniteteve'], ['79','Nisma Legjislative'], ['80','Miratimi i Ligjeve'], ['81','Legjislacioni me Interes Vital'], ['82','Shpërndarja e Kuvendit']]),
+    constitutionSection('Kapitulli_V', 'Kapitulli V', 'Presidenti i Republikës së Kosovës', 'Statusi, kompetencat, zgjedhja, mandati, imuniteti dhe shkarkimi i Presidentit.', [['83','Statusi i Presidentit'], ['84','Kompetencat e Presidentit'], ['85','Kualifikimi për Zgjedhjen e Presidentit'], ['86','Zgjedhja e Presidentit'], ['87','Mandati dhe Betimi'], ['88','Papajtueshmëria'], ['89','Imuniteti'], ['90','Mungesa e Përkohshme e Presidentit'], ['91','Shkarkimi i Presidentit']]),
+    constitutionSection('Kapitulli_VI', 'Kapitulli VI', 'Qeveria e Republikës së Kosovës', 'Kompetencat e Qeverisë dhe Kryeministrit, zgjedhja, përgjegjësia dhe shërbimi civil.', [['92','Parimet e Përgjithshme'], ['93','Kompetencat e Qeverisë'], ['94','Kompetencat e Kryeministrit'], ['95','Zgjedhja e Qeverisë'], ['96','Ministritë dhe Përfaqësimi i Komuniteteve'], ['97','Përgjegjësia'], ['98','Imuniteti'], ['99','Procedurat'], ['100','Mocioni i Votëbesimit'], ['101','Shërbimi Civil']]),
+    constitutionSection('Kapitulli_VII', 'Kapitulli VII', 'Sistemi i Drejtësisë', 'Parimet e gjyqësorit, gjykatat, gjyqtarët, prokuroria dhe avokatura.', [['102','Parimet e Përgjithshme të Sistemit Gjyqësor'], ['103','Organizimi dhe Jurisdiksioni i Gjykatave'], ['104','Emërimi dhe Shkarkimi i Gjyqtarëve'], ['105','Mandati dhe Riemërimi'], ['106','Papajtueshmëria'], ['107','Imuniteti'], ['108','Këshilli Gjyqësor i Kosovës'], ['109','Prokurori i Shtetit'], ['110','Këshilli Prokurorial i Kosovës'], ['111','Avokatura']]),
+    constitutionSection('Kapitulli_VIII', 'Kapitulli VIII', 'Gjykata Kushtetuese', 'Jurisdiksioni, përbërja, mandati dhe efekti i vendimeve të Gjykatës Kushtetuese.', [['112','Parimet e Përgjithshme'], ['113','Jurisdiksioni dhe Palët e Autorizuara'], ['114','Përbërja dhe Mandati i Gjykatës Kushtetuese'], ['115','Organizimi i Gjykatës Kushtetuese'], ['116','Efekti Juridik i Vendimeve'], ['117','Imuniteti'], ['118','Shkarkimi']]),
+    constitutionSection('Kapitulli_IX', 'Kapitulli IX', 'Marrëdhëniet Ekonomike', 'Parimet ekonomike, financat publike, prona dhe burimet natyrore.', [['119','Parimet e Përgjithshme'], ['120','Financat Publike'], ['121','Prona'], ['122','Përdorimi i Pasurisë dhe Burimeve Natyrore']]),
+    constitutionSection('Kapitulli_X', 'Kapitulli X', 'Qeverisja Lokale dhe Organizimi Territorial', 'Parimet dhe funksionimi i vetëqeverisjes lokale.', [['123','Parimet e Përgjithshme'], ['124','Organizimi dhe Funksionimi i Vetëqeverisjes Lokale']]),
+    constitutionSection('Kapitulli_XI', 'Kapitulli XI', 'Sektori i Sigurisë', 'FSK, Policia, AKI, aviacioni civil dhe gjendja e jashtëzakonshme.', [['125','Parimet e Përgjithshme'], ['126','Forca e Sigurisë e Kosovës'], ['127','Këshilli i Sigurisë i Kosovës'], ['128','Policia e Kosovës'], ['129','Agjencia e Kosovës për Inteligjencë'], ['130','Autoriteti Civil i Aviacionit'], ['131','Gjendja e Jashtëzakonshme']]),
+    constitutionSection('Kapitulli_XII', 'Kapitulli XII', 'Institucionet e Pavarura', 'Avokati i Popullit, Auditori, KQZ, BQK, KPM dhe agjencitë e pavarura.', [['132','Roli dhe Kompetencat e Avokatit të Popullit'], ['133','Zyra e Avokatit të Popullit'], ['134','Kualifikimi, Zgjedhja dhe Shkarkimi i Avokatit të Popullit'], ['135','Raportimi i Avokatit të Popullit'], ['136','Auditori i Përgjithshëm i Kosovës'], ['137','Kompetencat e Auditorit të Përgjithshëm të Kosovës'], ['138','Raportimi i Auditorit të Përgjithshëm të Kosovës'], ['139','Komisioni Qendror i Zgjedhjeve'], ['140','Banka Qendrore e Kosovës'], ['141','Komisioni i Pavarur i Medieve'], ['142','Agjencitë e Pavarura']]),
+    constitutionSection('Kapitulli_XIII', 'Kapitulli XIII', 'Dispozitat Përfundimtare', 'Propozimi gjithëpërfshirës, amendamentimi dhe vazhdimësia e legjislacionit.', [['143','Propozimi Gjithëpërfshirës për Zgjidhjen e Statusit të Kosovës'], ['144','Amendamentimi'], ['145','Vazhdimësia e Marrëveshjeve Ndërkombëtare dhe e Legjislacionit të Aplikueshëm']]),
+    constitutionSection('Kapitulli_XIV', 'Kapitulli XIV', 'Dispozitat Kalimtare', 'Dispozitat kalimtare për tranzicionin institucional pas hyrjes në fuqi.', [['146','Përfaqësuesi Ndërkombëtarë Civil'], ['147','Autoriteti Përfundimtarë i Përfaqësuesit Ndërkombëtarë Civil'], ['148','Dispozitat Transicionale për Kuvendin e Kosovës'], ['149','Miratimi Fillestar i Ligjeve me Interes Vital'], ['150','Procesi i Emërimit të Gjyqtarëve dhe Prokurorëve'], ['151','Përbërja e Përkohshme e Këshillit Gjyqësor të Kosovës'], ['152','Përbërja e Përkohshme e Gjykatës Kushtetuese'], ['153','Prania Ndërkombëtare Ushtarake'], ['154','Trupat e Mbrojtjes të Kosovës'], ['155','Shtetësia'], ['156','Refugjatët dhe Personat e Zhvendosur Brenda Vendit'], ['157','Auditori i Përgjithshëm i Kosovës'], ['158','Autoriteti Qendror Bankar'], ['159','Pronat dhe Ndërmarrjet në Pronësi Shoqërore'], ['160','Ndërmarrjet në Pronësi Publike'], ['161','Transicioni i Institucioneve'], ['162','Hyrja në Fuqi']]),
+  ],
+};
+
+function constitutionArticleUrl(article, section) {
+  if (article.source_url) return article.source_url;
+  return `${CONSTITUTION_ARTICLE_BASE}/${section.slug}#${article.title.replace(/\s+/g, '_')}`;
+}
+
+function normalizeConstitutionArticle(article, section) {
+  const normalized = Array.isArray(article)
+    ? { number: article[0], topic: article[1], title: `Neni ${article[0]} [${article[1]}]` }
+    : article;
+  return { ...normalized, section };
+}
+
 function ConstitutionPage({ lang }) {
-  const { materials } = useRuleOfLawContent();
-  const constitution = materials.filter(item => item.group === 'constitution');
+  const constitutionData = useCmsObject('constitution_structure', KOSOVO_CONSTITUTION_FALLBACK);
+  const sections = Array.isArray(constitutionData.sections) ? constitutionData.sections : KOSOVO_CONSTITUTION_FALLBACK.sections;
+  const allArticles = sections.flatMap(section => (section.articles || []).map(article => normalizeConstitutionArticle(article, section)));
+  const keyNumbers = constitutionData.key_numbers || KOSOVO_CONSTITUTION_FALLBACK.key_numbers;
+  const keyArticles = keyNumbers.map(number => allArticles.find(article => article.number === number)).filter(Boolean);
   const [query, setQuery] = useState('');
+  const [showAll, setShowAll] = useState(false);
   const needle = query.trim().toLowerCase();
-  const visible = constitution.filter(item => {
-    const text = `${localizedValue(item, 'title', lang)} ${localizedValue(item, 'summary', lang)} ${item.status || ''}`.toLowerCase();
+  const visible = allArticles.filter(item => {
+    const text = `${item.title} ${item.topic || ''} ${item.section?.title || ''} ${item.section?.chapter || ''}`.toLowerCase();
     return !needle || text.includes(needle);
   });
   return (
@@ -4859,23 +4911,110 @@ function ConstitutionPage({ lang }) {
       <MaterialsPageHero
         eyebrow="Akt themelor"
         title="Kushtetuta e Republikës së Kosovës"
-        sub="Faqe e veçantë për aktin bazë të shtetit: organizimi institucional, ndarja e pushteteve, të drejtat themelore dhe amendamentet kushtetuese."
-        stat={constitution.length || 1}
-        statLabel="akt kushtetues"
+        sub="Historiku, 20 nenet kryesore dhe lista e plotë e neneve me kërkim dhe burime."
+        stat={allArticles.length || 162}
+        statLabel="nene kushtetuese"
       />
-      {constitution.length ? (
-        <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
-          <div className="container">
+      <section style={{ padding: '0 0 120px', background: 'var(--paper)' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 0.72fr', gap: 1, background: 'var(--line)', border: '1px solid var(--line)', marginBottom: 32 }} className="constitution-intro-grid">
+            <article style={{ background: 'var(--paper-2)', padding: '34px 32px' }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14 }}>Historik i shkurtër</div>
+              <h2 className="serif" style={{ fontSize: 'clamp(34px, 4vw, 58px)', lineHeight: 1.02, color: 'var(--ink)', margin: 0 }}>Akti më i lartë juridik i Republikës</h2>
+              <p style={{ fontSize: 16.5, color: 'var(--ink-2)', lineHeight: 1.7, marginTop: 20 }}>{constitutionData.intro?.body_sq || KOSOVO_CONSTITUTION_FALLBACK.intro.body_sq}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 24 }}>
+                <a href={constitutionData.intro?.official_url || CONSTITUTION_OFFICIAL_URL} target="_blank" rel="noreferrer" className="mono" style={{ border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: '12px 14px', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Dokumenti zyrtar</a>
+                <a href={constitutionData.intro?.original_url || CONSTITUTION_ORIGINAL_URL} target="_blank" rel="noreferrer" className="mono" style={{ border: '1px solid var(--ink)', color: 'var(--ink)', padding: '12px 14px', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Versioni origjinal</a>
+              </div>
+            </article>
+            <aside style={{ background: 'var(--paper)', padding: 28 }}>
+              {[
+                ['Miratuar', constitutionData.intro?.adopted || '9 prill 2008'],
+                ['Hyri në fuqi', constitutionData.intro?.in_force || '15 qershor 2008'],
+                ['Kapituj', sections.length],
+                ['Nene', allArticles.length],
+              ].map(([label, value]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: 18, borderBottom: '1px solid var(--line)', padding: '14px 0' }}>
+                  <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label}</span>
+                  <span className="serif" style={{ fontSize: 24, color: 'var(--ink)', textAlign: 'right' }}>{value}</span>
+                </div>
+              ))}
+            </aside>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, alignItems: 'end', margin: '42px 0 18px' }} className="constitution-section-head">
+            <div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8 }}>20 nenet kryesore</div>
+              <h2 className="serif" style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.04, color: 'var(--ink)', margin: 0 }}>Pikat që duhen parë së pari</h2>
+            </div>
+            <button type="button" onClick={() => setShowAll(true)} className="mono" style={{ border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: '13px 16px', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer' }}>Shfaq të gjitha nenet</button>
+          </div>
+
+          <div className="constitution-key-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }}>
+            {keyArticles.map(article => (
+              <a key={article.number} href={constitutionArticleUrl(article, article.section)} target="_blank" rel="noreferrer" style={{ background: 'var(--paper-2)', padding: 18, color: 'var(--ink)', minHeight: 148 }}>
+                <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>{article.section?.chapter} / Neni {article.number}</div>
+                <h3 className="serif" style={{ fontSize: 24, lineHeight: 1.08, margin: 0 }}>{article.topic || article.title}</h3>
+                <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 14 }}>Lexo nenin</div>
+              </a>
+            ))}
+          </div>
+
+          {showAll && (
+            <div id="te-gjitha-nenet" style={{ marginTop: 48 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, alignItems: 'end', marginBottom: 18 }} className="constitution-section-head">
+                <div>
+                  <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8 }}>Lista e plotë</div>
+                  <h2 className="serif" style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.04, color: 'var(--ink)', margin: 0 }}>Të gjitha nenet e Kushtetutës</h2>
+                </div>
+                <button type="button" onClick={() => { setShowAll(false); setQuery(''); }} className="mono" style={{ border: '1px solid var(--line)', background: 'var(--paper-2)', color: 'var(--ink)', padding: '12px 14px', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer' }}>Mbyll listën</button>
+              </div>
             <MaterialSearchBar
               value={query}
               onChange={setQuery}
-              placeholder="Kërko në Kushtetutë..."
+                placeholder="Kërko nen, kapitull, të drejtë, institucion..."
               count={visible.length}
             />
-            <MaterialGrid items={visible} lang={lang} />
+              <div style={{ display: 'grid', gap: 10 }}>
+                {sections.map(section => {
+                  const sectionArticles = visible.filter(article => article.section?.slug === section.slug);
+                  if (!sectionArticles.length && needle) return null;
+                  return (
+                    <details key={section.slug} open={!!needle} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                      <summary style={{ cursor: 'pointer', padding: '16px 18px', display: 'grid', gridTemplateColumns: '1fr auto', gap: 18, listStyle: 'none', alignItems: 'center' }}>
+                        <span>
+                          <span className="mono" style={{ display: 'block', fontSize: 9, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>{section.chapter}</span>
+                          <span className="serif" style={{ fontSize: 26, lineHeight: 1.08, color: 'var(--ink)' }}>{section.title}</span>
+                        </span>
+                        <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{sectionArticles.length}</span>
+                      </summary>
+                      <div className="constitution-article-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }}>
+                        {sectionArticles.map(article => (
+                          <a key={`${section.slug}-${article.number}`} href={constitutionArticleUrl(article, section)} target="_blank" rel="noreferrer" style={{ background: 'var(--paper)', padding: '14px 16px', color: 'var(--ink)' }}>
+                            <div className="mono" style={{ fontSize: 9, color: 'var(--rust)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>Neni {article.number}</div>
+                            <div className="serif" style={{ fontSize: 21, lineHeight: 1.12 }}>{article.topic || article.title}</div>
+                          </a>
+                        ))}
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           </div>
-        </section>
-      ) : <LoadingMaterials />}
+        <style>{`
+          @media (max-width: 980px) {
+            .constitution-intro-grid { grid-template-columns: 1fr !important; }
+            .constitution-key-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          }
+          @media (max-width: 640px) {
+            .constitution-key-grid,
+            .constitution-article-grid { grid-template-columns: 1fr !important; }
+            .constitution-section-head { align-items: stretch !important; flex-direction: column; }
+          }
+        `}</style>
+      </section>
     </>
   );
 }
@@ -4974,7 +5113,7 @@ function MaterialsCatalogPage({ lang }) {
   return (
     <>
       <MaterialsPageHero
-        eyebrow="Katalogu i materialeve"
+        eyebrow="Ligjet tjera"
         title="Të gjitha materialet e nxjerra për juristët, në një vend"
         sub="Ligje, raporte, udhëzues, dokumente ndërkombëtare, kontakte praktike, glosarë dhe infografika të ndara sipas kategorive."
         stat={catalog.length || 313}
@@ -4998,9 +5137,9 @@ function MaterialsCatalogPage({ lang }) {
             <div style={{ display: 'grid', gap: 10 }}>
               {Object.entries(grouped).map(([cat, items], groupIndex) => (
                 <details key={cat} open={groupIndex === 0} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
-                  <summary style={{ cursor: 'pointer', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', gap: 18, listStyle: 'none' }}>
-                    <span className="serif" style={{ fontSize: 25, color: 'var(--ink)' }}>{cat}</span>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
+                  <summary style={{ cursor: 'pointer', padding: '13px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, listStyle: 'none' }}>
+                    <span className="serif" style={{ fontSize: 22, lineHeight: 1.08, color: 'var(--ink)' }}>{cat}</span>
+                    <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
                   </summary>
                   <div className="materials-catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 1, background: 'var(--line)', borderTop: '1px solid var(--line)' }}>
                     {items.map((item, i) => (

@@ -11,7 +11,7 @@ where page_slug = 'sundimi'
   and content->>'key' in ('materials_catalog','rule_of_law_actions');
 
 insert into page_blocks (page_slug, type, title, content, sort_order, published) values
-('sundimi', 'collection', 'Rule of law action buttons', '{"key":"rule_of_law_actions","items":[{"label_sq":"Kushtetuta e Republikës së Kosovës","href":"#/kushtetuta","variant":"dark"},{"label_sq":"Ligjet themelore","href":"#/ligjet-themelore","variant":"light"},{"label_sq":"Katalogu i materialeve","href":"#/katalogu-materialeve","variant":"light"}]}'::jsonb, 31, true);
+('sundimi', 'collection', 'Rule of law action buttons', '{"key":"rule_of_law_actions","items":[{"label_sq":"Kushtetuta e Republikës së Kosovës","href":"#/kushtetuta","variant":"dark"},{"label_sq":"Ligjet themelore","href":"#/ligjet-themelore","variant":"light"},{"label_sq":"Ligjet tjera","href":"#/katalogu-materialeve","variant":"light"}]}'::jsonb, 31, true);
 
 with raw(category, title, material_type) as (
   values
@@ -377,4 +377,4 @@ with raw(category, title, material_type) as (
   from enriched
 )
 insert into page_blocks (page_slug, type, title, content, sort_order, published)
-select 'sundimi', 'collection', 'Full materials catalog', content, 33, true from payload;
+select 'sundimi', 'collection', 'Other laws', content, 33, true from payload;
