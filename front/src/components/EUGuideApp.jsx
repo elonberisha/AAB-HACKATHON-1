@@ -2202,11 +2202,11 @@ function ChatWidget({ lang, t, open, setOpen }) {
 
     // Auto-title session with first user message
     if (userMsgCount === 0) {
-      autoTitleSession(message);
+      autoTitleSession(message, activeSessionId);
     }
 
     try {
-      const res = await chatStream(message, getSession(), lang);
+      const res = await chatStream(message, activeSessionId, lang);
       if (!res.ok || !res.body) throw new Error('Chat stream failed');
 
       setTyping(false);
@@ -2254,7 +2254,14 @@ function ChatWidget({ lang, t, open, setOpen }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [activeSessionId, setActiveSessionId] = useState(() => getSession());
+  const [activeSessionId, setActiveSessionId] = useState(() => {
+    if (typeof window === 'undefined') return 'server';
+    const existing = window.localStorage.getItem('euguide-session-id');
+    if (existing) return existing;
+    const next = crypto.randomUUID();
+    window.localStorage.setItem('euguide-session-id', next);
+    return next;
+  });
   const [editingTitle, setEditingTitle] = useState(null); // session id being edited
   const [editTitleValue, setEditTitleValue] = useState('');
 
@@ -2301,12 +2308,11 @@ function ChatWidget({ lang, t, open, setOpen }) {
   // New chat — create fresh session
   const newChat = () => {
     const next = crypto.randomUUID();
+    window.localStorage.setItem('euguide-session-id', next);
+    setActiveSessionId(next);
     setMsgs([{ role: 'assistant', text: t.chat.greeting }]);
     setInput('');
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('euguide-session-id', next);
-    }
-    setActiveSessionId(next);
+    setTyping(false);
   };
 
   // Rename a session title
@@ -2324,24 +2330,20 @@ function ChatWidget({ lang, t, open, setOpen }) {
   };
 
   // Auto-title: after first user message, set title if session has none
-  const autoTitleSession = useCallback(async (message) => {
-    if (!user) return;
-    const sid = typeof window !== 'undefined' ? window.localStorage.getItem('euguide-session-id') : null;
-    if (!sid) return;
+  const autoTitleSession = useCallback(async (message, sid) => {
+    if (!user || !sid) return;
     try {
       const { data } = await supabase
         .from('sessions')
         .select('title')
         .eq('id', sid)
         .single();
-      // Only auto-title if title is empty/null
       if (!data?.title) {
         const title = message.length > 40 ? message.slice(0, 40) + '...' : message;
         await supabase
           .from('sessions')
           .update({ title })
           .eq('id', sid);
-        // Refresh sidebar if open
         if (sidebarOpen) refreshHistory();
       }
     } catch {}
