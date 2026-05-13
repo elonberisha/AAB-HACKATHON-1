@@ -6,7 +6,9 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start -p ${PORT:-8000}",
-    "ingest": "node scripts/ingest.mjs"
+    "ingest": "node scripts/ingest.mjs",
+    "fetch-web": "node scripts/fetch-web-content.mjs",
+    "ingest-all": "node scripts/fetch-web-content.mjs && node scripts/ingest.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
