@@ -70,8 +70,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     })
   }, [])
 
-  // Login page — no sidebar
-  if (pathname === '/admin/login') {
+  // Login and auth callback pages — no sidebar, just the page content
+  if (pathname === '/admin/login' || pathname === '/login' || pathname?.includes('/auth/callback')) {
     return <>{children}</>
   }
 
