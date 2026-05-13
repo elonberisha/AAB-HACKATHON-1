@@ -2152,10 +2152,24 @@ function ChatWidget({ lang, t, open, setOpen }) {
   }, []);
 
   const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
+    // Use popup so the main page (and open chat) doesn't reload
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        skipBrowserRedirect: true, // don't navigate main window
+      },
     });
+    if (error || !data?.url) return;
+
+    const w = 480, h = 580;
+    const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+    const top  = Math.round(window.screenY + (window.outerHeight - h) / 2);
+    window.open(data.url, 'euguide-google-auth',
+      `width=${w},height=${h},left=${left},top=${top},toolbar=0,menubar=0,scrollbars=1`
+    );
+    // onAuthStateChange listener (set up in useEffect) will fire SIGNED_IN
+    // once the popup stores the session in localStorage → setUser() updates automatically
   };
 
   const handleLogout = async () => {
@@ -2212,15 +2226,10 @@ function ChatWidget({ lang, t, open, setOpen }) {
     setInput('');
     setTyping(true);
 
-    // After first message: refresh sidebar after backend saves session
-    if (userMsgCount === 0) {
-      autoTitleSession(message, activeSessionId);
-      // Delay refresh so backend has time to save
-      setTimeout(() => { if (sidebarOpen) refreshHistory(); }, 2000);
-    }
+    const sid = activeSessionId || getSession();
+    const isFirstMsg = userMsgCount === 0;
 
     try {
-      const sid = activeSessionId || getSession();
       const res = await chatStream(message, sid, lang, user?.id ?? null);
       if (!res.ok || !res.body) throw new Error('Chat stream failed');
 
@@ -2259,6 +2268,15 @@ function ChatWidget({ lang, t, open, setOpen }) {
       }
 
       if (!received) replaceEmptyAssistant(fallbackText());
+
+      // After stream done — backend has saved the session by now
+      if (isFirstMsg) {
+        // Small delay to ensure DB write is committed
+        setTimeout(() => {
+          autoTitleSession(message, sid);
+          if (sidebarOpen) refreshHistory();
+        }, 800);
+      }
     } catch {
       setTyping(false);
       replaceEmptyAssistant(fallbackText());
@@ -2313,6 +2331,23 @@ function ChatWidget({ lang, t, open, setOpen }) {
     } catch {}
   };
 
+  // Delete a session
+  const deleteSession = async (sessionId) => {
+    try {
+      await supabase.from('sessions').delete().eq('id', sessionId);
+      setChatHistory(h => h.filter(s => s.id !== sessionId));
+      if (sessionId === activeSessionId) {
+        // Start a brand new chat if we deleted the active one
+        const next = crypto.randomUUID();
+        window.localStorage.setItem('euguide-session-id', next);
+        setActiveSessionId(next);
+        setMsgs([{ role: 'assistant', text: t.chat.greeting }]);
+        setInput('');
+        setTyping(false);
+      }
+    } catch {}
+  };
+
   // New chat — create fresh session
   const newChat = () => {
     const next = crypto.randomUUID();
@@ -2337,27 +2372,17 @@ function ChatWidget({ lang, t, open, setOpen }) {
     setEditingTitle(null);
   };
 
-  // Auto-title: after first user message, set title if session has none
+  // Auto-title: set title from first user message (only called once per new session)
   const autoTitleSession = useCallback(async (message, sid) => {
     if (!user || !sid) return;
+    const title = message.length > 45 ? message.slice(0, 45).trimEnd() + '…' : message;
     try {
-      const { data } = await supabase
-        .from('sessions')
-        .select('title')
-        .eq('id', sid)
-        .single();
-      if (!data?.title) {
-        const title = message.length > 40 ? message.slice(0, 40) + '...' : message;
-        await supabase
-          .from('sessions')
-          .update({ title })
-          .eq('id', sid);
-        if (sidebarOpen) refreshHistory();
-      }
+      await supabase.from('sessions').update({ title }).eq('id', sid).is('title', null);
+      if (sidebarOpen) refreshHistory();
     } catch {}
   }, [user, sidebarOpen, refreshHistory]);
 
-  const drawerWidth = sidebarOpen && user ? 'min(640px, calc(100vw - 32px))' : 'min(420px, calc(100vw - 32px))';
+  const drawerWidth = 'min(420px, calc(100vw - 32px))';
 
   return (
     <>
@@ -2388,7 +2413,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
         background: 'var(--paper)',
         border: '1px solid var(--ink)',
         boxShadow: '0 16px 40px rgba(14,27,44,0.25)',
-        display: 'flex', flexDirection: 'row',
+        display: 'flex', flexDirection: 'column',
         transform: open ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
         opacity: open ? 1 : 0,
         pointerEvents: open ? 'auto' : 'none',
@@ -2397,143 +2422,145 @@ function ChatWidget({ lang, t, open, setOpen }) {
         overflow: 'hidden',
       }}>
 
-        {/* ---- History Sidebar ---- */}
-        {user && (
-          <div className="chat-sidebar" style={{
-            width: sidebarOpen ? 230 : 0,
-            minWidth: sidebarOpen ? 230 : 0,
-            background: '#0f172a',
-            borderRight: sidebarOpen ? '1px solid rgba(242,239,232,0.08)' : 'none',
-            display: 'flex', flexDirection: 'column',
-            overflow: 'hidden',
-            transition: 'width 250ms cubic-bezier(.2,.7,.2,1), min-width 250ms cubic-bezier(.2,.7,.2,1)',
-          }}>
-            {/* Sidebar header */}
-            <div style={{ padding: '12px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(242,239,232,0.85)', whiteSpace: 'nowrap' }}>Bisedat</span>
-              <button onClick={() => setSidebarOpen(false)} style={{
-                background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.4)',
-                cursor: 'pointer', padding: '2px 6px', lineHeight: 1, fontSize: 15,
-                borderRadius: 4, transition: 'color 150ms',
-              }}
-                onMouseEnter={e => e.currentTarget.style.color = 'rgba(242,239,232,0.8)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(242,239,232,0.4)'}
-              >×</button>
-            </div>
+        {/* ---- History Overlay (absolute, no layout shift) ---- */}
+        {user && sidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <div onClick={() => setSidebarOpen(false)} style={{
+              position: 'absolute', inset: 0, zIndex: 8,
+              background: 'rgba(14,27,44,0.45)',
+            }} />
+            {/* Panel */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, bottom: 0,
+              width: 230, zIndex: 9,
+              background: 'var(--ink)',
+              borderRight: '1px solid rgba(242,239,232,0.1)',
+              display: 'flex', flexDirection: 'column',
+              animation: 'slideInLeft 200ms cubic-bezier(.2,.7,.2,1)',
+            }}>
+              {/* Panel header */}
+              <div style={{ padding: '13px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, borderBottom: '1px solid rgba(242,239,232,0.07)' }}>
+                <span className="serif" style={{ fontSize: 16, color: 'var(--paper)' }}>Bisedat</span>
+                <button onClick={() => setSidebarOpen(false)} style={{
+                  background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.35)',
+                  cursor: 'pointer', width: 26, height: 26,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 4, transition: 'color 150ms',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'rgba(242,239,232,0.8)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(242,239,232,0.35)'}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
 
-            {/* New chat button */}
-            <div style={{ padding: '0 8px 10px', flexShrink: 0 }}>
-              <button onClick={newChat} style={{
-                width: '100%', padding: '9px 12px',
-                background: 'rgba(59,130,246,0.15)',
-                border: '1px solid rgba(59,130,246,0.25)',
-                borderRadius: 6,
-                color: '#93c5fd', fontSize: 12, fontWeight: 500,
-                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
-                transition: 'background 150ms, border-color 150ms',
-                whiteSpace: 'nowrap',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(59,130,246,0.25)'; e.currentTarget.style.borderColor = 'rgba(59,130,246,0.4)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(59,130,246,0.15)'; e.currentTarget.style.borderColor = 'rgba(59,130,246,0.25)'; }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                Bisede e re
-              </button>
-            </div>
+              {/* New chat button */}
+              <div style={{ padding: '10px 10px 8px', flexShrink: 0 }}>
+                <button onClick={newChat} style={{
+                  width: '100%', padding: '8px 12px',
+                  background: 'transparent',
+                  border: '1px solid rgba(242,239,232,0.15)',
+                  color: 'rgba(242,239,232,0.7)', fontSize: 12,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
+                  transition: 'border-color 150ms, color 150ms',
+                  whiteSpace: 'nowrap',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(242,239,232,0.35)'; e.currentTarget.style.color = 'rgba(242,239,232,1)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(242,239,232,0.15)'; e.currentTarget.style.color = 'rgba(242,239,232,0.7)'; }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Bisede e re
+                </button>
+              </div>
 
-            {/* History list */}
-            <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '0 6px' }}>
-              {loadingHistory ? (
-                <div style={{ padding: 20, textAlign: 'center' }}>
-                  <div style={{ width: 20, height: 20, border: '2px solid rgba(242,239,232,0.1)', borderTopColor: 'rgba(59,130,246,0.5)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
-                </div>
-              ) : chatHistory.length === 0 ? (
-                <div style={{ padding: '24px 12px', textAlign: 'center' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(242,239,232,0.15)" strokeWidth="1.5" style={{ margin: '0 auto 8px', display: 'block' }}>
-                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.25)', display: 'block' }}>Asnje bisede e ruajtur</span>
-                  <span style={{ fontSize: 10, color: 'rgba(242,239,232,0.15)', display: 'block', marginTop: 4 }}>Fillo bisede te re</span>
-                </div>
-              ) : chatHistory.map(session => {
-                const isActive = session.id === activeSessionId;
-                const isEditing = editingTitle === session.id;
-                return (
-                  <div key={session.id} style={{
-                    width: '100%', padding: '8px 8px',
-                    background: isActive ? 'rgba(59,130,246,0.12)' : 'transparent',
-                    borderRadius: 6, marginBottom: 2,
-                    transition: 'background 150ms',
-                    cursor: 'pointer',
-                    borderLeft: isActive ? '2px solid #3b82f6' : '2px solid transparent',
-                  }}
-                    onClick={() => !isEditing && loadSession(session.id)}
-                    onDoubleClick={() => {
-                      setEditingTitle(session.id);
-                      setEditTitleValue(session.title || '');
-                    }}
-                    onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(242,239,232,0.05)'; }}
-                    onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isActive ? '#60a5fa' : 'rgba(242,239,232,0.25)'} strokeWidth="1.5" style={{ marginTop: 2, flexShrink: 0 }}>
-                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        {isEditing ? (
-                          <input
-                            autoFocus
-                            value={editTitleValue}
-                            onChange={e => setEditTitleValue(e.target.value)}
-                            onBlur={() => saveTitle(session.id)}
-                            onKeyDown={e => { if (e.key === 'Enter') saveTitle(session.id); if (e.key === 'Escape') setEditingTitle(null); }}
-                            onClick={e => e.stopPropagation()}
-                            style={{
-                              width: '100%', background: 'rgba(242,239,232,0.08)',
-                              border: '1px solid rgba(59,130,246,0.4)',
-                              borderRadius: 3, padding: '2px 6px',
-                              color: 'rgba(242,239,232,0.9)', fontSize: 11,
-                              outline: 'none', fontFamily: 'inherit',
-                            }}
-                          />
-                        ) : (
-                          <div style={{
-                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                            marginBottom: 2, fontSize: 12,
-                            color: isActive ? '#93c5fd' : 'rgba(242,239,232,0.65)',
-                          }}>
-                            {session.title || 'Bisede pa titull'}
-                          </div>
-                        )}
-                        <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.2)' }}>
-                          {new Date(session.updated_at).toLocaleDateString('sq-AL', { day: 'numeric', month: 'short' })}
-                        </div>
-                      </div>
-                    </div>
+              {/* History list */}
+              <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '0 6px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {loadingHistory ? (
+                  <div style={{ padding: 20, textAlign: 'center' }}>
+                    <div style={{ width: 18, height: 18, border: '2px solid rgba(242,239,232,0.1)', borderTopColor: 'rgba(242,239,232,0.4)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                   </div>
-                );
-              })}
-            </div>
+                ) : chatHistory.length === 0 ? (
+                  <div style={{ padding: '28px 12px', textAlign: 'center' }}>
+                    <span style={{ fontSize: 11, color: 'rgba(242,239,232,0.2)', display: 'block' }}>Asnje bisede e ruajtur</span>
+                  </div>
+                ) : chatHistory.map(session => {
+                  const isActive = session.id === activeSessionId;
+                  const isEditing = editingTitle === session.id;
+                  const d = new Date(session.updated_at);
+                  const dateStr = `${d.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
+                  return (
+                    <div key={session.id} style={{
+                      width: '100%', padding: '8px 8px',
+                      background: isActive ? 'rgba(242,239,232,0.08)' : 'transparent',
+                      borderRadius: 4, marginBottom: 1,
+                      transition: 'background 150ms',
+                      cursor: 'pointer',
+                      borderLeft: isActive ? '2px solid var(--gold)' : '2px solid transparent',
+                      position: 'relative',
+                    }}
+                      onClick={() => !isEditing && loadSession(session.id)}
+                      onDoubleClick={() => { setEditingTitle(session.id); setEditTitleValue(session.title || ''); }}
+                      onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(242,239,232,0.05)'; e.currentTarget.querySelector('.del-btn').style.opacity = '1'; }}
+                      onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; e.currentTarget.querySelector('.del-btn').style.opacity = '0'; }}
+                    >
+                      {isEditing ? (
+                        <input
+                          autoFocus
+                          value={editTitleValue}
+                          onChange={e => setEditTitleValue(e.target.value)}
+                          onBlur={() => saveTitle(session.id)}
+                          onKeyDown={e => { if (e.key === 'Enter') saveTitle(session.id); if (e.key === 'Escape') setEditingTitle(null); }}
+                          onClick={e => e.stopPropagation()}
+                          style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(242,239,232,0.3)', padding: '2px 0', color: 'var(--paper)', fontSize: 12, outline: 'none', fontFamily: 'inherit' }}
+                        />
+                      ) : (
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: isActive ? 'var(--paper)' : 'rgba(242,239,232,0.55)', paddingRight: 22 }}>
+                          {session.title || 'Bisede pa titull'}
+                        </div>
+                      )}
+                      <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.2)', marginTop: 2 }}>{dateStr}</div>
 
-            {/* User info at bottom */}
-            <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(242,239,232,0.06)', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              {user.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="" style={{ width: 22, height: 22, borderRadius: '50%', flexShrink: 0 }} />
-              ) : (
-                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(59,130,246,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#93c5fd', flexShrink: 0 }}>
-                  {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
-                </div>
-              )}
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user.user_metadata?.full_name || 'User'}
-                </div>
-                <div className="mono" style={{ fontSize: 8, color: 'rgba(242,239,232,0.3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user.email}
+                      {/* Trash delete button — shows on hover */}
+                      <button
+                        className="del-btn"
+                        onClick={e => { e.stopPropagation(); deleteSession(session.id); }}
+                        style={{ position: 'absolute', top: '50%', right: 4, transform: 'translateY(-50%)', opacity: 0, background: 'transparent', border: 'none', color: 'rgba(242,239,232,0.3)', cursor: 'pointer', padding: 4, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'opacity 150ms, color 150ms' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'rgba(239,68,68,0.9)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'rgba(242,239,232,0.3)'}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6l-1 14H6L5 6"/>
+                          <path d="M10 11v6M14 11v6"/>
+                          <path d="M9 6V4h6v2"/>
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* User info at bottom */}
+              <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(242,239,232,0.07)', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                {user.user_metadata?.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} alt="" style={{ width: 22, height: 22, borderRadius: '50%', flexShrink: 0 }} />
+                ) : (
+                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(242,239,232,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'rgba(242,239,232,0.6)', flexShrink: 0 }}>
+                    {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
+                  </div>
+                )}
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.6)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.user_metadata?.full_name || 'User'}
+                  </div>
+                  <div className="mono" style={{ fontSize: 9, color: 'rgba(242,239,232,0.25)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.email}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* ---- Main Chat Area ---- */}
@@ -2661,6 +2688,11 @@ function ChatWidget({ lang, t, open, setOpen }) {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
+        @keyframes slideInLeft {
+          from { transform: translateX(-100%); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
+        .chat-sidebar div::-webkit-scrollbar { display: none; }
       `}</style>
     </>
   );
