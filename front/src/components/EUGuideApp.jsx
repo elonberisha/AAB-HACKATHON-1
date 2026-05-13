@@ -3119,7 +3119,7 @@ function TopicActionSection({ topicKey, lang }) {
           {copy.cards.map(card => (
             <article key={card.k} style={{ background: 'var(--paper-2)', padding: '26px 24px', minHeight: 240 }}>
               <span className="serif" style={{ fontSize: 42, color: accent, lineHeight: 0.9 }}>{card.k}</span>
-              <h3 className="serif" style={{ fontSize: 25, lineHeight: 1.08, marginTop: 22, color: 'var(--ink)' }}>{card.h}</h3>
+              <h3 className="serif" style={{ fontSize: 24, lineHeight: 1.08, marginTop: 22, color: 'var(--ink)' }}>{card.h}</h3>
               <p style={{ fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-2)', marginTop: 14 }}>{card.p}</p>
             </article>
           ))}
@@ -3671,7 +3671,7 @@ function ReformaInstitutionsSection({ lang }) {
                 }}>{it.short}</span>
                 <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>{String(i + 1).padStart(2, '0')} / 06</span>
               </div>
-              <h4 className="serif" style={{ fontSize: 21, lineHeight: 1.15, color: 'var(--ink)', marginBottom: 12 }}>{it['name_' + lang] || it.name_sq}</h4>
+              <h4 className="serif" style={{ fontSize: 24, lineHeight: 1.15, color: 'var(--ink)', marginBottom: 12 }}>{it['name_' + lang] || it.name_sq}</h4>
               <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ink-2)', margin: 0, flex: 1 }}>{it['role_' + lang] || it.role_sq}</p>
               <div className="mono" style={{
                 marginTop: 18, paddingTop: 12, borderTop: '1px dashed var(--line)',
