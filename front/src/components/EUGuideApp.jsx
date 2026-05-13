@@ -3368,17 +3368,33 @@ function PageActionCards({ items }) {
 }
 
 function BEObjectivesEntry({ lang }) {
-  const entries = useCmsArray('be_actions', []);
+  const fallback = [{
+    eyebrow_sq: 'Objektivat e anëtarësimit',
+    eyebrow_en: 'Membership objectives',
+    eyebrow_sr: 'Ciljevi clanstva',
+    title_sq: 'Objektivat konkrete janë këtu, brenda Integrimit në BE.',
+    title_en: 'The concrete objectives are here, inside EU Integration.',
+    title_sr: 'Konkretni ciljevi su ovde, unutar EU integracija.',
+    body_sq: 'Hape listën e objektivave për të parë kushtet, progresin, kapitujt, burimet zyrtare dhe materialet që lidhen me anëtarësimin.',
+    body_en: 'Open the objectives list to see conditions, progress, chapters, official sources and materials linked to membership.',
+    body_sr: 'Otvori listu ciljeva da vidis uslove, napredak, poglavlja, zvanicne izvore i materijale povezane sa clanstvom.',
+    cta_sq: 'Hap objektivat',
+    cta_en: 'Open objectives',
+    cta_sr: 'Otvori ciljeve',
+    href: '#/objektivat',
+    variant: 'dark',
+  }];
+  const entries = useCmsArray('be_actions', fallback);
   if (!entries.length) return null;
   return (
-    <section style={{ padding: '72px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+    <section style={{ padding: '46px 0 68px', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 54, alignItems: 'center' }} className="be-objectives-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.25fr', gap: 42, alignItems: 'center', border: '1px solid var(--line)', background: 'var(--paper)', padding: 30 }} className="be-objectives-grid">
           <div>
             <div className="mono" style={{ fontSize: 11, color: 'var(--rust)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 18 }}>
               {localizedValue(entries[0], 'eyebrow', lang)}
             </div>
-            <h2 className="serif" style={{ fontSize: 'clamp(36px, 5vw, 64px)', lineHeight: 1.02, color: 'var(--ink)' }}>
+            <h2 className="serif" style={{ fontSize: 'clamp(32px, 4.4vw, 54px)', lineHeight: 1.02, color: 'var(--ink)' }}>
               {localizedValue(entries[0], 'title', lang)}
             </h2>
           </div>
@@ -3524,9 +3540,9 @@ function TopicPage({ topicKey, lang, t, onChat }) {
     <>
       <TopicSection topic={topic} lang={lang} idx={0} />
       {/* Show context-relevant detail per topic */}
+      {topicKey === 'be' && <BEObjectivesEntry lang={lang} />}
       {topicKey === 'be' && <RegionChart lang={lang} t={t} />}
       {topicKey === 'be' && <Clusters lang={lang} t={t} />}
-      {topicKey === 'be' && <BEObjectivesEntry lang={lang} />}
       {topicKey === 'korrupsioni' && <CPIChart lang={lang} t={t} />}
       {(topicKey === 'reforma' || topicKey === 'sundimi') && (
         <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
