@@ -2130,6 +2130,18 @@ function ChatWidget({ lang, t, open, setOpen }) {
     };
   }, []);
 
+  // Initialize session ID client-side only (avoids hydration mismatch)
+  useEffect(() => {
+    const existing = window.localStorage.getItem('euguide-session-id');
+    if (existing) {
+      setActiveSessionId(existing);
+    } else {
+      const next = crypto.randomUUID();
+      window.localStorage.setItem('euguide-session-id', next);
+      setActiveSessionId(next);
+    }
+  }, []);
+
   // Check auth state
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => { if (data.user) setUser(data.user); });
@@ -2206,7 +2218,8 @@ function ChatWidget({ lang, t, open, setOpen }) {
     }
 
     try {
-      const res = await chatStream(message, activeSessionId, lang);
+      const sid = activeSessionId || getSession();
+      const res = await chatStream(message, sid, lang);
       if (!res.ok || !res.body) throw new Error('Chat stream failed');
 
       setTyping(false);
@@ -2254,14 +2267,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [activeSessionId, setActiveSessionId] = useState(() => {
-    if (typeof window === 'undefined') return 'server';
-    const existing = window.localStorage.getItem('euguide-session-id');
-    if (existing) return existing;
-    const next = crypto.randomUUID();
-    window.localStorage.setItem('euguide-session-id', next);
-    return next;
-  });
+  const [activeSessionId, setActiveSessionId] = useState('');
   const [editingTitle, setEditingTitle] = useState(null); // session id being edited
   const [editTitleValue, setEditTitleValue] = useState('');
 
