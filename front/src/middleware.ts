@@ -68,11 +68,31 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // /admin/api/request-login — public pre-auth endpoint that only sends links to whitelisted admins
+  if (path === '/admin/api/request-login') {
+    return response
+  }
+
   // All other /admin/* routes — REQUIRE auth
   if (!user) {
     const url = request.nextUrl.clone()
     url.pathname = isAdminSubdomain ? '/login' : '/admin/login'
     return NextResponse.redirect(url)
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role,email')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !['admin', 'editor'].includes(profile.role)) {
+    const url = request.nextUrl.clone()
+    url.pathname = isAdminSubdomain ? '/login' : '/admin/login'
+    const redirect = NextResponse.redirect(url)
+    redirect.cookies.delete('sb-access-token')
+    redirect.cookies.delete('sb-refresh-token')
+    return redirect
   }
 
   // Authenticated — rewrite subdomain path to /admin/...

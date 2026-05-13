@@ -11,6 +11,8 @@ interface Profile {
   created_at: string
 }
 
+const ROOT_ADMIN = 'elonberisha1999@gmail.com'
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<Profile[]>([])
 
@@ -22,9 +24,17 @@ export default function AdminUsersPage() {
   }
 
   async function toggleRole(user: Profile) {
+    if (user.email?.toLowerCase() === ROOT_ADMIN) return
     const newRole = user.role === 'admin' ? 'user' : 'admin'
     if (!confirm(`${newRole === 'admin' ? 'Promovo' : 'Ç-promovo'} ${user.email} si ${newRole}?`)) return
     await supabase.from('profiles').update({ role: newRole }).eq('id', user.id)
+    load()
+  }
+
+  async function remove(user: Profile) {
+    if (user.email?.toLowerCase() === ROOT_ADMIN) return
+    if (!confirm(`Fshi profilin ${user.email}?`)) return
+    await supabase.from('profiles').delete().eq('id', user.id)
     load()
   }
 
@@ -53,9 +63,16 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500">{new Date(u.created_at).toLocaleDateString('sq')}</td>
                 <td className="px-4 py-3 text-center">
-                  <button onClick={() => toggleRole(u)} className={`text-sm ${u.role === 'admin' ? 'text-orange-600' : 'text-blue-600'} hover:underline`}>
-                    {u.role === 'admin' ? 'Ç-promovo' : 'Promovo admin'}
-                  </button>
+                  {u.email?.toLowerCase() === ROOT_ADMIN ? (
+                    <span className="text-xs text-slate-400">Root admin</span>
+                  ) : (
+                    <div className="space-x-2">
+                      <button onClick={() => toggleRole(u)} className={`text-sm ${u.role === 'admin' ? 'text-orange-600' : 'text-blue-600'} hover:underline`}>
+                        {u.role === 'admin' ? 'Ç-promovo' : 'Promovo admin'}
+                      </button>
+                      <button onClick={() => remove(u)} className="text-sm text-red-600 hover:underline">Fshi</button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

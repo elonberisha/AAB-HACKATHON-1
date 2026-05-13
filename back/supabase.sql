@@ -94,6 +94,44 @@ create table if not exists sections (
 create index if not exists sections_page_id_idx on sections(page_id);
 create index if not exists sections_sort_order_idx on sections(page_id, sort_order);
 
+-- =============================================================================
+-- 2.1 CMS BUILDER — global settings, page blocks, chart datasets
+-- =============================================================================
+
+create table if not exists site_settings (
+  key text primary key,
+  value jsonb not null default '{}',
+  description text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists page_blocks (
+  id uuid primary key default gen_random_uuid(),
+  page_slug text not null,
+  type text not null check (type in ('hero', 'card_grid', 'rich_section', 'chart_ref', 'faq_ref', 'objectives_ref', 'infographics_ref', 'collection', 'custom')),
+  title text,
+  content jsonb not null default '{}',
+  sort_order int default 0,
+  published boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists page_blocks_page_idx on page_blocks(page_slug, sort_order);
+create index if not exists page_blocks_type_idx on page_blocks(type);
+
+create table if not exists chart_series (
+  key text primary key,
+  title text,
+  type text not null default 'bar',
+  data jsonb not null default '[]',
+  config jsonb not null default '{}',
+  published boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 -- Categories (krijohet para articles për FK)
 create table if not exists categories (
   id uuid primary key default gen_random_uuid(),
@@ -282,6 +320,14 @@ create index if not exists eu_objectives_completed_idx on eu_objectives(complete
 create index if not exists eu_objectives_cluster_idx on eu_objectives(cluster);
 create index if not exists eu_objectives_published_idx on eu_objectives(published, sort_order);
 
+create or replace function set_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
 -- Trigger updated_at
 drop trigger if exists set_updated_at_eu_objectives on eu_objectives;
 create trigger set_updated_at_eu_objectives
@@ -366,6 +412,18 @@ drop trigger if exists set_updated_at_profiles on profiles;
 create trigger set_updated_at_profiles
   before update on profiles for each row execute function set_updated_at();
 
+drop trigger if exists set_updated_at_site_settings on site_settings;
+create trigger set_updated_at_site_settings
+  before update on site_settings for each row execute function set_updated_at();
+
+drop trigger if exists set_updated_at_page_blocks on page_blocks;
+create trigger set_updated_at_page_blocks
+  before update on page_blocks for each row execute function set_updated_at();
+
+drop trigger if exists set_updated_at_chart_series on chart_series;
+create trigger set_updated_at_chart_series
+  before update on chart_series for each row execute function set_updated_at();
+
 drop trigger if exists set_updated_at_pages on pages;
 create trigger set_updated_at_pages
   before update on pages for each row execute function set_updated_at();
@@ -414,6 +472,42 @@ drop policy if exists "Allow signup profile insert" on profiles;
 create policy "Allow signup profile insert" on profiles
   for insert with check (true);
 
+create or replace function public.is_admin_email(candidate_email text)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from profiles
+    where lower(email) = lower(candidate_email)
+      and role in ('admin', 'editor')
+  );
+$$;
+
+grant execute on function public.is_admin_email(text) to anon, authenticated, service_role;
+
+create or replace function prevent_root_admin_change()
+returns trigger as $$
+begin
+  if old.email = 'elonberisha1999@gmail.com' then
+    if tg_op = 'DELETE' then
+      raise exception 'Root admin cannot be deleted';
+    end if;
+    if new.role <> 'admin' or new.email <> old.email then
+      raise exception 'Root admin cannot be changed';
+    end if;
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+drop trigger if exists protect_root_admin on profiles;
+create trigger protect_root_admin
+  before update or delete on profiles
+  for each row execute function prevent_root_admin_change();
+
 -- PAGES
 alter table pages enable row level security;
 drop policy if exists "Public read published pages" on pages;
@@ -429,6 +523,30 @@ drop policy if exists "Public read sections" on sections;
 create policy "Public read sections" on sections for select using (true);
 drop policy if exists "Admin write sections" on sections;
 create policy "Admin write sections" on sections
+  for all using (is_admin()) with check (is_admin());
+
+-- CMS BUILDER
+alter table site_settings enable row level security;
+drop policy if exists "Public read site settings" on site_settings;
+create policy "Public read site settings" on site_settings for select using (true);
+drop policy if exists "Admin write site settings" on site_settings;
+create policy "Admin write site settings" on site_settings
+  for all using (is_admin()) with check (is_admin());
+
+alter table page_blocks enable row level security;
+drop policy if exists "Public read published page blocks" on page_blocks;
+create policy "Public read published page blocks" on page_blocks
+  for select using (published = true or is_admin());
+drop policy if exists "Admin write page blocks" on page_blocks;
+create policy "Admin write page blocks" on page_blocks
+  for all using (is_admin()) with check (is_admin());
+
+alter table chart_series enable row level security;
+drop policy if exists "Public read published chart series" on chart_series;
+create policy "Public read published chart series" on chart_series
+  for select using (published = true or is_admin());
+drop policy if exists "Admin write chart series" on chart_series;
+create policy "Admin write chart series" on chart_series
   for all using (is_admin()) with check (is_admin());
 
 -- ARTICLES
@@ -591,3 +709,28 @@ on conflict (slug) do nothing;
 -- 2. Pastaj ekzekuto:
 --    update profiles set role = 'admin' where email = 'YOUR_EMAIL@gmail.com';
 -- =============================================================================
+
+-- =============================================================================
+-- 10. CMS SEED DATA
+-- =============================================================================
+
+insert into site_settings (key, value, description) values
+  ('strings', '{}', 'Global translated UI copy overrides for nav, footer, chat, labels and SEO.')
+on conflict (key) do nothing;
+
+insert into chart_series (key, title, type, data) values
+  ('region', 'Western Balkans EU accession progress', 'bar', '[]'),
+  ('cpi', 'Kosovo CPI timeline', 'line', '[]'),
+  ('clusters', 'EU negotiation clusters', 'donut', '[]'),
+  ('reform', 'Acquis alignment progress', 'bar', '[]')
+on conflict (key) do nothing;
+
+insert into page_blocks (page_slug, type, title, content, sort_order, published) values
+  ('home', 'collection', 'Topic cards', '{"key":"topics","items":[]}', 10, true),
+  ('home', 'chart_ref', 'Region progress chart', '{"chart_key":"region"}', 20, true),
+  ('be', 'chart_ref', 'EU clusters', '{"chart_key":"clusters"}', 10, true),
+  ('korrupsioni', 'chart_ref', 'CPI chart', '{"chart_key":"cpi"}', 10, true),
+  ('objektivat', 'objectives_ref', 'EU objectives', '{}', 10, true),
+  ('faq', 'faq_ref', 'FAQ', '{}', 10, true),
+  ('infografika', 'infographics_ref', 'Infographics', '{}', 10, true)
+on conflict do nothing;

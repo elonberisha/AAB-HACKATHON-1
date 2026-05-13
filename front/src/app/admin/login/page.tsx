@@ -30,18 +30,18 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/admin/auth/callback`,
-      },
+    const res = await fetch('/admin/api/request-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        redirectTo: `${window.location.origin}/admin/auth/callback`,
+      }),
     })
+    const data = await res.json().catch(() => ({}))
 
-    if (error) {
-      setError(error.message === 'Signups not allowed for otp'
-        ? 'Ky email nuk eshte i regjistruar si admin.'
-        : error.message)
+    if (!res.ok) {
+      setError(data.error || 'Nuk mund te dergohet linku i hyrjes.')
       setLoading(false)
       return
     }

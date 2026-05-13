@@ -11,6 +11,7 @@ interface Doc {
   chunks_count: number
   status: string
   error_message: string | null
+  storage_path?: string | null
   created_at: string
 }
 
@@ -57,7 +58,15 @@ export default function AdminDocumentsPage() {
 
   async function remove(id: string) {
     if (!confirm('Fshi dokumentin dhe chunks?')) return
-    await supabase.from('uploaded_documents').delete().eq('id', id)
+    const aiUrl = process.env.NEXT_PUBLIC_AI_URL || ''
+    if (aiUrl) {
+      await fetch(`${aiUrl}/api/documents/${id}`, { method: 'DELETE' })
+    } else {
+      await supabase.from('documents').delete().eq('uploaded_document_id', id)
+      const doc = docs.find(d => d.id === id)
+      if (doc?.storage_path) await supabase.storage.from('documents').remove([doc.storage_path])
+      await supabase.from('uploaded_documents').delete().eq('id', id)
+    }
     load()
   }
 

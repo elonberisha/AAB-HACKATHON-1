@@ -5,6 +5,17 @@ import { saveSession } from '@/lib/session'
 import { SYSTEM_PROMPT } from '@/lib/prompt'
 
 export async function POST(req: NextRequest) {
+  const expectedSecret = process.env.VAPI_SECRET
+  if (expectedSecret) {
+    const receivedSecret =
+      req.headers.get('x-vapi-secret') ||
+      req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+
+    if (receivedSecret !== expectedSecret) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+  }
+
   const body = await req.json()
 
   const messages: Array<{ role: string; content: string }> = body.messages ?? []
@@ -81,7 +92,7 @@ export async function POST(req: NextRequest) {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN ?? '*',
     },
   })
 }
@@ -89,7 +100,7 @@ export async function POST(req: NextRequest) {
 export async function OPTIONS() {
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN ?? '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

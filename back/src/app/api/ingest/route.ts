@@ -45,6 +45,23 @@ export async function POST(req: NextRequest) {
 
   const buffer = Buffer.from(content, 'base64')
   const fileType = fileName.toLowerCase().split('.').pop() ?? 'unknown'
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]+/g, '-')
+  const storagePath = `${Date.now()}-${safeName}`
+
+  const { data: storedFile, error: storageErr } = await supabase.storage
+    .from('documents')
+    .upload(storagePath, buffer, {
+      contentType: fileType === 'pdf'
+        ? 'application/pdf'
+        : fileType === 'docx'
+          ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          : 'text/plain',
+      upsert: false,
+    })
+
+  if (storageErr || !storedFile) {
+    return Response.json({ error: 'Failed to store document file', details: storageErr?.message }, { status: 500 })
+  }
 
   // 1. Krijo uploaded_documents entry (status: processing)
   const { data: uploadRow, error: uploadErr } = await supabase
@@ -56,11 +73,13 @@ export async function POST(req: NextRequest) {
       uploaded_by: uploadedBy ?? null,
       language: language ?? 'sq',
       status: 'processing',
+      storage_path: storagePath,
     })
     .select()
     .single()
 
   if (uploadErr || !uploadRow) {
+    await supabase.storage.from('documents').remove([storagePath])
     return Response.json({ error: 'Failed to create upload record', details: uploadErr?.message }, { status: 500 })
   }
 
