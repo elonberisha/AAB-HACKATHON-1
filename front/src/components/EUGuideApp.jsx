@@ -1758,12 +1758,22 @@ function useRoute() {
 // ============================================================
 function Navbar({ lang, setLang, t, route, onChat }) {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(scrollY > 40);
-    addEventListener('scroll', onScroll, { passive: true });
-    return () => removeEventListener('scroll', onScroll);
+    let lastY = typeof window !== 'undefined' ? window.scrollY : 0;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 40);
+      // Always show near the top; hide on scroll-down past 80px; show on scroll-up
+      if (y < 80) setHidden(false);
+      else if (y > lastY + 4) setHidden(true);
+      else if (y < lastY - 4) setHidden(false);
+      lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const links = [
@@ -1780,7 +1790,9 @@ function Navbar({ lang, setLang, t, route, onChat }) {
       background: scrolled ? 'rgba(242,239,232,0.92)' : 'var(--paper)',
       backdropFilter: scrolled ? 'blur(8px)' : 'none',
       borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',
-      transition: 'all 240ms ease',
+      transform: hidden ? 'translateY(-100%)' : 'translateY(0)',
+      transition: 'transform 260ms cubic-bezier(.2,.7,.2,1), background 240ms ease, border-color 240ms ease, backdrop-filter 240ms ease',
+      willChange: 'transform',
     }}>
       <div className="container nav-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px' }}>
         <a href="#/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -4118,30 +4130,23 @@ function ReformaSourcesSection({ lang }) {
   }[lang] || null;
   const c = copy || { eyebrow: 'Burimet', title: 'Çdo numër në këtë faqe ka një dokument origjinal', sub: '' };
   return (
-    <section style={{ padding: '100px 0 120px', borderTop: '1px solid var(--line)', background: 'var(--ink)', color: 'var(--paper)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
-        <div style={{ marginBottom: 56, maxWidth: 880 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
-            <span className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.06em' }}>§ 04</span>
-            <span className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--paper)', borderTop: '1px solid var(--paper)', paddingTop: 6 }}>{c.eyebrow}</span>
-          </div>
-          <h2 className="serif" style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: 1.04, color: 'var(--paper)' }}>{c.title}</h2>
-          <p style={{ fontSize: 17, color: 'rgba(242,239,232,0.7)', maxWidth: 640, marginTop: 18 }}>{c.sub}</p>
-        </div>
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="04" />
         <div className="reforma-sources-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
           {data.map((g, gi) => (
-            <div key={gi} style={{ borderTop: '1px solid rgba(242,239,232,0.25)', paddingTop: 22 }}>
-              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(242,239,232,0.75)', marginBottom: 22 }}>
-                <span style={{ color: 'var(--gold)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
+            <div key={gi} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-2)', marginBottom: 22 }}>
+                <span style={{ color: 'var(--rust)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {g.items.map((it, ii) => (
-                  <li key={ii} style={{ display: 'flex', gap: 14, paddingBottom: 18, borderBottom: ii < g.items.length - 1 ? '1px solid rgba(242,239,232,0.12)' : 'none' }}>
-                    <span className="mono" style={{ fontSize: 11, color: 'var(--gold)', flexShrink: 0, marginTop: 4 }}>0{ii + 1}</span>
+                  <li key={ii} style={{ display: 'flex', gap: 14, paddingBottom: 18, borderBottom: ii < g.items.length - 1 ? '1px solid var(--line)' : 'none' }}>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--rust)', flexShrink: 0, marginTop: 4 }}>0{ii + 1}</span>
                     <div>
-                      <div className="serif" style={{ fontSize: 20, lineHeight: 1.2, color: 'var(--paper)' }}>{it.t}</div>
-                      <div style={{ fontSize: 14, color: 'rgba(242,239,232,0.65)', lineHeight: 1.55, marginTop: 6 }}>{it.sub}</div>
-                      <a href={it.href || `https://${it.url}`} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.12em', color: 'var(--gold)', marginTop: 10, borderBottom: '1px solid rgba(199,173,112,0.4)', paddingBottom: 1 }}>↗ {it.url}</a>
+                      <div className="serif" style={{ fontSize: 20, lineHeight: 1.2, color: 'var(--ink)' }}>{it.t}</div>
+                      <div style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.55, marginTop: 6 }}>{it.sub}</div>
+                      <a href={it.href || `https://${it.url}`} target="_blank" rel="noreferrer" className="mono" style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink)', marginTop: 10, borderBottom: '1px solid var(--ink-3)', paddingBottom: 1 }}>↗ {it.url}</a>
                     </div>
                   </li>
                 ))}
@@ -4149,7 +4154,7 @@ function ReformaSourcesSection({ lang }) {
             </div>
           ))}
         </div>
-        <div className="mono" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid rgba(242,239,232,0.15)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(242,239,232,0.5)' }}>
+        <div className="mono" style={{ marginTop: 40, paddingTop: 18, borderTop: '1px solid var(--line)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
           {lang === 'sq' ? 'Përditësuar maj 2026 · Linket janë referenca për publikimet origjinale; statusi i tyre mund të ndryshojë.' :
            lang === 'en' ? 'Updated May 2026 · Links reference the original publications; their status may change over time.' :
            'Ažurirano maj 2026 · Linkovi su reference za originalne publikacije; status može da se promeni.'}
@@ -5193,7 +5198,7 @@ function RuleOfLawMaterials({ lang }) {
             </h3>
             <div style={{ display: 'grid', gap: 10 }}>
               {Object.entries(categories).map(([category, items]) => (
-                <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                <details key={category} style={{ border: '1px solid var(--line)', background: 'var(--paper)' }}>
                   <summary style={{ cursor: 'pointer', padding: '13px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18, listStyle: 'none' }}>
                     <span className="serif" style={{ fontSize: 22, lineHeight: 1.08, color: 'var(--ink)' }}>{translateKnownText(category, lang)}</span>
                     <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{items.length}</span>
