@@ -1763,14 +1763,33 @@ function Navbar({ lang, setLang, t, route, onChat }) {
 
   useEffect(() => {
     let lastY = typeof window !== 'undefined' ? window.scrollY : 0;
-    const onScroll = () => {
+    let ticking = false;
+    const handle = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
-      // Always show near the top; hide on scroll-down past 80px; show on scroll-up
-      if (y < 80) setHidden(false);
-      else if (y > lastY + 4) setHidden(true);
-      else if (y < lastY - 4) setHidden(false);
-      lastY = y;
+      // Always show near the top
+      if (y < 80) {
+        setHidden(false);
+        lastY = y;
+      } else {
+        const delta = y - lastY;
+        // Only update lastY when we actually cross a threshold,
+        // so slow scrolls accumulate into a direction change.
+        if (delta > 6) {
+          setHidden(true);
+          lastY = y;
+        } else if (delta < -6) {
+          setHidden(false);
+          lastY = y;
+        }
+      }
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handle);
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
