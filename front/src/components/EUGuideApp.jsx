@@ -2661,7 +2661,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
         await vapi.start({
           model: {
             provider: 'custom-llm',
-            url: `${aiUrl}/api/vapi/chat/completions`,
+            url: `${aiUrl}/api/vapi`,
             model: 'gpt-4o-mini',
           },
           voice: {
