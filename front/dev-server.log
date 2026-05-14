@@ -1,0 +1,19 @@
+
+> euguide-ks-front@0.1.0 dev
+> next dev --hostname 127.0.0.1
+
+   ▲ Next.js 15.5.18
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.4s
+ ✓ Compiled /middleware in 463ms (168 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 5.1s (656 modules)
+ GET / 200 in 5933ms
+ GET / 200 in 576ms
+ ○ Compiling /[route] ...
+ ✓ Compiled /[route] in 8.3s (672 modules)
+ GET / 200 in 221ms

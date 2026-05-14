@@ -2118,20 +2118,6 @@ function PageBreadcrumb({ route, t, lang }) {
 
 function Logo() {
   return (
-<<<<<<< Updated upstream
-    <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
-      <rect x="0.5" y="0.5" width="39" height="39" fill="var(--ink)" />
-      {/* 12 stars of EU in a circle */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
-        const r = 13;
-        const cx = stableNum(20 + r * Math.cos(a));
-        const cy = stableNum(20 + r * Math.sin(a));
-        return <circle key={i} cx={cx} cy={cy} r="1.4" fill="var(--gold)" />;
-      })}
-      <text x="20" y="24" className="serif" style={{ fontSize: 13, fill: 'var(--paper)', textAnchor: 'middle' }}>k</text>
-    </svg>
-=======
     <img
       src="/eu-kosovo-logo.png"
       alt="EU Guide Kosovo logo"
@@ -2139,7 +2125,6 @@ function Logo() {
       height="41"
       style={{ display: 'block', objectFit: 'contain', flex: '0 0 auto' }}
     />
->>>>>>> Stashed changes
   );
 }
 
