@@ -942,7 +942,7 @@ const COURT_CASES = [
 ];
 
 const KOSOVO_FACTS = {
-  pop: '1.6M',
+  pop: '~1.6M',
   area: '10,887 km²',
   cap: { sq: 'Prishtinë', en: 'Pristina', sr: 'Priština' },
   curr: 'EUR (€)',
@@ -6554,7 +6554,7 @@ function KosovaPage({ lang, t }) {
       peopleLabel: 'III. Njerëzit',
       peopleTitle: <>Kombi më i ri në <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>Evropë</span> - dhe ndër më shpresëplotët.</>,
       peopleText: 'Mbi 50% e popullsisë së Kosovës është nën moshën 30 vjeç. Një brez që nuk i pranoi kufijtë. I arsimuar, ambicioz, shumëgjuhësh - ky brez e mban Evropën tashmë në zemër.',
-      facts: [['Popullsia', '1.8M'], ['Nën moshën 30', '50%'], ['Pro BE-së në sondazhe', '92%'], ['Gjuhë të folura', '4']],
+      facts: [['Popullsia', '~1.6M'], ['Nën moshën 30', '50%'], ['Pro BE-së në sondazhe', '92%'], ['Gjuhë të folura', '4']],
       valuesLabel: 'IV. Pse Evropa',
       valuesTitle: <>Kosova nuk dëshiron vetëm t’i bashkohet Evropës. Ajo tashmë <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>i jeton vlerat e saj.</span></>,
       pillars: [
@@ -6601,7 +6601,7 @@ function KosovaPage({ lang, t }) {
       peopleLabel: 'III. The People',
       peopleTitle: <>The youngest nation in <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>Europe</span> - and its most hopeful.</>,
       peopleText: "Over 50% of Kosovo's population is under 30. A generation that never accepted limits. Educated, ambitious, multilingual - they carry Europe already in their hearts.",
-      facts: [['Population', '1.8M'], ['Under Age 30', '50%'], ['Pro-EU in polls', '92%'], ['Languages Spoken', '4']],
+      facts: [['Population', '~1.6M'], ['Under Age 30', '50%'], ['Pro-EU in polls', '92%'], ['Languages Spoken', '4']],
       valuesLabel: 'IV. Why Europe',
       valuesTitle: <>Kosovo doesn&apos;t just want to join Europe. It already <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>lives its values.</span></>,
       pillars: [
@@ -6648,7 +6648,7 @@ function KosovaPage({ lang, t }) {
       peopleLabel: 'III. Ljudi',
       peopleTitle: <>Najmlađa nacija u <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>Evropi</span> - i jedna od najpunijih nade.</>,
       peopleText: 'Više od 50% stanovništva Kosova mlađe je od 30 godina. Generacija koja nikada nije prihvatila granice. Obrazovana, ambiciozna, višejezična - Evropu već nosi u srcu.',
-      facts: [['Stanovništvo', '1.8M'], ['Mlađi od 30', '50%'], ['Pro-EU u anketama', '92%'], ['Jezika u upotrebi', '4']],
+      facts: [['Stanovništvo', '~1.6M'], ['Mlađi od 30', '50%'], ['Pro-EU u anketama', '92%'], ['Jezika u upotrebi', '4']],
       valuesLabel: 'IV. Zašto Evropa',
       valuesTitle: <>Kosovo ne želi samo da se pridruži Evropi. Ono već <span style={{ color: 'var(--blue)', fontStyle: 'italic' }}>živi njene vrednosti.</span></>,
       pillars: [
