@@ -1197,6 +1197,25 @@ function CPIChart({ lang, t }) {
   const linePath = data.map((d, i) => (i === 0 ? 'M' : 'L') + xScale(i) + ' ' + yScale(d.score)).join(' ');
   const areaPath = linePath + ` L ${xScale(data.length - 1)} ${H - P.b} L ${xScale(0)} ${H - P.b} Z`;
 
+  // Horizontal wipe reveal on scroll-in
+  const [chartRef, chartInView] = useInView({ threshold: 0.25 });
+  const [clipW, setClipW] = React.useState(0);
+  React.useEffect(() => {
+    if (!chartInView) return;
+    if (prefersReducedMotion()) { setClipW(W); return; }
+    const start = performance.now();
+    const duration = 1500;
+    let raf = 0;
+    const tick = (nowTs) => {
+      const t = Math.min(1, (nowTs - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setClipW(W * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [chartInView, W]);
+
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container">
@@ -1207,7 +1226,12 @@ function CPIChart({ lang, t }) {
               <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>CPI · 0–100</span>
               <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>2015 → 2025</span>
             </div>
-            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }} onMouseLeave={() => setHover(null)}>
+            <svg ref={chartRef} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }} onMouseLeave={() => setHover(null)}>
+              <defs>
+                <clipPath id="cpi-reveal-clip">
+                  <rect x="0" y="0" width={clipW} height={H} />
+                </clipPath>
+              </defs>
               {/* horizontal grid */}
               {[25, 30, 35, 40, 45, 50].map(v => (
                 <g key={v}>
@@ -1219,18 +1243,26 @@ function CPIChart({ lang, t }) {
               {data.map((d, i) => i % 2 === 0 && (
                 <text key={d.year} x={xScale(i)} y={H - P.b + 18} className="mono" style={{ fontSize: 10, fill: 'var(--ink-3)', textAnchor: 'middle' }}>{d.year}</text>
               ))}
-              {/* area */}
-              <path d={areaPath} fill="var(--rust)" opacity="0.12" />
-              {/* line */}
-              <path d={linePath} fill="none" stroke="var(--rust)" strokeWidth="2" />
-              {/* points */}
-              {data.map((d, i) => (
-                <g key={d.year}>
-                  <circle cx={xScale(i)} cy={yScale(d.score)} r={hover === i ? 6 : 3} fill="var(--paper)" stroke="var(--rust)" strokeWidth="2" style={{ transition: 'r 160ms' }} />
-                  <rect x={xScale(i) - 18} y="0" width="36" height={H} fill="transparent" onMouseEnter={() => setHover(i)} />
+              {/* clipped: area + line + points + annotation reveal left-to-right */}
+              <g clipPath="url(#cpi-reveal-clip)">
+                {/* area */}
+                <path d={areaPath} fill="var(--rust)" opacity="0.12" />
+                {/* line */}
+                <path d={linePath} fill="none" stroke="var(--rust)" strokeWidth="2" />
+                {/* points (visible circles) */}
+                {data.map((d, i) => (
+                  <circle key={d.year} cx={xScale(i)} cy={yScale(d.score)} r={hover === i ? 6 : 3} fill="var(--paper)" stroke="var(--rust)" strokeWidth="2" style={{ transition: 'r 160ms' }} />
+                ))}
+                {/* annotation: visa liberalization */}
+                <g>
+                  <line x1={xScale(8)} y1={yScale(data[8].score)} x2={xScale(8)} y2={P.t + 12} stroke="var(--ink-2)" strokeWidth="1" />
+                  <text x={xScale(8) + 6} y={P.t + 16} className="mono" style={{ fontSize: 10, fill: 'var(--ink-2)' }}>liberalizimi i vizave</text>
                 </g>
+              </g>
+              {/* hit-test rects + hover tooltip stay above the clip so hover keeps working */}
+              {data.map((d, i) => (
+                <rect key={`hit-${d.year}`} x={xScale(i) - 18} y="0" width="36" height={H} fill="transparent" onMouseEnter={() => setHover(i)} />
               ))}
-              {/* hover tooltip */}
               {hover !== null && (
                 <g>
                   <line x1={xScale(hover)} y1={P.t} x2={xScale(hover)} y2={H - P.b} stroke="var(--ink-2)" strokeDasharray="2 3" strokeWidth="1" />
@@ -1240,11 +1272,6 @@ function CPIChart({ lang, t }) {
                   </text>
                 </g>
               )}
-              {/* annotation: visa liberalization */}
-              <g>
-                <line x1={xScale(8)} y1={yScale(data[8].score)} x2={xScale(8)} y2={P.t + 12} stroke="var(--ink-2)" strokeWidth="1" />
-                <text x={xScale(8) + 6} y={P.t + 16} className="mono" style={{ fontSize: 10, fill: 'var(--ink-2)' }}>liberalizimi i vizave</text>
-              </g>
             </svg>
           </div>
           <div>
