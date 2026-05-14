@@ -6196,6 +6196,7 @@ const LEGAL_PAGE_COPY_FULL = {
       sections: [
         ["Kush jemi", "euguide-ks është platformë edukative dhe qytetare për Kosovën, e ndërtuar për të sqaruar integrimin në BE, ligjet, objektivat, raportet dhe burimet zyrtare në një vend të vetëm."],
         ["Çfarë mbledhim", "Për vizitorët publikë synojmë të ruajmë minimumin e mundshëm: gjuhën e zgjedhur, kërkimet brenda faqes dhe të dhëna teknike bazë për siguri. Për adminët ruhet emaili, roli dhe historiku minimal i veprimeve."],
+        ["Standardet evropiane", "Platforma synon të ndjekë parimet e GDPR (General Data Protection Regulation), ePrivacy Directive (Directive on Privacy and Electronic Communications), EU AI Act (Artificial Intelligence Act) dhe WCAG 2.2 AA (Web Content Accessibility Guidelines), aty ku aplikohen për një platformë edukative."],
         ["Admin dhe magic link", "Hyrja në admin bëhet me link në email. Vetëm profilet me rol admin ose editor duhet të kenë qasje. Root admin mbrohet nga fshirja ose degradimi për të ruajtur kontrollin e projektit."],
         ["Chatbot dhe AI", "Pyetjet në chatbot mund të përpunohen për të kthyer përgjigje me burime. Përdoruesit nuk duhet të dërgojnë të dhëna shumë personale, dokumente private ose informata që nuk duan të ruhen në histori teknike."],
         ["Dokumentet", "Dokumentet e ngarkuara në panelin admin ruhen për kërkim, indeksim, copëzim dhe citim nga AI. Ato duhet të jenë materiale publike, ligje, raporte ose dokumente që projekti ka të drejtë t’i përdorë."],
@@ -6216,6 +6217,7 @@ const LEGAL_PAGE_COPY_FULL = {
       sections: [
         ["Who we are", "euguide-ks is an educational civic platform for Kosovo, built to explain EU integration, laws, objectives, reports and official sources in one place."],
         ["What we collect", "For public visitors we keep data minimal: selected language, site searches and basic technical security data. For administrators we store email, role and a minimal action history."],
+        ["European standards", "The platform aims to follow the principles of GDPR (General Data Protection Regulation), ePrivacy Directive (Directive on Privacy and Electronic Communications), EU AI Act (Artificial Intelligence Act) and WCAG 2.2 AA (Web Content Accessibility Guidelines), where they apply to an educational platform."],
         ["Admin and magic link", "Admin access uses an email login link. Only profiles with admin or editor roles should have access. The root admin is protected from deletion or demotion."],
         ["Chatbot and AI", "Chatbot questions may be processed to return sourced answers. Users should not submit sensitive personal data, private documents or information they do not want processed technically."],
         ["Documents", "Documents uploaded in the admin panel are stored for search, indexing, chunking and AI citation. They should be public legal materials, reports or files the project may lawfully use."],
@@ -6236,6 +6238,7 @@ const LEGAL_PAGE_COPY_FULL = {
       sections: [
         ["Ko smo", "euguide-ks je edukativna građanska platforma za Kosovo, izgrađena da objasni EU integraciju, zakone, ciljeve, izveštaje i zvanične izvore na jednom mestu."],
         ["Šta prikupljamo", "Za javne posetioce čuvamo minimum: izabrani jezik, pretrage na sajtu i osnovne tehničke podatke za bezbednost. Za administratore čuvamo email, ulogu i minimalnu istoriju aktivnosti."],
+        ["Evropski standardi", "Platforma teži da prati principe GDPR (General Data Protection Regulation), ePrivacy Directive (Directive on Privacy and Electronic Communications), EU AI Act (Artificial Intelligence Act) i WCAG 2.2 AA (Web Content Accessibility Guidelines), kada se primenjuju na edukativnu platformu."],
         ["Admin i magic link", "Pristup adminu ide preko linka u emailu. Pristup treba da imaju samo profili sa ulogom admin ili editor. Root admin je zaštićen od brisanja ili degradacije."],
         ["Chatbot i AI", "Pitanja u chatbotu mogu se obraditi radi odgovora sa izvorima. Korisnici ne treba da šalju osetljive lične podatke, privatne dokumente ili informacije koje ne žele da budu tehnički obrađene."],
         ["Dokumenti", "Dokumenti učitani u admin panel čuvaju se za pretragu, indeksiranje, deljenje na delove i AI citiranje. Treba da budu javni pravni materijali, izveštaji ili fajlovi koje projekat sme da koristi."],
