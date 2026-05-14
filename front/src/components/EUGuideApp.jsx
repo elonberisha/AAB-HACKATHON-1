@@ -2153,7 +2153,7 @@ function Hero({ lang, t, onChat }) {
     <section style={{ padding: '32px 0 80px', position: 'relative', overflow: 'hidden' }}>
       <div className="container">
         {/* tag */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 56, flexWrap: 'wrap', gap: 16 }} className="hero-tag-row">
+        <Reveal delay={0} distance={10} className="hero-tag-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 56, flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--rust)', animation: 'pulse 2s ease infinite' }} />
             <span className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{t.hero.tag}</span>
@@ -2161,10 +2161,10 @@ function Hero({ lang, t, onChat }) {
           <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>
             Prishtinë · Bruxelles · 41°N 21°E
           </div>
-        </div>
+        </Reveal>
 
         {/* Title — big editorial */}
-        <h1 className="serif" style={{
+        <Reveal as="h1" delay={120} distance={16} className="serif" style={{
           fontSize: 'clamp(38px, 6.6vw, 96px)',
           lineHeight: 0.96,
           color: 'var(--ink)',
@@ -2174,11 +2174,11 @@ function Hero({ lang, t, onChat }) {
           {t.hero.title_a}
           <span style={{ fontStyle: 'italic', color: 'var(--blue)' }}>{t.hero.title_b}</span>
           {t.hero.title_c}
-        </h1>
+        </Reveal>
 
         {/* Hero grid: blurb + meta panel */}
         <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 64, marginTop: 56 }} className="hero-grid">
-          <div>
+          <Reveal delay={240}>
             <p style={{ fontSize: 20, color: 'var(--ink-2)', lineHeight: 1.5, maxWidth: 560, marginTop: 0 }}>
               {t.hero.sub}
             </p>
@@ -2199,10 +2199,10 @@ function Hero({ lang, t, onChat }) {
                 {t.hero.cta2}
               </button>
             </div>
-          </div>
+          </Reveal>
 
           {/* meta panel — the journey ticker */}
-          <div style={{
+          <Reveal delay={340} distance={22} style={{
             background: 'var(--paper-2)', border: '1px solid var(--line)',
             padding: 28,
             position: 'relative',
@@ -2249,7 +2249,7 @@ function Hero({ lang, t, onChat }) {
               <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.1em' }}>{t.hero.meta_c.toUpperCase()}</span>
               <span className="mono" style={{ fontSize: 12, color: 'var(--rust)' }}>● {t.hero.meta_d}</span>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
 
@@ -2270,15 +2270,15 @@ function CTABand({ lang, onChat }) {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper-2)' }}>
       <div className="container cta-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 64, alignItems: 'center' }}>
-        <div>
+        <Reveal delay={0}>
           <h2 className="serif" style={{ fontSize: 'clamp(36px, 5vw, 64px)', lineHeight: 1.02, color: 'var(--ink)', maxWidth: 700 }}>
             <span style={{ fontStyle: 'italic', color: 'var(--blue)' }}>Pyet</span>, dhe EU Agent përgjigjet në shqip, anglisht ose serbisht — me referencë te dokumenti origjinal.
           </h2>
           <p style={{ fontSize: 17, color: 'var(--ink-2)', marginTop: 24, maxWidth: 560 }}>
             I trajnuar mbi raportet e Komisionit Evropian, ligjet vendore dhe analizat e shoqërisë civile. I përdorshëm me tekst ose me zë.
           </p>
-        </div>
-        <div>
+        </Reveal>
+        <Reveal delay={140} distance={22}>
           <button onClick={onChat} style={{
             background: 'var(--ink)', color: 'var(--paper)',
             border: 'none', width: '100%', padding: '28px 32px',
@@ -2294,7 +2294,7 @@ function CTABand({ lang, onChat }) {
             <span className="serif" style={{ fontSize: 32, lineHeight: 1, marginTop: 24 }}>Shkruaj pyetjen</span>
             <span className="mono" style={{ fontSize: 11, opacity: 0.6 }}>↩ enter për të dërguar</span>
           </button>
-        </div>
+        </Reveal>
       </div>
       <style>{`
         @media (max-width: 900px) { .cta-grid { grid-template-columns: 1fr !important; gap: 40px !important; } }
@@ -3304,7 +3304,7 @@ function TopicSection({ topic, lang, idx }) {
     <section id={topic.key} style={{ padding: '120px 0', borderTop: '1px solid var(--line)', background: idx % 2 === 0 ? 'var(--paper)' : 'var(--paper-2)' }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80 }} className="topic-deep">
-          <div>
+          <Reveal delay={0}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
               <span className="serif ital" style={{ fontSize: 64, color: topic.accent, lineHeight: 1 }}>{topic.num}</span>
               <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>shtylla {topic.num}</span>
@@ -3318,10 +3318,10 @@ function TopicSection({ topic, lang, idx }) {
                 <span style={{ fontSize: 14, color: 'var(--ink-2)', maxWidth: 180 }}>{topic['metric_label_' + lang] || topic.metric_label_sq}</span>
               </div>
             </div>
-          </div>
+          </Reveal>
           <div>
             {content && content.map((sec, i) => (
-              <div key={i} style={{ paddingBottom: 28, marginBottom: 28, borderBottom: i === content.length - 1 ? 'none' : '1px solid var(--line)' }}>
+              <Reveal key={i} delay={120 + i * 90} style={{ paddingBottom: 28, marginBottom: 28, borderBottom: i === content.length - 1 ? 'none' : '1px solid var(--line)' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
                   <span className="mono" style={{ fontSize: 10, color: topic.accent, letterSpacing: '0.1em' }}>0{i + 1}</span>
                   <h3 className="serif" style={{ fontSize: 26, color: 'var(--ink)' }}>{sec.h}</h3>
@@ -3337,7 +3337,7 @@ function TopicSection({ topic, lang, idx }) {
                     ))}
                   </ul>
                 )}
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -3571,12 +3571,12 @@ function TopicActionSection({ topicKey, lang }) {
           <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-2)', marginTop: 20, maxWidth: 520 }}>{copy.intro}</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="topic-action-cards">
-          {copy.cards.map(card => (
-            <article key={card.k} style={{ background: 'var(--paper-2)', padding: '26px 24px', minHeight: 240 }}>
+          {copy.cards.map((card, ci) => (
+            <Reveal as="article" key={card.k} delay={ci * 80} className="hover-lift" style={{ background: 'var(--paper-2)', padding: '26px 24px', minHeight: 240 }}>
               <span className="serif" style={{ fontSize: 42, color: accent, lineHeight: 0.9 }}>{card.k}</span>
               <h3 className="serif" style={{ fontSize: 24, lineHeight: 1.08, marginTop: 22, color: 'var(--ink)' }}>{card.h}</h3>
               <p style={{ fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-2)', marginTop: 14 }}>{card.p}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -4887,11 +4887,11 @@ function PageHeader({ kicker, title, sub, accent = 'var(--ink)' }) {
   return (
     <section className="page-header" style={{ padding: '40px 0 64px', borderBottom: '1px solid var(--line)' }}>
       <div className="container">
-        <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.18em', marginBottom: 24 }}>
+        <Reveal delay={0} distance={8} className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.18em', marginBottom: 24 }}>
           <a href="#/" style={{ color: 'var(--ink-3)' }}>HOME</a> / {kicker.toUpperCase()}
-        </div>
-        <h1 className="serif" style={{ fontSize: 'clamp(48px, 7.5vw, 104px)', lineHeight: 0.94, color: accent, letterSpacing: '-0.02em' }}>{title}</h1>
-        {sub && <p style={{ fontSize: 20, color: 'var(--ink-2)', lineHeight: 1.5, maxWidth: 720, marginTop: 24 }}>{sub}</p>}
+        </Reveal>
+        <Reveal as="h1" delay={100} distance={16} className="serif" style={{ fontSize: 'clamp(48px, 7.5vw, 104px)', lineHeight: 0.94, color: accent, letterSpacing: '-0.02em' }}>{title}</Reveal>
+        {sub && <Reveal as="p" delay={200} style={{ fontSize: 20, color: 'var(--ink-2)', lineHeight: 1.5, maxWidth: 720, marginTop: 24 }}>{sub}</Reveal>}
       </div>
     </section>
   );
@@ -5334,7 +5334,7 @@ function MaterialGrid({ items, lang }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 1, background: 'var(--line)', border: '1px solid var(--line)' }} className="material-grid">
       {items.map((item, i) => (
-        <article key={`${item.title_sq || item.title}-${i}`} style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210, gridColumn: hasOrphan && i === items.length - 1 ? '1 / -1' : undefined }}>
+        <Reveal as="article" key={`${item.title_sq || item.title}-${i}`} delay={i * 60} className="hover-lift" style={{ background: 'var(--paper-2)', padding: 24, minHeight: 210, gridColumn: hasOrphan && i === items.length - 1 ? '1 / -1' : undefined }}>
           <div className="mono" style={{ fontSize: 10, color: 'var(--rust)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
             {item.law_number || translateKnownText(localizedField(item, 'status', lang) || item.status, lang)}
           </div>
@@ -5350,7 +5350,7 @@ function MaterialGrid({ items, lang }) {
               {ui(lang, 'Burimi zyrtar', 'Official source', 'Zvanični izvor')} →
             </a>
           )}
-        </article>
+        </Reveal>
       ))}
     </div>
   );
@@ -6462,14 +6462,14 @@ function NextTopicNav({ current, lang, t }) {
   return (
     <section style={{ padding: '60px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
-        <a href={'#/' + prev.key} style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--ink)' }}>
+        <Reveal as="a" delay={0} href={'#/' + prev.key} style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--ink)' }}>
           <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.15em' }}>← {lang === 'sq' ? 'Më parë' : lang === 'en' ? 'Previous' : 'Prethodno'}</span>
           <span className="serif" style={{ fontSize: 26 }}>{(prev['title_' + lang] || prev.title_sq).replace('\n', ' ')}</span>
-        </a>
-        <a href={'#/' + next.key} style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--ink)', textAlign: 'right' }}>
+        </Reveal>
+        <Reveal as="a" delay={120} href={'#/' + next.key} style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--ink)', textAlign: 'right' }}>
           <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.15em' }}>{lang === 'sq' ? 'Më pas' : lang === 'en' ? 'Next' : 'Sledeće'} →</span>
           <span className="serif" style={{ fontSize: 26 }}>{(next['title_' + lang] || next.title_sq).replace('\n', ' ')}</span>
-        </a>
+        </Reveal>
       </div>
     </section>
   );
