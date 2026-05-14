@@ -594,6 +594,326 @@ ARSIMI DHE TREGU I PUNËS:
 - Programi Erasmus+ i hapur për Kosovën
 - Kuadrot e nevojshme: IT, inxhinieri, shëndetësi
   `.trim(),
+
+  'kushtetuta-kosoves': `
+KUSHTETUTA E REPUBLIKËS SË KOSOVËS
+Miratuar: 09 Prill 2008 | Kuvendi i Republikës së Kosovës | Nr. K-09042008
+Amendamentuar: 2012, 2013, 2015, 2016, 2020
+Ligji më i lartë i vendit. Të gjitha ligjet, aktet dhe veprimet shtetërore duhet të jenë në përputhje me Kushtetutën.
+
+KAPITULLI I — DISPOZITAT THEMELORE (Nenet 1–20)
+
+Neni 1 — Përkufizimi i Shtetit:
+Republika e Kosovës është shtet i pavarur, sovran, demokratik, unik dhe i pandashëm. Kosova nuk ka pretendime territoriale ndaj asnjë shteti tjetër dhe nuk kërkon bashkim me asnjë shtet.
+
+Neni 2 — Sovraniteti:
+Sovraniteti rrjedh nga populli. Është i paprekshëm, i patjetërsueshëm dhe i pandashëm.
+
+Neni 3 — Barazia Para Ligjit:
+Kosova është shoqëri shumetnike e qeverisur demokratikisht. Pushteti publik bazohet në barabarësinë e të gjithë individëve.
+
+Neni 4 — Forma e Qeverisjes dhe Ndarja e Pushteteve:
+Republika Demokratike e bazuar në ndarjen e pushteteve dhe balancimin e tyre. Kuvendi ushtron pushtetin legjislativ. Presidenti përfaqëson unitetin e popullit. Qeveria zbaton ligjet dhe politikat shtetërore. Pushteti gjyqësor është unik, i pavarur, i ushtruar nga gjykatat.
+
+Neni 5 — Gjuhët:
+Gjuhët zyrtare: Shqipja dhe Serbishtja. Turqishtja, Boshnjakishtja dhe Romanishtja kanë status zyrtar në nivel komunal.
+
+Neni 7 — Vlerat:
+Rendi kushtetues bazohet në lirinë, paqen, demokracinë dhe barabarësinë. Barazia gjinore është vlerë themelore.
+
+Neni 8 — Shteti Laik:
+"Republika e Kosovës është shtet laik dhe është neutral në çështjet e besimit fetar."
+
+Neni 10 — Ekonomia:
+"Ekonomia e tregut me konkurrencë të lirë është baza e rendit ekonomik."
+
+Neni 16 — Epërsia e Kushtetutës:
+Kushtetuta është akti më i lartë juridik. Çdo ligj duhet të jetë në përputhje me të. Rendi ndërkombëtar respektohet.
+
+Neni 19 — Zbatueshmëria e së Drejtës Ndërkombëtare:
+Marrëveshjet e ratifikuara ndërkombëtare bëhen pjesë e sistemit juridik të brendshëm dhe kanë epërsi ndaj ligjeve të brendshme.
+
+KAPITULLI II — TË DREJTAT DHE LIRITË THEMELORE (Nenet 21–56)
+
+Neni 21 — Parimet e Përgjithshme:
+Të drejtat dhe liritë themelore janë të pandashme, të patjetërsueshme dhe të padhunueshme. Kushtetuta i mbron dhe garanton ato.
+
+Neni 22 — Zbatimi i Drejtpërdrejtë:
+Instrumentet ndërkombëtare zbatohen drejtpërdrejt: Deklarata Universale e të Drejtave të Njeriut, Konventa Evropiane për të Drejtat e Njeriut, Pakti Ndërkombëtar për të Drejta Civile dhe Politike, Konventa Kuadër e Këshillit të Evropës për Mbrojtjen e Minoriteteve Kombëtare.
+
+Neni 23 — Dinjiteti i Njeriut:
+"Dinjiteti i njeriut është i pacenueshëm dhe është baza e të gjitha të drejtave dhe lirive themelore."
+
+Neni 24 — Barazia Para Ligjit:
+Të gjithë janë të barabartë para ligjit. Ndalohet diskriminimi bazuar në: racë, ngjyrë, gjini, gjuhë, fe, opinion politik, origjinë kombëtare ose sociale, orientim seksual, lindje, aftësi të kufizuar ose çdo status tjetër personal.
+
+Neni 25 — E Drejta e Jetës:
+Çdo individ gëzon të drejtën e jetës. "Dënimi me vdekje është i ndaluar."
+
+Neni 27 — Ndalimi i Torturës:
+"Askush nuk do t'i nënshtrohet torturës, trajtimit ose ndëshkimit çnjerëzor ose degradues."
+
+Neni 28 — Ndalimi i Skllavërisë dhe Punës së Detyruar:
+Ndalohet skllavëria, servituti dhe puna e detyruar. "Trafikimi me njerëz është i ndaluar."
+
+Neni 29 — E Drejta e Lirisë dhe Sigurisë:
+Askush nuk mund të privohet nga liria pa vendim gjykate. Maksimumi 48 orë ndalim pa urdhër gjykate. Personi i ndaluar menjëherë njoftohet për arsyet e ndalimit.
+
+Neni 30 — Të Drejtat e të Akuzuarit:
+Gjashtë të drejta minimale: informim për akuzat, kohë e mjaftueshme për mbrojtje, interpretim falas, avokat, marrje pyetje i dëshmitarëve, heshtje.
+
+Neni 31 — E Drejta e Gjykimit të Drejtë dhe të Paanshëm:
+Çdo person ka të drejtë gjykimi të drejtë, publik dhe brenda afateve të arsyeshme. Prezumimi i pafajësisë. Ndihma juridike e garantuar.
+
+Neni 32 — E Drejta e Mbrojtjes Juridike:
+Çdo person ka të drejtë ankimi ndaj vendimeve gjyqësore dhe administrative që shkelin të drejtat ose interesat e tij.
+
+Neni 34 — E Drejta të Mos Gjykohet dy Herë:
+"Askush nuk do të gjykohet më shumë se një herë për të njëjtën vepër penale." (ne bis in idem)
+
+Neni 35 — Liria e Lëvizjes:
+Lëvizje e lirë brenda Kosovës. E drejta e largimit dhe kthimit. Asnjë qytetar nuk mund të dëbohet.
+
+Neni 36 — E Drejta e Privatësisë:
+Jeta private, familja, banesa dhe korrespondenca janë të mbrojtura. Policia nuk mund të hyjë pa urdhër gjykate.
+
+Neni 38 — Liria e Besimit, Ndërgjegjës dhe Fesë:
+Liria fetare dhe manifestimi i saj. Kufizimet vetëm për sigurinë publike.
+
+Neni 40 — Liria e Shprehjes:
+Të drejtat e shprehjes mbrohen. Kufizimet vetëm për parandalimin e dhunës ose urrejtjes.
+
+Neni 41 — E Drejta e Qasjes në Dokumente Publike:
+Çdo qytetar ka të drejtë qasje në dokumente zyrtare. Përjashtimet: privatësia, sekretet tregtare, siguria.
+
+Neni 43 — Liria e Tubimit:
+"Liria e tubimit paqësor është e garantuar. Çdo person ka të drejtë të organizojë tubime, protesta dhe demonstrata."
+
+Neni 45 — Liria e Zgjedhjes dhe Pjesëmarrjes:
+Të drejtë vote kanë qytetarët mbi 18 vjeç. Votim i fshehtë.
+
+Neni 46 — Mbrojtja e Pronës:
+Pronësia e garantuar, e mbrojtur nga privimi arbitrar. Shpronësimi vetëm me kompensim të drejtë.
+
+Neni 47 — E Drejta e Arsimit:
+Arsimi bazë është falas. Mundësi e barabartë arsimimi.
+
+Neni 49 — E Drejta e Punës:
+Liria e punës dhe zgjedhjes së profesionit.
+
+Neni 55 — Kufizimet e të Drejtave dhe Lirive Themelore:
+Kufizimet vetëm me ligj. Duhet të jenë të nevojshme dhe proporcionale në shoqërinë demokratike.
+
+Neni 56 — Të Drejtat Themelore Gjatë Gjendjes së Jashtëzakonshme:
+Nenet 23–38 (dinjiteti, jeta, torturas, ndalimi skllavërisë) janë të papresueshme në çdo rrethanë.
+
+KAPITULLI III — TË DREJTAT E KOMUNITETEVE (Nenet 57–62)
+
+Neni 57 — Parimet e Përgjithshme:
+Anëtarët e komuniteteve mund të zgjedhin lirisht identitetin e tyre, pa diskriminim.
+
+Neni 59 — Të Drejtat e Komuniteteve:
+Komunitetet kanë të drejtë: shprehin kulturën, marrin arsim në gjuhën amtare, përdorin gjuhën lirshëm, themelojnë media, mbajnë kontakte me diasporën.
+
+Neni 61 — Përfaqësimi në Institucione Publike:
+Komunitetet kanë të drejtë përfaqësimi të drejtë në organet publike.
+
+KAPITULLI IV — KUVENDI I KOSOVËS (Nenet 63–82)
+
+Neni 63 — Parimet e Përgjithshme:
+"Kuvendi është institucioni legjislativ i Republikës së Kosovës i zgjedhur drejtpërdrejt nga populli."
+
+Neni 64 — Struktura:
+120 deputetë të zgjedhur me votim të fshehtë. 20 vende të garantuara për komunitetet joshumicë (10 serbë, 10 të tjera).
+
+Neni 65 — Kompetencat:
+Miraton ligje, amendamentet kushtetuese me dy të tretat e votave, ratifikon traktate, miraton buxhetin, zgjedh Presidentin, mbikëqyr Qeverinë.
+
+Neni 70 — Mandati i Deputetëve:
+Deputetët përfaqësojnë popullin pa mandat të detyruar. Imuniteti nga ndjekja penale.
+
+Neni 79 — Iniciativa Legjislative:
+Iniciativa mund të merret nga: Presidenti, Qeveria, deputetët, ose të paktën 10,000 qytetarë.
+
+KAPITULLI V — PRESIDENTI (Nenet 83–91)
+
+Neni 83 — Statusi:
+"Presidenti është kreu i shtetit dhe përfaqëson unitetin e popullit të Republikës së Kosovës."
+
+Neni 85 — Kualifikimi:
+Kandidat mund të jetë çdo qytetar i Kosovës mbi 35 vjeç.
+
+Neni 87 — Mandati:
+"Mandati i Presidentit është pesë (5) vjet" dhe "mund të rizgjedhet vetëm një herë."
+
+KAPITULLI VI — QEVERIA (Nenet 92–101)
+
+Neni 92 — Parimet e Përgjithshme:
+Qeveria përbëhet nga Kryeministri, zëvendëskryeministrat dhe ministrat. Ushtron pushtetin ekzekutiv.
+
+Neni 96 — Ministritë dhe Përfaqësimi:
+Të paktën një ministër nga komuniteti serb dhe nga komunitetet e tjera joshumicë.
+
+KAPITULLI VII — SISTEMI I DREJTËSISË (Nenet 102–111)
+
+Neni 102 — Parimet e Përgjithshme:
+"Pushteti gjyqësor ushtrohet nga gjykatat." Pushteti gjyqësor është "unik, i pavarur, i drejtë, apolitik dhe i paanshëm."
+
+Neni 103 — Organizimi:
+"Gjykata Supreme e Kosovës është autoriteti më i lartë gjyqësor." Të paktën 15% e gjyqtarëve të Gjykatës Supreme nga komunitetet joshumicë (minimumi 3 gjyqtarë).
+
+Neni 104 — Emërimi dhe Shkarkimi:
+Presidenti emëron dhe shkarkon gjyqtarët me propozim të Këshillit Gjyqësor. Gjyqtarët shkarkohen vetëm për krim të rëndë ose neglizhencë të rëndë.
+
+Neni 108 — Këshilli Gjyqësor i Kosovës (KGjK):
+Trembëdhjetë anëtarë: shtatë gjyqtarë të zgjedhur nga gjyqësori, dy nga Kuvendi, dy nga deputetët serbë, dy nga deputetët e komuniteteve të tjera joshumicë.
+
+Neni 109 — Prokurori i Shtetit:
+"Prokurori i Shtetit është institucion i pavarur." Prokurori Kryesor emërohet nga Presidenti me propozim të Këshillit Prokurorial — mandat 7 vjeç, i paripërsëritshëm.
+
+KAPITULLI VIII — GJYKATA KUSHTETUESE (Nenet 112–118)
+
+Neni 112 — Parimet e Përgjithshme:
+"Gjykata Kushtetuese është autoriteti përfundimtar për interpretimin e Kushtetutës" dhe është plotësisht e pavarur.
+
+Neni 113 — Jurisdiksioni:
+Kuvendi, Presidenti, Qeveria dhe Avokati i Popullit mund t'i drejtohen Gjykatës Kushtetuese. Individët mund të ankojnë shkeljet e të drejtave pas shterimit të mjeteve juridike.
+
+Neni 114 — Përbërja dhe Mandati:
+Nëntë gjyqtarë me "jo më pak se dhjetë (10) vjet përvojë profesionale relevante." Mandat "nëntë (9) vjet i paripërsëritshëm."
+
+Neni 116 — Efekti Juridik i Vendimeve:
+Vendimet e Gjykatës Kushtetuese "janë të detyrueshme për gjyqësorin dhe të gjithë personat dhe institucionet."
+
+KAPITULLI IX — MARRËDHËNIET EKONOMIKE
+
+Neni 119 — Parimet e Përgjithshme:
+Republika siguron mjedis të favorshëm juridik për ekonominë e tregut. Liria e veprimtarisë ekonomike. Mbrojtja e pronës. Të drejta të barabarta për investitorët vendas dhe të huaj. Ndalohen praktikat anti-konkurruese.
+  `.trim(),
+
+  'ligjet-kosoves': `
+LIGJET KRYESORE TË REPUBLIKËS SË KOSOVËS
+Burimi: Gazeta Zyrtare e Kosovës (gzk.rks-gov.net) | Ministria e Drejtësisë (md.rks-gov.net)
+Totali i akteve në GZK: 75,837 akte | Institucioni: Kuvendi i Republikës së Kosovës
+
+GAZETA ZYRTARE E KOSOVËS (GZK):
+Portal: gzk.rks-gov.net
+Mbështetet nga: USAID
+Aplikacione mobile: Android/iOS
+Llojet e akteve: Kushtetuta, marrëveshje ndërkombëtare, kode, ligje, dekrete presidenciale, udhëzime administrative, rregullore, vendime, urdhra, gjykime gjyqësore, deklarata, rezoluta, njoftimet, raporte, opinione, planet rregullatore, aktet e konsoliduara.
+
+KODET KRYESORE:
+1. Kodi Penal Nr. 06/L-074 (amendamentuar me Ligjin Nr. 08/L-188, 05.12.2023)
+   — Veprat penale, ndëshkimet, parimet penale
+2. Kodi i Procedurës Penale Nr. 08/L-032 (amendamentuar me Ligjin Nr. 08/L-187, 05.12.2023)
+   — Hetimi, ndjekja penale, gjykimi, mjetet juridike, mbrojtja e palëve
+3. Kodi Civil i Kosovës — marrëdhëniet civile, kontrata, prona, trashëgimia
+4. Kodi i Procedurës Civile — paditë, palët, afatet, seancat, provat, ankesat
+
+LIGJET MBI SISTEMIN GJYQËSOR DHE PROKURORIAL:
+- Ligji Nr. 06/L-054 për Gjykatat — organizimi i sistemit gjyqësor
+- Ligji Nr. 06/L-056 për Prokurorinë e Shtetit (amendamentuar me Ligjin Nr. 08/L-249, 27.05.2025)
+- Ligji Nr. 04/L-017 për Ndihmën Juridike Falas
+- Ligji Nr. 08/L-168 për Prokurorinë Speciale (05.12.2023)
+- Ligji Nr. 08/L-194 për Sistemin Qendror të Evidencës Penale të Kosovës (05.12.2023)
+- Ligji Nr. 08/L-182 për Konfliktet Administrative (23.01.2024)
+- Ligji Nr. 08/L-227 për Përfaqësimin e Institucioneve Shtetërore në Procedura Gjyqësore, Ndërmjetësim dhe Arbitrazh (10.01.2024)
+- Ligji Nr. 08/L-307 për Ratifikimin e Traktatit me Danimarkën për Institucionin Korrektues në Gjilan (21.06.2024)
+
+LIGJET MBI PRONËN DHE PASURINË PUBLIKE:
+- Ligji Nr. 08/L-125 për Pronën Publike (05.12.2023)
+- Agjencia Kadastrale e Kosovës (AKK): kadastriks.net
+- Regjistrimi i pronës te Zyrat Komunale të Kadastrit
+
+LIGJET ANTI-KORRUPSION:
+- Ligji Nr. 05/L-082 kundër Korrupsionit
+- Ligji Nr. 06/L-011 për Deklarimin, Prejardhjen dhe Kontrollin e Pasurisë
+- Ligji Nr. 05/L-096 për Konfiskimin e Pasurisë pa Dënim
+- Ligji Nr. 06/L-082 për Mbrojtjen e Sinjalizuesve (Whistleblower)
+- Ligji Nr. 04/L-116 për Parandalimin e Konfliktit të Interesit
+- Ligji Nr. 04/L-042 për Prokurimin Publik
+
+LIGJET MBI SHËRBIMIN CIVIL DHE ADMINISTRATËN:
+- Ligji Nr. 03/L-149 për Shërbimin Civil të Kosovës
+- Ligji Nr. 04/L-051 për Organizimin dhe Funksionimin e Administratës Shtetërore
+- Ligji Nr. 05/L-031 për Procedurën Administrative
+- Ligji Nr. 06/L-113 për Qasje në Dokumente Publike
+- Ligji Nr. 08/L-255 për Shërbime Sociale dhe Familjare (10.01.2024)
+
+LIGJET MBI TË DREJTAT E NJERIUT DHE MBROJTJEN SOCIALE:
+- Ligji Nr. 03/L-047 për Mbrojtjen e Komuniteteve dhe të Anëtarëve të Tyre
+- Ligji Nr. 06/L-082 për Mbrojtjen e të Dhënave Personale
+- Ligji Nr. 04/L-017 për Ndihmën Juridike Falas
+- Ligji Nr. 08/L-255 për Shërbime Sociale dhe Familjare
+- Ligji për Mosdiskriminim
+
+LIGJET MBI BIZNESIN DHE EKONOMINË:
+- Ligji për Shoqëritë Tregtare — rregullon Sh.P.K., Sh.A., bizneset individuale
+- Ligji për Tatimin mbi të Ardhura të Korporatave — tatim 10%
+- Ligji për TVSH — norma standarde 18%, e reduktuar 8%
+- Ligji Nr. 10/L-025 për Kontabilitetin, Raportimin Financiar dhe Auditimin (amendamentuar 2026)
+- Ligji Nr. 10/L-024 për Materialet Shpërthyese (2026)
+- Ligji Nr. 10/L-021 për Financimin e Menaxhimit të Burimeve Ujore (2026)
+- Ligji Nr. 04/L-034 për Agjencinë Kosovare të Privatizimit — menaxhimi i ndërmarrjeve shoqërore
+
+MINISTRIA E DREJTËSISË (MD):
+Web: md.rks-gov.net | Tel: +383(0)38-200-67-035 | Falas: 080010010
+Ministri: Donika Gërvalla | Zëvendës Ministri: Genc Nimoni
+
+Departamentet: çështje ligjore, bashkëpunim ndërkombëtar, integrim evropian, buxhet, shërbime të përgjithshme, politika të sistemit të drejtësisë, mbikëqyrje e profesioneve të lira, qasja në drejtësi, shërbime sociale/familjare.
+
+Agjencitë nën MD:
+1. Avokatura e Shtetit — përfaqëson institucionet shtetërore në gjykatë
+2. Shërbimi Korrektues — administron burgjet dhe dënimin
+3. Shërbimi i Provës — monitoron dënimin me kusht
+4. Administrata e Pasurisë së Sekuestruar — menaxhon pasurinë e konfiskuar
+5. Ndihma Juridike Falas — ofron avokat falas për të paaftet financiarisht
+6. Instituti i Mjekësisë Ligjore
+7. Inspektorati Korrektues
+
+Shërbimet për Qytetarët nga MD:
+- Bazat e të dhënave të jurisprudencës
+- Shërbimi i administratorëve të falimentimit
+- Noterët dhe shërbimi privat i ekzekutimit
+- Ndërmjetësimi
+- Ndihma juridike falas
+- Kompensimi i viktimave
+- Mbrojtja e sinjalizuesve (whistleblower)
+- Mbrojtja e të dhënave personale
+- Qasja në dokumente publike
+- Ankesa dhe peticionet
+
+PROCEDURA E ANKESËS ADMINISTRATIVE:
+- Ankesë ndaj vendimit administrativ: brenda 15 ditëve te organi epror
+- Organi epror refuzon: drejtohuni Gjykatës Administrative
+- Shkelje të drejtash: Ombudspersoni — Tel: 0800 15555 (falas), Web: oik-rks.org, Adresa: Rr. Migjeni, nr. 21, Prishtinë
+- Diskriminim: Komisioni për Barazi dhe Kthim (KBK)
+
+SISTEMI I GJYKATAVE TË KOSOVËS:
+1. Gjykata Kushtetuese — kushtetutshmëria e ligjeve, konfliktet ndërinstitucionale, mbrojtja e të drejtave themelore. Web: gjk-ks.org
+2. Gjykata Supreme e Kosovës — shkalla e fundit e apelit, zbatimi uniform i ligjit
+3. Gjykata e Apelit — katër departamente: i Përgjithshëm, Penal, Civil, Administrativ
+4. Gjykatat Themelore (7): Prishtinë, Prizren, Pejë, Gjakovë, Mitrovicë, Gjilan, Ferizaj
+5. Gjykata Themelore Komerciale — çështje tregtare
+
+PROKURORIA:
+- Prokuroria e Shtetit — kryeson gjithë prokurorinë
+- Prokuroritë Themelore (7) — krime të zakonshme
+- Prokuroria Speciale e Republikës së Kosovës (PSRK) — krim i organizuar, korrupsion, terrorizëm, pastrim parash
+- Departamenti për Krime Lufte
+
+NDIHMA JURIDIKE FALAS — SI TË APLIKONI:
+Ligji Nr. 04/L-017 garanton ndihmë juridike falas.
+Kushtet: persona me të ardhura nën kufirin minimal social.
+Ku: Shërbimi i Ndihmës Juridike Falas pranë Ministrisë së Drejtësisë ose gjykatave.
+Dokumentet: vërtetim i gjendjes financiare nga komuna.
+Kontakt: md.rks-gov.net | 080010010 (falas)
+
+AVOKATIA E PAVARUR:
+- Dhoma e Avokatëve të Kosovës (DAK) — rregullon profesionin e avokatisë
+- Avokatia është profesion i pavarur sipas Kushtetutës (Neni 111)
+- Avokat i detyruar: në rastet penale nëse i akuzuari nuk ka mjete financiare
+  `.trim(),
 }
 
 export async function POST(req: NextRequest) {
