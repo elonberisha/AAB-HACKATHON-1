@@ -4450,34 +4450,27 @@ function KorrupsionRedFlagsSection({ lang }) {
   }[lang] || null;
   const c = copy || {};
   return (
-    <section style={{ padding: '100px 0 120px', borderTop: '1px solid var(--line)', background: 'var(--ink)', color: 'var(--paper)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--line)', background: 'var(--paper)' }}>
       <div className="container">
-        <div style={{ marginBottom: 56, maxWidth: 880 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 18 }}>
-            <span className="mono" style={{ fontSize: 12, color: 'rgba(242,239,232,0.5)', letterSpacing: '0.06em' }}>§ 05</span>
-            <span className="mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--paper)', borderTop: '1px solid var(--paper)', paddingTop: 6 }}>{c.eyebrow}</span>
-          </div>
-          <h2 className="serif" style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: 1.04, color: 'var(--paper)' }}>{c.title}</h2>
-          <p style={{ fontSize: 17, color: 'rgba(242,239,232,0.7)', maxWidth: 640, marginTop: 18 }}>{c.sub}</p>
-        </div>
+        <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="05" />
         <div className="korr-redflags-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
           {data.map((g, gi) => (
-            <div key={gi} style={{ borderTop: '1px solid rgba(242,239,232,0.25)', paddingTop: 22 }}>
-              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(242,239,232,0.75)', marginBottom: 22 }}>
-                <span style={{ color: 'oklch(78% 0.14 82)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
+            <div key={gi} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-2)', marginBottom: 22 }}>
+                <span style={{ color: 'var(--rust)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {(g['items_' + lang] || g.items_sq).map((item, ii) => (
                   <li key={ii} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <span className="mono" style={{ fontSize: 11, color: 'oklch(78% 0.14 82)', flexShrink: 0, marginTop: 2 }}>⚠</span>
-                    <span style={{ fontSize: 15, lineHeight: 1.55, color: 'rgba(242,239,232,0.85)' }}>{item}</span>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--rust)', flexShrink: 0, marginTop: 2 }}>⚠</span>
+                    <span style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="mono" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid rgba(242,239,232,0.15)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(242,239,232,0.5)' }}>
+        <div className="mono" style={{ marginTop: 40, paddingTop: 18, borderTop: '1px solid var(--line)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
           {c.src}
         </div>
       </div>
