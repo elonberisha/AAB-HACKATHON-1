@@ -6321,7 +6321,7 @@ function TopicPage({ topicKey, lang, t, onChat }) {
       {topicKey === 'korrupsioni' && <KorrupsionEvidenceSection lang={lang} />}
       {topicKey === 'korrupsioni' && <KorrupsionChannelsSection lang={lang} />}
       {topicKey === 'korrupsioni' && <KorrupsionRedFlagsSection lang={lang} />}
-      {topicKey !== 'reforma' && topicKey !== 'korrupsioni' && topicKey !== 'sundimi' && <TopicActionSection topicKey={topicKey} lang={lang} />}
+      {false && <TopicActionSection topicKey={topicKey} lang={lang} />}
       <NextTopicNav current={topicKey} lang={lang} t={t} />
     </>
   );
