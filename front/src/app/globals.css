@@ -125,6 +125,28 @@ footer {
   outline-offset: 4px;
 }
 
+/* Card micro-interaction: subtle lift + accent border on hover.
+   Mobile devices skip the lift (no hover pointer). */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition-property: transform, box-shadow, opacity;
+    transition-duration: 260ms, 260ms, 620ms;
+    transition-timing-function: cubic-bezier(.2, .7, .2, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 28px -18px rgba(14, 27, 44, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift,
+  .hover-lift:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 @media (max-width: 720px) {
   :root {
     --app-zoom: 1;

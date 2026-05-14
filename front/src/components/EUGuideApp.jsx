@@ -49,6 +49,80 @@ function useCmsObject(key, fallback) {
   return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback;
 }
 
+// ============================================================
+// Motion helpers — scroll reveal + count-up + reduced-motion guard
+// ============================================================
+function prefersReducedMotion() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function useInView(options) {
+  const ref = React.useRef(null);
+  const [inView, setInView] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setInView(true);
+      return;
+    }
+    if (prefersReducedMotion()) { setInView(true); return; }
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px', ...(options || {}) });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return [ref, inView];
+}
+
+function Reveal({ children, delay = 0, distance = 18, as: Tag = 'div', className, style, ...rest }) {
+  const [ref, inView] = useInView();
+  return (
+    <Tag
+      ref={ref}
+      className={className}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0)' : `translateY(${distance}px)`,
+        transition: `opacity 620ms ease ${delay}ms, transform 620ms cubic-bezier(.2,.7,.2,1) ${delay}ms`,
+        willChange: 'opacity, transform',
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+function CountUp({ value, duration = 1100, suffix = '', prefix = '' }) {
+  const [ref, inView] = useInView({ threshold: 0.4 });
+  const [display, setDisplay] = React.useState(typeof value === 'number' ? 0 : value);
+  React.useEffect(() => {
+    if (typeof value !== 'number') { setDisplay(value); return; }
+    if (!inView) return;
+    if (prefersReducedMotion()) { setDisplay(value); return; }
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplay(Math.round(value * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, value, duration]);
+  return <span ref={ref}>{prefix}{display}{suffix}</span>;
+}
+
 function mapObjective(row) {
   return {
     id: row.slug || row.id,
@@ -3728,7 +3802,7 @@ function AcquisProgressSection({ lang, accent }) {
               <span style={{ color: 'var(--ink-2)' }}>2025</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 14 }}>
-              <span className="serif" style={{ fontSize: 72, lineHeight: 0.85, color: 'var(--ink)' }}>{avg}</span>
+              <span className="serif" style={{ fontSize: 72, lineHeight: 0.85, color: 'var(--ink)' }}><CountUp value={avg} /></span>
               <span className="serif" style={{ fontSize: 28, color: 'var(--ink-3)' }}>/100</span>
               {avgDelta !== 0 && (
                 <span className="mono" style={{ fontSize: 12, color: avgDelta > 0 ? 'var(--sage)' : 'var(--rust)', marginLeft: 'auto', letterSpacing: '0.04em' }}>
@@ -4042,7 +4116,7 @@ function ReformaInstitutionsSection({ lang }) {
           background: 'var(--line)', border: '1px solid var(--line)',
         }}>
           {data.map((it, i) => (
-            <article key={it.key} style={{
+            <Reveal as="article" key={it.key} delay={i * 70} className="hover-lift" style={{
               background: 'var(--paper-2)', padding: '28px 26px', minHeight: 240,
               display: 'flex', flexDirection: 'column',
             }}>
@@ -4068,7 +4142,7 @@ function ReformaInstitutionsSection({ lang }) {
                   fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)',
                 }}>{it.site}</div>
               )}
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -4262,11 +4336,11 @@ function KorrupsionEvidenceSection({ lang }) {
           background: 'var(--line)', border: '1px solid var(--line)',
         }}>
           {data.map((it, i) => (
-            <article key={it.k} style={{ background: 'var(--paper-2)', padding: '24px 22px', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
+            <Reveal as="article" key={it.k} delay={i * 60} className="hover-lift" style={{ background: 'var(--paper-2)', padding: '24px 22px', minHeight: 180, display: 'flex', flexDirection: 'column' }}>
               <span className="serif" style={{ fontSize: 38, color: 'oklch(58% 0.14 82)', lineHeight: 0.9, marginBottom: 14 }}>{it.k}</span>
               <h4 className="serif" style={{ fontSize: 22, lineHeight: 1.12, color: 'var(--ink)', marginBottom: 10 }}>{it['h_' + lang] || it.h_sq}</h4>
               <p style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-2)', margin: 0 }}>{it['p_' + lang] || it.p_sq}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
         <p className="mono" style={{ marginTop: 18, fontSize: 11, color: 'var(--rust)', letterSpacing: '0.05em' }}>
@@ -4394,7 +4468,7 @@ function KorrupsionChannelsSection({ lang }) {
           background: 'var(--line)', border: '1px solid var(--line)',
         }}>
           {data.map((it, i) => (
-            <article key={it.key} style={{ background: 'var(--paper)', padding: '28px 26px', minHeight: 240, display: 'flex', flexDirection: 'column' }}>
+            <Reveal as="article" key={it.key} delay={i * 70} className="hover-lift" style={{ background: 'var(--paper)', padding: '28px 26px', minHeight: 240, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
                 <span className="serif" style={{ fontSize: 32, color: 'oklch(58% 0.14 82)', lineHeight: 0.9 }}>{it.short}</span>
                 <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>{String(i + 1).padStart(2, '0')} / 0{data.length}</span>
@@ -4408,7 +4482,7 @@ function KorrupsionChannelsSection({ lang }) {
               <div className="mono" style={{ marginTop: 8, fontSize: 10, letterSpacing: '0.04em', color: 'var(--rust)' }}>
                 ✓ {it['anon_' + lang] || it.anon_sq}
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
