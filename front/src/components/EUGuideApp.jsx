@@ -1804,8 +1804,8 @@ function Navbar({ lang, setLang, t, route, onChat }) {
   ];
 
   return (
-    <header className="site-header" style={{
-      position: 'sticky', top: 0, zIndex: 50,
+    <header className="site-header" data-hidden={hidden ? 'true' : 'false'} style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
       background: scrolled ? 'rgba(242,239,232,0.92)' : 'var(--paper)',
       backdropFilter: scrolled ? 'blur(8px)' : 'none',
       borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',

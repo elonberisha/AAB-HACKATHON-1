@@ -106,10 +106,13 @@ body::before {
 }
 
 main,
-header,
 footer {
   position: relative;
   z-index: 2;
+}
+
+.euguide-zoom main {
+  padding-top: 78px;
 }
 
 ::selection {
