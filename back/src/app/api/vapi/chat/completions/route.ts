@@ -4,6 +4,12 @@ import { searchDocuments } from '@/lib/rag'
 import { saveSession } from '@/lib/session'
 import { SYSTEM_PROMPT } from '@/lib/prompt'
 
+// Zgjat Vercel function timeout deri 60s (kërkon Pro plan, injorohet në Hobby)
+export const maxDuration = 60
+
+// Fjali përshëndetjeje — nuk bëjmë RAG për to
+const GREETINGS = /^(hi|hello|hey|përshëndetje|pershendetje|mirëmëngjes|mirëdita|mirëmbrëma|zdravo|bok|ćao|salut|hej)\W*$/i
+
 export async function POST(req: NextRequest) {
   const expectedSecret = process.env.VAPI_SECRET
   if (expectedSecret) {
@@ -23,28 +29,49 @@ export async function POST(req: NextRequest) {
   const sessionId = call?.metadata?.sessionId ?? call?.id ?? `vapi-${Date.now()}`
 
   const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
-  const userText = lastUserMsg?.content ?? ''
+  const userText = (lastUserMsg?.content ?? '').trim()
 
-  // RAG search — skip nëse mesazhi është shumë i shkurtër (përshëndetje)
+  // RAG search me timeout 4s — nëse vonohet, vazhdo pa kontekst
   let context = ''
-  if (userText.length > 10) {
-    context = await searchDocuments(userText)
+  const isGreeting = userText.length < 20 || GREETINGS.test(userText)
+  if (!isGreeting) {
+    try {
+      const ragResult = await Promise.race([
+        searchDocuments(userText),
+        new Promise<string>((_, reject) =>
+          setTimeout(() => reject(new Error('RAG timeout')), 4000)
+        ),
+      ])
+      context = ragResult
+    } catch {
+      // RAG timeout ose gabim — vazhdo pa kontekst
+      context = ''
+    }
   }
 
-  let fullReply = ''
   const encoder = new TextEncoder()
+  let fullReply = ''
 
   const chatMessages = messages
     .filter(m => m.role === 'user' || m.role === 'assistant')
     .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
 
-  // gpt-4o-mini për voice — 3x më shpejt se gpt-4o
+  const VOICE_RULES = `
+
+RREGULLA PËR VOICE AGENT:
+- Përgjigju SHKURT — maksimum 3 fjali
+- Mos përdor lista, numra, ose formatim
+- Fol natyrshëm si në bisedë
+- Nëse nuk ke informacion të mjaftueshëm, thuaj "Mund të më pyesësh më shumë detaje?"`
+
+  // gpt-4o-mini — 3x më i shpejtë se gpt-4o, i mjaftueshëm për voice
   const stream = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     stream: true,
-    max_tokens: 300, // përgjigje të shkurtra për voice
+    max_tokens: 200,
+    temperature: 0.5,
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT(context) + '\n\nRREGULL SHTESË PËR VOICE:\n- Përgjigju GJITHMONË në SHQIP, pavarësisht gjuhës së pyetjes\n- Përgjigju SHKURT (2-4 fjali max)\n- Mos përdor lista, bullet points, ose formatim\n- Fol natyrshëm si në bisedë të përditshme\n- Mos thuaj "sipas dokumenteve" nëse nuk ke kontekst dokumentesh' },
+      { role: 'system', content: SYSTEM_PROMPT(context) + VOICE_RULES },
       ...chatMessages,
     ],
   })
@@ -79,7 +106,7 @@ export async function POST(req: NextRequest) {
       controller.enqueue(encoder.encode('data: [DONE]\n\n'))
       controller.close()
 
-      // Ruaj në background — nuk bllokon stream-in
+      // Ruaj sesionin në background — nuk bllokon stream-in
       saveSession(sessionId, [
         ...chatMessages,
         { role: 'assistant', content: fullReply },
