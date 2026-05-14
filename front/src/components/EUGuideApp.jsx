@@ -942,7 +942,7 @@ const COURT_CASES = [
 ];
 
 const KOSOVO_FACTS = {
-  pop: '~1.6M',
+  pop: '1.6M',
   area: '10,887 km²',
   cap: { sq: 'Prishtinë', en: 'Pristina', sr: 'Priština' },
   curr: 'EUR (€)',
