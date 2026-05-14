@@ -260,7 +260,8 @@ footer {
     gap: 10px !important;
   }
 
-  .nav-brand svg {
+  .nav-brand svg,
+  .nav-brand img {
     width: 34px;
     height: 34px;
     flex: 0 0 auto;

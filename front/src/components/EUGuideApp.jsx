@@ -2118,6 +2118,7 @@ function PageBreadcrumb({ route, t, lang }) {
 
 function Logo() {
   return (
+<<<<<<< Updated upstream
     <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
       <rect x="0.5" y="0.5" width="39" height="39" fill="var(--ink)" />
       {/* 12 stars of EU in a circle */}
@@ -2130,6 +2131,15 @@ function Logo() {
       })}
       <text x="20" y="24" className="serif" style={{ fontSize: 13, fill: 'var(--paper)', textAnchor: 'middle' }}>k</text>
     </svg>
+=======
+    <img
+      src="/eu-kosovo-logo.png"
+      alt="EU Guide Kosovo logo"
+      width="44"
+      height="41"
+      style={{ display: 'block', objectFit: 'contain', flex: '0 0 auto' }}
+    />
+>>>>>>> Stashed changes
   );
 }
 
@@ -2483,23 +2493,13 @@ function FundingLogo({ type }) {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 260 }}>
-      <svg width="86" height="58" viewBox="0 0 240 164" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-        <path d="M18 105C8 65 23 29 71 0C52 31 39 67 35 99C53 69 82 45 121 31C79 63 46 88 18 105Z" fill="#D43B34" />
-        <path d="M102 3H133V122H102V3Z" fill="#D43B34" />
-        <path d="M139 3H169C188 40 204 78 217 122H187C176 82 160 43 139 3Z" fill="#D43B34" />
-        <path d="M176 4C206 9 230 27 239 57C226 49 209 46 188 51C185 34 181 19 176 4Z" fill="#D43B34" />
-        <path d="M0 144C40 96 99 62 166 43C204 32 234 35 239 52C244 69 221 90 184 105C211 84 206 72 177 70C122 67 53 95 0 144Z" fill="#D43B34" />
-        <path d="M0 124C42 91 94 67 157 52C194 43 225 45 232 59C239 73 220 89 186 101C204 86 199 78 173 78C119 77 50 100 0 124Z" fill="#D43B34" />
-        <text x="32" y="160" fill="#D43B34" fontFamily="Inter, Arial, sans-serif" fontSize="30" fontWeight="900" letterSpacing="1">PRISHTINE</text>
-      </svg>
-      <div style={{ color: 'rgba(242,239,232,0.9)', textAlign: 'left', lineHeight: 1 }}>
-        <div className="serif" style={{ fontSize: 30, color: 'rgba(242,239,232,0.9)', whiteSpace: 'nowrap' }}>Kolegji AAB</div>
-        <div style={{ fontSize: 11, color: 'rgba(242,239,232,0.56)', fontWeight: 800, letterSpacing: '0.08em', marginTop: 8, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-          Cilësi. Lidership. Sukses!
-        </div>
-      </div>
-    </div>
+    <img
+      src="/kolegji-aab-logo.png"
+      alt="Kolegji AAB"
+      width="300"
+      height="70"
+      style={{ display: 'block', width: 300, maxWidth: '70vw', height: 'auto', objectFit: 'contain' }}
+    />
   );
 }
 
