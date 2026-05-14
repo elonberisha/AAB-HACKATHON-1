@@ -1121,7 +1121,7 @@ function RegionChart({ lang, t }) {
                 const color = c.status === 'negotiating' ? 'var(--sage)' : c.status === 'candidate' ? 'var(--gold)' : 'var(--rust)';
                 const isKosova = c.code === 'XK';
                 return (
-                  <div key={c.code} style={{
+                  <Reveal key={c.code} delay={i * 70} distance={12} className="region-row" style={{
                     display: 'grid',
                     gridTemplateColumns: '52px 130px 1fr 90px',
                     alignItems: 'center',
@@ -1132,7 +1132,7 @@ function RegionChart({ lang, t }) {
                     margin: isKosova ? '0 -16px' : 0,
                     paddingLeft: isKosova ? 16 : 0,
                     paddingRight: isKosova ? 16 : 0,
-                  }} className="region-row">
+                  }}>
                     <span className="mono" style={{ fontSize: 18, color: 'var(--ink)', fontWeight: 500 }}>{c.code}</span>
                     <span className="serif" style={{ fontSize: 22, color: 'var(--ink)' }}>
                       {c.name}
@@ -1150,7 +1150,7 @@ function RegionChart({ lang, t }) {
                       ))}
                     </div>
                     <span className="mono" style={{ fontSize: 14, color: 'var(--ink)', textAlign: 'right' }}>{c.progress}<span style={{ color: 'var(--ink-3)' }}>/100</span></span>
-                  </div>
+                  </Reveal>
                 );
               })}
             </div>
@@ -4228,7 +4228,7 @@ function ReformaSourcesSection({ lang }) {
         <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="04" />
         <div className="reforma-sources-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
           {data.map((g, gi) => (
-            <div key={gi} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
+            <Reveal key={gi} delay={gi * 90} distance={14} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
               <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-2)', marginBottom: 22 }}>
                 <span style={{ color: 'var(--rust)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
               </div>
@@ -4244,7 +4244,7 @@ function ReformaSourcesSection({ lang }) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           ))}
         </div>
         <div className="mono" style={{ marginTop: 40, paddingTop: 18, borderTop: '1px solid var(--line)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
@@ -4553,7 +4553,7 @@ function KorrupsionRedFlagsSection({ lang }) {
         <SectionHead eyebrow={c.eyebrow} title={c.title} sub={c.sub} num="05" />
         <div className="korr-redflags-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
           {data.map((g, gi) => (
-            <div key={gi} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
+            <Reveal key={gi} delay={gi * 90} distance={14} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
               <div className="mono" style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-2)', marginBottom: 22 }}>
                 <span style={{ color: 'var(--rust)' }}>§ 0{gi + 1}</span> · {g['cat_' + lang] || g.cat_sq}
               </div>
@@ -4565,7 +4565,7 @@ function KorrupsionRedFlagsSection({ lang }) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           ))}
         </div>
         <div className="mono" style={{ marginTop: 40, paddingTop: 18, borderTop: '1px solid var(--line)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--ink-3)' }}>
@@ -4761,25 +4761,25 @@ function HomePage({ lang, t, onChat }) {
         to="be"
         ctaLabel={lang === 'sq' ? 'Më shumë për BE-në →' : lang === 'en' ? 'More on EU →' : 'Više o EU →'}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {top.map(c => {
+          {top.map((c, i) => {
             const color = c.status === 'negotiating' ? 'var(--sage)' : c.status === 'candidate' ? 'var(--gold)' : 'var(--rust)';
             const isKosova = c.code === 'XK';
             return (
-              <div key={c.code} style={{
+              <Reveal key={c.code} delay={i * 60} distance={10} className="region-row" style={{
                 display: 'grid', gridTemplateColumns: '52px 130px 1fr 80px',
                 alignItems: 'center', gap: 16, padding: '10px 0',
                 borderBottom: '1px solid var(--line)',
                 background: isKosova ? 'var(--paper-2)' : 'transparent',
                 margin: isKosova ? '0 -16px' : 0,
                 paddingLeft: isKosova ? 16 : 0, paddingRight: isKosova ? 16 : 0,
-              }} className="region-row">
+              }}>
                 <span className="mono" style={{ fontSize: 16, color: 'var(--ink)' }}>{c.code}</span>
                 <span className="serif" style={{ fontSize: 20, color: 'var(--ink)' }}>{c['name_' + lang] || c.name_sq || c.name}{isKosova && <span style={{ color: 'var(--rust)', marginLeft: 6 }}>★</span>}</span>
                 <div style={{ height: 14, background: 'var(--paper-3)', position: 'relative' }}>
                   <div style={{ position: 'absolute', inset: 0, width: c.progress + '%', background: color }} />
                 </div>
                 <span className="mono" style={{ fontSize: 13, color: 'var(--ink)', textAlign: 'right' }}>{c.progress}/100</span>
-              </div>
+              </Reveal>
             );
           })}
         </div>
@@ -4792,7 +4792,7 @@ function HomePage({ lang, t, onChat }) {
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, border: '1px solid var(--line)' }} className="stats-strip">
             {homeStats.map((stat, i) => (
-              <BigStat key={i} {...stat} lang={lang} border={i > 0} />
+              <Reveal key={i} delay={i * 80} distance={14}><BigStat {...stat} lang={lang} border={i > 0} /></Reveal>
             ))}
           </div>
         </div>
@@ -4819,10 +4819,10 @@ function HomePage({ lang, t, onChat }) {
             <div className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 12 }}>{totalCompleted} të plotësuara nga {objectives.length}</div>
           </div>
           <div>
-            {objsPreview.map(o => {
+            {objsPreview.map((o, i) => {
               const cl = CLUSTER_LABELS[o.cluster] || CLUSTER_LABELS.other;
               return (
-                <div key={o.id} style={{ display: 'grid', gridTemplateColumns: '36px 1fr 120px 80px', alignItems: 'center', gap: 16, padding: '16px 0', borderTop: '1px solid var(--line)' }} className="obj-preview-row">
+                <Reveal key={o.id} delay={i * 65} distance={10} className="obj-preview-row" style={{ display: 'grid', gridTemplateColumns: '36px 1fr 120px 80px', alignItems: 'center', gap: 16, padding: '16px 0', borderTop: '1px solid var(--line)' }}>
                   <span style={{
                     width: 22, height: 22, borderRadius: '50%',
                     border: `1.5px solid ${o.completed ? 'var(--sage)' : 'var(--ink-3)'}`,
@@ -4833,7 +4833,7 @@ function HomePage({ lang, t, onChat }) {
                   <span className="serif" style={{ fontSize: 20, color: 'var(--ink)', lineHeight: 1.2 }}>{o['name_' + lang] || o.name_sq || o.name}</span>
                   <span className="mono" style={{ fontSize: 10, padding: '3px 8px', border: `1px solid ${cl.color}`, color: cl.color, justifySelf: 'start' }}>{cl[lang] || cl.sq}</span>
                   <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', textAlign: 'right' }}>{o.completed ? 100 : o.progress}%</span>
-                </div>
+                </Reveal>
               );
             })}
             <div style={{ borderTop: '1px solid var(--line)' }} />
@@ -4850,13 +4850,13 @@ function HomePage({ lang, t, onChat }) {
         ctaLabel={lang === 'sq' ? 'Të gjitha pyetjet →' : lang === 'en' ? 'All questions →' : 'Sva pitanja →'}>
         <div>
           {faqPreview.map((f, i) => (
-            <details key={i} style={{ borderTop: '1px solid var(--line)' }}>
+            <Reveal as="details" key={i} delay={i * 70} distance={10} style={{ borderTop: '1px solid var(--line)' }}>
               <summary style={{ padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, cursor: 'pointer', listStyle: 'none' }}>
                 <span className="serif" style={{ fontSize: 22, lineHeight: 1.2, color: 'var(--ink)' }}>{f['q_' + lang] || f.q_sq || f.question}</span>
                 <span style={{ fontSize: 22, color: 'var(--ink-2)', flexShrink: 0 }}>+</span>
               </summary>
               <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.55, margin: 0, padding: '0 60px 24px 0' }}>{f['a_' + lang] || f.a_sq || f.answer}</p>
-            </details>
+            </Reveal>
           ))}
           <div style={{ borderTop: '1px solid var(--line)' }} />
         </div>
