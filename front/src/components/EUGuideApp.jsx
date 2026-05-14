@@ -2149,6 +2149,7 @@ function Logo() {
 function Hero({ lang, t, onChat }) {
   const initialNow = new Date('2026-05-13T00:00:00Z').getTime();
   const [now, setNow] = useState(initialNow);
+  const [timelineRef, timelineInView] = useInView({ threshold: 0.3 });
   useEffect(() => {
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -2235,7 +2236,7 @@ function Hero({ lang, t, onChat }) {
             </div>
 
             {/* mini timeline */}
-            <div style={{ marginTop: 8 }}>
+            <div ref={timelineRef} style={{ marginTop: 8 }}>
               <div style={{ display: 'flex', position: 'relative', height: 50 }}>
                 {[
                   { y: '2016', label: 'SAA', filled: true },
@@ -2244,14 +2245,38 @@ function Hero({ lang, t, onChat }) {
                   { y: '2026', label: 'sot', filled: true, current: true },
                   { y: '2027', label: 'kandidat?', filled: false },
                   { y: '20?', label: 'anëtarësia', filled: false },
-                ].map((step, i, arr) => (
+                ].map((step, i, arr) => {
+                  const stepDelay = i * 140;
+                  return (
                   <div key={i} style={{ flex: 1, position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: 6, left: 0, right: i === arr.length - 1 ? '50%' : 0, height: 2, background: step.filled && arr[i + 1] && arr[i + 1].filled ? 'var(--ink)' : (step.filled ? 'linear-gradient(to right, var(--ink), var(--paper-3))' : 'var(--paper-3)') }} />
-                    <div style={{ position: 'relative', width: 14, height: 14, borderRadius: '50%', background: step.filled ? (step.current ? 'var(--rust)' : 'var(--ink)') : 'var(--paper)', border: '2px solid var(--ink)', margin: '0 auto', zIndex: 2 }} />
-                    <div className="mono" style={{ fontSize: 9, color: 'var(--ink-3)', textAlign: 'center', marginTop: 6, letterSpacing: '0.05em' }}>{step.y}</div>
-                    <div className="mono" style={{ fontSize: 9, color: step.current ? 'var(--rust)' : 'var(--ink-2)', textAlign: 'center', marginTop: 2 }}>{step.label}</div>
+                    <div style={{
+                      position: 'absolute', top: 6, left: 0, right: i === arr.length - 1 ? '50%' : 0,
+                      height: 2,
+                      background: step.filled && arr[i + 1] && arr[i + 1].filled ? 'var(--ink)' : (step.filled ? 'linear-gradient(to right, var(--ink), var(--paper-3))' : 'var(--paper-3)'),
+                      transform: timelineInView ? 'scaleX(1)' : 'scaleX(0)',
+                      transformOrigin: 'left',
+                      transition: `transform 380ms cubic-bezier(.2,.7,.2,1) ${stepDelay}ms`,
+                    }} />
+                    <div style={{
+                      position: 'relative', width: 14, height: 14, borderRadius: '50%',
+                      background: step.filled ? (step.current ? 'var(--rust)' : 'var(--ink)') : 'var(--paper)',
+                      border: '2px solid var(--ink)', margin: '0 auto', zIndex: 2,
+                      transform: timelineInView ? 'scale(1)' : 'scale(0)',
+                      transition: `transform 360ms cubic-bezier(.2,.9,.3,1.3) ${stepDelay + 120}ms`,
+                    }} />
+                    <div className="mono" style={{
+                      fontSize: 9, color: 'var(--ink-3)', textAlign: 'center', marginTop: 6, letterSpacing: '0.05em',
+                      opacity: timelineInView ? 1 : 0,
+                      transition: `opacity 300ms ease ${stepDelay + 220}ms`,
+                    }}>{step.y}</div>
+                    <div className="mono" style={{
+                      fontSize: 9, color: step.current ? 'var(--rust)' : 'var(--ink-2)', textAlign: 'center', marginTop: 2,
+                      opacity: timelineInView ? 1 : 0,
+                      transition: `opacity 300ms ease ${stepDelay + 280}ms`,
+                    }}>{step.label}</div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
