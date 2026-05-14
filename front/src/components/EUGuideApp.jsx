@@ -4613,6 +4613,7 @@ function PreviewBlock({ eyebrow, title, sub, num, to, ctaLabel, children }) {
 
 function RecognitionHomeSection({ lang }) {
   const data = useCmsArray('recognitions', RECOGNITIONS);
+  const [barsRef, barsInView] = useInView({ threshold: 0.25 });
   const [activeYear, setActiveYear] = useState(data[data.length - 1]?.y || 2025);
   const active = data.find(d => d.y === activeYear) || data[data.length - 1] || { y: 2025, n: 118 };
   const max = Math.max(...data.map(d => d.n), 120);
@@ -4666,11 +4667,12 @@ function RecognitionHomeSection({ lang }) {
         </div>
 
         <div>
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${data.length}, minmax(28px, 1fr))`, gap: 5, height: 330, alignItems: 'end', borderBottom: '1px solid var(--line)', paddingBottom: 12 }} className="recognition-bars" role="list" aria-label={copy.eyebrow}>
-            {data.map((d) => {
+          <div ref={barsRef} style={{ display: 'grid', gridTemplateColumns: `repeat(${data.length}, minmax(28px, 1fr))`, gap: 5, height: 330, alignItems: 'end', borderBottom: '1px solid var(--line)', paddingBottom: 12 }} className="recognition-bars" role="list" aria-label={copy.eyebrow}>
+            {data.map((d, i) => {
               const h = `${Math.max(12, (d.n / max) * 88)}%`;
               const mark = [2008, 2011, 2014, 2017, 2020, 2023, 2025].includes(d.y);
               const selected = d.y === active.y;
+              const barDelay = i * 45;
               return (
                 <button
                   key={d.y}
@@ -4687,12 +4689,24 @@ function RecognitionHomeSection({ lang }) {
                     opacity: selected ? 1 : 0.72,
                     position: 'relative',
                     boxShadow: selected ? '0 -10px 24px rgba(199,173,112,0.26)' : 'none',
-                    transition: 'height 180ms ease, opacity 180ms ease, box-shadow 180ms ease, background 180ms ease',
+                    transform: barsInView ? 'scaleY(1)' : 'scaleY(0)',
+                    transformOrigin: 'bottom',
+                    transition: `transform 540ms cubic-bezier(.2,.7,.2,1) ${barDelay}ms, height 180ms ease, opacity 180ms ease, box-shadow 180ms ease, background 180ms ease`,
                     width: '100%',
                   }}>
-                    {(mark || selected) && <span className="mono" style={{ position: 'absolute', top: -22, left: 0, right: 0, textAlign: 'center', fontSize: 10, color: selected ? 'var(--ink)' : 'var(--ink-3)' }}>{d.n}</span>}
+                    {(mark || selected) && <span className="mono" style={{
+                      position: 'absolute', top: -22, left: 0, right: 0, textAlign: 'center',
+                      fontSize: 10, color: selected ? 'var(--ink)' : 'var(--ink-3)',
+                      opacity: barsInView ? 1 : 0,
+                      transition: `opacity 420ms ease ${barDelay + 320}ms`,
+                    }}>{d.n}</span>}
                   </div>
-                  <span className="mono" style={{ fontSize: 9, color: selected || mark ? 'var(--ink)' : 'var(--ink-3)', writingMode: 'vertical-rl', transform: 'rotate(180deg)', margin: '10px auto 0', height: 38 }}>
+                  <span className="mono" style={{
+                    fontSize: 9, color: selected || mark ? 'var(--ink)' : 'var(--ink-3)',
+                    writingMode: 'vertical-rl', transform: 'rotate(180deg)', margin: '10px auto 0', height: 38,
+                    opacity: barsInView ? 1 : 0,
+                    transition: `opacity 320ms ease ${barDelay + 200}ms`,
+                  }}>
                     {d.y}
                   </span>
                 </button>
