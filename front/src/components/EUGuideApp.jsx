@@ -888,6 +888,41 @@ const KOSOVO_FACTS = {
 // Inline styles + small style helpers. No shared "styles" object name.
 
 // ============================================================
+// Markdown renderer — converts links, bold, newlines in chat
+// ============================================================
+function renderMd(text) {
+  if (!text) return null;
+  // Split on markdown links [label](url) to process inline
+  const parts = [];
+  const linkRe = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g;
+  let last = 0;
+  let m;
+  while ((m = linkRe.exec(text)) !== null) {
+    if (m.index > last) parts.push(m.input.slice(last, m.index));
+    parts.push({ label: m[1], url: m[2] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+
+  return parts.map((part, i) => {
+    if (typeof part === 'object') {
+      return (
+        <a key={i} href={part.url} target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--gold)', textDecoration: 'underline', wordBreak: 'break-word' }}>
+          {part.label}
+        </a>
+      );
+    }
+    // Process **bold** and newlines in plain text segments
+    return part.split(/(\*\*[^*]+\*\*|\n)/).map((seg, j) => {
+      if (seg === '\n') return <br key={j} />;
+      if (seg.startsWith('**') && seg.endsWith('**')) return <strong key={j}>{seg.slice(2, -2)}</strong>;
+      return seg;
+    });
+  });
+}
+
+// ============================================================
 // Section header — eyebrow + serif title + optional subtitle
 // ============================================================
 function SectionHead({ eyebrow, title, sub, align = 'left', kicker, num }) {
@@ -3030,7 +3065,7 @@ function ChatWidget({ lang, t, open, setOpen }) {
                     fontSize: 13, lineHeight: 1.5,
                     border: m.role === 'user' ? 'none' : '1px solid var(--line)',
                   }}>
-                    {m.text}
+                    {renderMd(m.text)}
                   </div>
                 </div>
               );
